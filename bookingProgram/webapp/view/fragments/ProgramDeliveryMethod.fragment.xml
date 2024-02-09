@@ -1,0 +1,101 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns="sap.m">
+	<Table showNoData="false" items="{viewModel>/currentProgram/deliveryMethods/newline}" visible="{=(!${viewModel>/displayMode} ) }">
+		<columns>
+			<Column width="25px" hAlign="Begin">
+				<CheckBox select='toggleDMSelect'/>
+			</Column>
+			<Column width="12rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Category}"/>
+			</Column>
+			<Column width="12rem">
+				<ObjectIdentifier title="{i18n>Label.Vendor}"/>
+			</Column>
+			<Column width="11.1rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Delivery.Method}"/>
+			</Column>
+			<Column width="1rem" minScreenWidth="Tablet" demandPopin="true" vAlign="Middle" hAlign="Center">
+				<Button type="Transparent" icon="sap-icon://delete" press='handleDMDelete' enabled="{=!${viewModel>/displayMode}}"/>
+			</Column>
+			<Column width="1rem" minScreenWidth="Tablet" demandPopin="true" vAlign="Middle" hAlign="Center">
+				<Button type='Transparent' icon="sap-icon://add-filter" press='onPressDelMethodsFilter' enabled="{=!${viewModel>/displayMode}}"/>
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<Text text=""></Text>
+					<Select selectedKey="{viewModel>categoryId}" id="progDelMethodCatSelection" showSecondaryValues="false" width='100%'
+						items="{path : 'dmCategoryModel>/', sorter: { path: 'key' }, templateShareable:true}">
+						<core:ListItem key="{dmCategoryModel>key}"
+							text="{ parts : ['dmCategoryModel>key', 'dmCategoryModel>enDesc', 'dmCategoryModel>frDesc'], formatter : '.formatter.dropdownFormatterXX' }"/>
+					</Select>
+					<Input type="Text" value="{viewModel>vendorName}" placeholder="{i18n>Label.Vendor.Number}" valueHelpOnly="true" showValueHelp="true"
+						valueHelpRequest="handleDmVendorKeyDialogPress"/>
+					<!--<Select  selectedKey="{viewModel>vendorId}" 
+							showSecondaryValues="false" 
+							width='100%'  
+							items="{path : 'dmVendorModel>/', sorter: { path: 'key' }, templateShareable:true}" 
+					>
+						<core:ListItem key="{dmVendorModel>key}" text="{ parts : ['dmVendorModel>key',  'dmVendorModel>enDesc', 'dmVendorModel>frDesc'], formatter : '.formatter.dropdownFormatterXX' }" />
+					</Select>-->
+					<Input type="Text" value="{viewModel>dmName}" placeholder="{i18n>Label.Delivery.Method}" valueHelpOnly="true" showValueHelp="true"
+						valueHelpRequest="handleDmKeyDialogPress"/>
+					<!--<Select  selectedKey="{viewModel>dmId}" 
+							showSecondaryValues="false" 
+							width='100%'  
+							items="{ path : 'dmDelMethodModel>/', templateShareable:true }" 
+					>
+						<core:ListItem key="{dmDelMethodModel>key}" text="{ parts : ['dmDelMethodModel>key',  'dmDelMethodModel>enDesc', 'dmDelMethodModel>frDesc'], formatter : '.formatter.dropdownXFormatterXX' }" />
+					</Select> -->
+					<Button type='Transparent' icon="sap-icon://add" press='handleDMAdd' enabled="{=!${viewModel>/displayMode}}"/>
+					
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+	<Table showNoData="false" visible="{=(!!${viewModel>/displayMode} ) }">
+		<columns>
+			<Column width="12rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Category}"/>
+			</Column>
+			<Column width="12rem">
+				<ObjectIdentifier title="{i18n>Label.Vendor}"/>
+			</Column>
+			<Column width="12rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Delivery.Method}"/>
+			</Column>
+			<Column width="1rem" minScreenWidth="Tablet" demandPopin="true" vAlign="Middle" hAlign="Center"></Column>
+		</columns>
+	</Table>
+	<ScrollContainer height="{viewModel>/tabs/DeliveryMethod/contHigh}" width="100%" horizontal="true" vertical="true" focusable="true">
+		<Table alternateRowColors="true" showNoData="false" mode="SingleSelectMaster" growing="true" growingScrollToLoad="true"
+			growingThreshold="50" id="deliveryMethodsTable">
+			<columns>
+				<!--<Column width="40px" hAlign="Begin" visible="{=(!${viewModel>/displayMode} ) }"/>-->
+				<Column width="12rem" vAlign="Middle"/>
+				<Column width="12rem" vAlign="Middle"/>
+				<Column width="12rem" vAlign="Middle"/>
+				<Column width="1rem" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" hAlign="Center"></Column>
+			</columns>
+			<items>
+				<ColumnListItem id="deliveryMethodsRowT">
+					<cells>
+						<!--<CheckBox selected='{viewModel>selected}' select='toggleDMRowSelect'/>-->
+						<Text text="{CATEGORY_DESC}"/>
+						<Text text="{ parts : ['VENDOR_ID', 'VENDOR_DESC'], formatter : '.formatter.dmFormatterXX' }"/>
+						<Text text="{ parts : ['DEL_METHOD', 'DEL_METHOD_NAME'], formatter : '.formatter.dmFormatterXX' }"/>
+						<HBox justifyContent="Center" width="100%">
+							<core:Icon src="sap-icon://message-error" class="size1" color="#ff0000" visible="{=!(${VALID} === 'X')}" activeColor="Negative" alt="Error"
+								press="onErrorX"/>
+						</HBox>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+		<Toolbar>
+			<content>
+				<Text text=""/>
+			</content>
+		</Toolbar>
+	</ScrollContainer>
+</core:FragmentDefinition>

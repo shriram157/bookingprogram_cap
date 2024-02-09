@@ -1,0 +1,188 @@
+PROCEDURE "PROCEDURES_PROGRAMPARTCREATE" ( 
+    IN im_details "PROGRAMADMIN_PROGRAMPARTVIEW",
+	OUT ex_error "PROCEDURES_TT_ERRORS"  ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER AS
+BEGIN
+USING SQLSCRIPT_STRING AS LIB;
+/***************************** 
+ Write your procedure logic 
+ *****************************/
+declare lv_object_key		string;
+declare lv_program_uuid		string;
+declare lv_valid	 		string;
+declare lv_programid		string;
+declare lv_department_id	string;
+declare lv_brand_id 		string;
+declare lv_vendor_id 		string;
+declare lv_category_id		string;
+declare lv_parts_id			string;
+declare lv_details			string;
+declare lv_en_desc			string;
+declare lv_fr_desc			string;
+declare lv_tiresize			string;
+declare lv_loadrating		string;
+declare lv_speedrating		string;
+declare lv_dealernet		string;
+declare lv_changed_by		string;
+declare lv_count			integer; 
+declare lv_count_en			integer; 
+declare lv_count_fr			integer; 
+
+declare lv_count_er			integer default 0; 
+declare lv_count_cat		integer default 0; 
+declare lv_count_ven		integer default 0; 
+declare lv_batch_mode 		string;
+declare lv_duplicated		boolean default false; 
+declare lv_updateDesc		boolean default false; 
+declare lv_error_codes		string;
+declare lv_errorCodeArray	NVARCHAR(8) ARRAY;
+declare lv_errorCodesLen	integer default 0; 
+declare lv_tempStr			string; 
+DECLARE i           		INTEGER      = 1;
+
+select "OBJECT_KEY","PROGRAM_UUID","VENDOR_ID","CATEGORY_ID","PART_NUM","DETAIL","TIRESIZE","SPEEDRATING","LOADRATING","DEALERNET","VALID","BATCH_MODE","ERROR_CODES","EN_DESC","FR_DESC","CHANGED_BY"
+     into lv_object_key,lv_program_uuid,lv_vendor_id,lv_category_id,lv_parts_id,lv_details,lv_tiresize,lv_speedrating,lv_loadrating,lv_dealernet,lv_valid,lv_batch_mode,lv_error_codes,lv_en_desc,lv_fr_desc,lv_changed_by
+     from :im_details; 
+
+
+if :lv_program_uuid = '' then
+  ex_error = select 552 as http_status_code, 
+               'The Program UUID is empty' as error_message, 
+                     'The program uuid field can not be my empty' as detail from "DUMMY";
+
+else
+
+  select count(*) into lv_count from "PROGRAMADMIN_PROG_PARTS" where PROGRAM_UUID = :lv_program_uuid AND VENDOR_ID = :lv_vendor_id	AND PART_NUM = :lv_parts_id;
+  if lv_count > 0 then
+	lv_duplicated := true;
+  end if; 
+  
+  if :lv_batch_mode = 'X' then
+  	if :lv_valid <> 'X' THEN 
+      if :lv_error_codes is not NULL then 
+	    lv_errorCodeArray := LIB:SPLIT_TO_ARRAY(:lv_error_codes,',');
+        FOR i IN 1..CARDINALITY(:lv_errorCodeArray) DO
+		  lv_tempStr := :lv_errorCodeArray[:i];
+		  if :lv_tempStr = 'BP01046' then 
+			lv_duplicated := true;
+		  end if;
+		  select count(*) into lv_count_er  from "CORE_OBJECT_MESSAGE" where OBJECT_KEY = lv_object_key AND ERROR_CODE = :lv_tempStr;
+		  if :lv_count_er < 1 then
+			insert into "CORE_OBJECT_MESSAGE" ("OBJECT_KEY","ERROR_CODE","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+	          values(lv_object_key,lv_tempStr,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+		  end if;
+		END FOR;		
+	  end if;    	
+	end if;
+
+--  check the category 
+	select count(*) into lv_count_cat from "PROGRAMADMIN_PROG_CATEGORY" where PROGRAM_UUID = :lv_program_uuid AND CATEGORY_ID = :lv_category_id  AND "VALID" = 'X';
+    if :lv_count_cat < 1  then
+	  insert into "CORE_OBJECT_MESSAGE" ("OBJECT_KEY","ERROR_CODE","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+	    values(lv_object_key,'BP01026',CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	  --- the check is failed  
+	  lv_valid := '';
+	end if;
+
+--  check the vendor 
+	select count(*) into lv_count_ven from "PROGRAMADMIN_PROG_VENDOR" where PROGRAM_UUID = :lv_program_uuid AND VENDOR_ID = :lv_vendor_id AND "VALID" = 'X';
+    if :lv_count_ven < 1  then
+	  insert into "CORE_OBJECT_MESSAGE" ("OBJECT_KEY","ERROR_CODE","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+	    values(lv_object_key,'BP01035',CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	  --- the check is failed  
+	  lv_valid := '';
+	end if;
+
+    insert into "PROGRAMADMIN_PROG_PARTS" ("OBJECT_KEY","PROGRAM_UUID","VENDOR_ID","CATEGORY_ID","PART_NUM","DETAIL","VALID","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+	  values(lv_object_key,lv_program_uuid,lv_vendor_id,lv_category_id,lv_parts_id,lv_details,lv_valid,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	
+	if :lv_valid ='X' then
+	    upsert "PROGRAMADMIN_PART_NAME" ("PART_NUM","LANGUAGE_KEY","PART_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY","TIRESIZE","SPEEDRATING","LOADRATING","DEALERNET")
+           values(lv_parts_id,'EN',lv_en_desc,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by,lv_tiresize,lv_speedrating,lv_loadrating,lv_dealernet);
+
+	    upsert "PROGRAMADMIN_PART_NAME" ("PART_NUM","LANGUAGE_KEY","PART_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY","TIRESIZE","SPEEDRATING","LOADRATING","DEALERNET")
+           values(lv_parts_id,'FR',lv_fr_desc,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by,lv_tiresize,lv_speedrating,lv_loadrating,lv_dealernet);
+
+	end if;
+	
+	--- insert the part number even if the part is not ther, only code will break the logic
+	-- if :lv_duplicated = false then
+	  --select count(*) into lv_count_en  from "PROGRAMADMIN_PART_NAME" where LANGUAGE_KEY = 'EN' AND PART_NUM = :lv_parts_id;
+	  --if lv_count_en < 1 then
+	  --  insert into "PROGRAMADMIN_PART_NAME" ("PART_NUM","LANGUAGE_KEY","PART_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+   --        values(lv_parts_id,'EN',lv_en_desc,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	  --end if;
+
+	  --select count(*) into lv_count_fr  from "PROGRAMADMIN_PART_NAME" where LANGUAGE_KEY = 'FR' AND PART_NUM = :lv_parts_id;
+	  --if lv_count_fr < 1 then
+	  --  insert into "PROGRAMADMIN_PART_NAME" ("PART_NUM","LANGUAGE_KEY","PART_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+   --        values(lv_parts_id,'FR',lv_fr_desc,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	  --end if;
+	-- end if;
+  else 
+    if lv_duplicated = true then
+	  ex_error = select 551 as http_status_code, 
+        'The Record already exist' as error_message, 
+        'The Record already exist, can not insert' as detail from "DUMMY";
+  
+    else
+	  lv_valid := 'X';  
+
+--  check the category 
+	  select count(*) into lv_count_cat from "PROGRAMADMIN_PROG_CATEGORY" where PROGRAM_UUID = :lv_program_uuid AND CATEGORY_ID = :lv_category_id  AND "VALID" = 'X';
+      if :lv_count_cat < 1  then
+	    -- insert into "CORE_OBJECT_MESSAGE" ("OBJECT_KEY","ERROR_CODE","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+	    --   values(lv_object_key,'BP01026',CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	    ex_error = select 553 as http_status_code, 
+          'the category is not valid' as error_message, 
+          'the category is not valid, can not insert' as detail from "DUMMY";
+
+	  --- the check is failed  
+	    lv_valid := '';
+	   end if;
+
+--  check the vendor 
+	  select count(*) into lv_count_ven from "PROGRAMADMIN_PROG_VENDOR" where PROGRAM_UUID = :lv_program_uuid AND VENDOR_ID = :lv_vendor_id AND "VALID" = 'X';
+      if :lv_count_ven < 1  then
+	     --insert into "CORE_OBJECT_MESSAGE" ("OBJECT_KEY","ERROR_CODE","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+	     --  values(lv_object_key,'BP01035',CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	  --- the check is failed  
+	    ex_error = select 554 as http_status_code, 
+          'the vendor is not valid' as error_message, 
+          'the vendor is not valid, can not insert' as detail from "DUMMY";
+	     lv_valid := '';
+	   end if;	  
+	 
+	   if :lv_valid = 'X' then 
+         insert into "PROGRAMADMIN_PROG_PARTS" ("OBJECT_KEY","PROGRAM_UUID","VENDOR_ID","CATEGORY_ID","PART_NUM","DETAIL","VALID","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+	       values(lv_object_key,lv_program_uuid,lv_vendor_id,lv_category_id,lv_parts_id,lv_details,lv_valid,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	       
+	     select count(*) into lv_count_en  from "PROGRAMADMIN_PART_NAME" where LANGUAGE_KEY = 'EN' AND PART_NUM = :lv_parts_id;
+	     if lv_count_en > 0 then
+	       update "PROGRAMADMIN_PART_NAME" set PART_DESC = :lv_en_desc, 
+	    		"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP,
+				"AUDIT_CHANGED_BY" = :lv_changed_by
+		    where "PART_NUM" = :lv_parts_id AND LANGUAGE_KEY = 'EN';
+	     else
+	       insert into "PROGRAMADMIN_PART_NAME" ("PART_NUM","LANGUAGE_KEY","PART_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY","TIRESIZE","SPEEDRATING","LOADRATING","DEALERNET")
+             values(lv_parts_id,'EN',lv_en_desc,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by,lv_tiresize,lv_speedrating,lv_loadrating,lv_dealernet);
+	     end if;
+
+	     select count(*) into lv_count_fr  from "PROGRAMADMIN_PART_NAME" where LANGUAGE_KEY = 'FR' AND PART_NUM = :lv_parts_id;
+	     if lv_count_fr > 0 then
+	       update "PROGRAMADMIN_PART_NAME" set PART_DESC = :lv_fr_desc, 
+	    		"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP,
+				"AUDIT_CHANGED_BY" = :lv_changed_by
+			where "PART_NUM" = :lv_parts_id AND LANGUAGE_KEY = 'FR';
+	     else
+	       insert into "PROGRAMADMIN_PART_NAME" ("PART_NUM","LANGUAGE_KEY","PART_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY","TIRESIZE","SPEEDRATING","LOADRATING","DEALERNET")
+             values(lv_parts_id,'FR',lv_fr_desc,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by,lv_tiresize,lv_speedrating,lv_loadrating,lv_dealernet);
+	     end if;
+	 
+	   end if;
+    end if;
+  end if;
+end if;
+
+END;

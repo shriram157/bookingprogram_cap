@@ -1,0 +1,683 @@
+<?xml version="1.0" encoding="UTF-8"?><Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" xmlns:Variable="http://www.sap.com/ndb/BiModelVariable.ecore" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="DEALERBOOKINGSTATUSSUMMARYVIEW" applyPrivilegeType="NONE" dataCategory="DEFAULT" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="DEALERBOOKINGSTATUSSUMMARYVIEW"/>
+<localVariables>
+  <variable id="IN_DEALER_CODE" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="20" mandatory="false">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+  <variable id="IN_PROGRAM_UUID" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="36" mandatory="false">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+
+  <variable id="IN_LANG" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="2" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable></localVariables>
+<variableMappings/>
+<dataSources>
+  <DataSource id="PROGRAMBOOKING_DEALERBOOKINGLATESTSTATUSTIMEVIEW">
+    <resourceUri>PROGRAMBOOKING_DEALERBOOKINGLATESTSTATUSTIMEVIEW</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMBOOKING_DEALER_BOOKING_STATUS_HIST">
+    <resourceUri>PROGRAMBOOKING_DEALER_BOOKING_STATUS_HIST</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_BOOKING_PROGRAM">
+    <resourceUri>PROGRAMADMIN_BOOKING_PROGRAM</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_PROG_NAME">
+    <resourceUri>PROGRAMADMIN_PROG_NAME</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_ST_TS_LATEST" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM_UUID"/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_CODE">
+        <descriptions defaultDescription="DEALER_CODE"/>
+      </viewAttribute>
+      <viewAttribute id="LAST_CREATED_ON">
+        <descriptions defaultDescription="LAST_CREATED_ON"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PROGRAMBOOKING_DEALERBOOKINGLATESTSTATUSTIMEVIEW">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LAST_CREATED_ON" source="LAST_CREATED_ON"/>
+    </input>
+    <filter>"PROGRAM_UUID" = '$$IN_PROGRAM_UUID$$' AND "DEALER_CODE" = '$$IN_DEALER_CODE$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_STATUS" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_CODE">
+        <descriptions defaultDescription="DEALER CODE"/>
+      </viewAttribute>
+      <viewAttribute id="B_STATUS">
+        <descriptions defaultDescription="BOOKING STATUS"/>
+      </viewAttribute>
+      <viewAttribute id="AUDIT_CREATED_ON">
+        <descriptions defaultDescription="CREATED ON"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PROGRAMBOOKING_DEALER_BOOKING_STATUS_HIST">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="B_STATUS" source="B_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CREATED_ON" source="AUDIT_CREATED_ON"/>
+    </input>
+    <filter>"PROGRAM_UUID" ='$$IN_PROGRAM_UUID$$' AND "DEALER_CODE" = '$$IN_DEALER_CODE$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="LATEST_STATUS" cardinality="CN_N" joinType="inner" referentialDirection="left">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_CODE">
+        <descriptions defaultDescription="DEALER CODE"/>
+      </viewAttribute>
+      <viewAttribute id="B_STATUS">
+        <descriptions defaultDescription="BOOKING STATUS"/>
+      </viewAttribute>
+      <viewAttribute id="AUDIT_CREATED_ON">
+        <descriptions defaultDescription="CREATED ON"/>
+      </viewAttribute>
+      <viewAttribute hidden="true" id="JOIN$PROGRAM_UUID$PROGRAM_UUID"/>
+      <viewAttribute hidden="true" id="JOIN$DEALER_CODE$DEALER_CODE"/>
+      <viewAttribute hidden="true" id="JOIN$LAST_CREATED_ON$AUDIT_CREATED_ON"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PRJ_ST_TS_LATEST">
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$PROGRAM_UUID$PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$DEALER_CODE$DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$LAST_CREATED_ON$AUDIT_CREATED_ON" source="LAST_CREATED_ON"/>
+    </input>
+    <input node="PRJ_STATUS">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="B_STATUS" source="B_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CREATED_ON" source="AUDIT_CREATED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$PROGRAM_UUID$PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$DEALER_CODE$DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$LAST_CREATED_ON$AUDIT_CREATED_ON" source="AUDIT_CREATED_ON"/>
+    </input>
+    <joinAttribute name="JOIN$PROGRAM_UUID$PROGRAM_UUID"/>
+    <joinAttribute name="JOIN$DEALER_CODE$DEALER_CODE"/>
+    <joinAttribute name="JOIN$LAST_CREATED_ON$AUDIT_CREATED_ON"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="LATEST_ST_ONLY">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_CODE">
+        <descriptions defaultDescription="DEALER CODE"/>
+      </viewAttribute>
+      <viewAttribute id="B_STATUS">
+        <descriptions defaultDescription="BOOKING STATUS"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="LATEST_STATUS">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="B_STATUS" source="B_STATUS"/>
+    </input>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PROGDESC">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="LANGUAGE_KEY">
+        <descriptions defaultDescription="LANGUAGE KEY"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_DESC">
+        <descriptions defaultDescription="DESCRIPTION/NAME"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_ID">
+        <descriptions defaultDescription="PROGRAM ID"/>
+      </viewAttribute>
+      <viewAttribute id="DEPART">
+        <descriptions defaultDescription="DEPARTMENT"/>
+      </viewAttribute>
+      <viewAttribute id="BRAND">
+        <descriptions defaultDescription="BRAND"/>
+      </viewAttribute>
+      <viewAttribute id="OPEN_DATE">
+        <descriptions defaultDescription="BOOKING WINDOW OPEN"/>
+      </viewAttribute>
+      <viewAttribute id="CLOSE_DATE">
+        <descriptions defaultDescription="BOOKING WINDOW CLOSE"/>
+      </viewAttribute>
+      <viewAttribute id="DELIVERY_FR">
+        <descriptions defaultDescription="DELIVERY WINDOW FROM"/>
+      </viewAttribute>
+      <viewAttribute id="DELIVERY_TO">
+        <descriptions defaultDescription="DELIVERY WINDOW TO"/>
+      </viewAttribute>
+      <viewAttribute id="STATUS">
+        <descriptions defaultDescription="STATUS"/>
+      </viewAttribute>
+      <viewAttribute id="INITIAL_WARN">
+        <descriptions defaultDescription="INITIAL WARNING"/>
+      </viewAttribute>
+      <viewAttribute id="FINAL_WARN">
+        <descriptions defaultDescription="FINAL WARNING"/>
+      </viewAttribute>
+      <viewAttribute id="CPROGRAM_UUID">
+        <descriptions defaultDescription="COMPARATIVE PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="AUDIT_CHANGED_BY">
+        <descriptions defaultDescription="CHANGED BY"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes>
+      <calculatedViewAttribute id="DEALER_CODE" datatype="VARCHAR" length="20" expressionLanguage="SQL">
+        <formula>'$$IN_DEALER_CODE$$'</formula>
+      </calculatedViewAttribute>
+    </calculatedViewAttributes>
+    <restrictedViewAttributes/>
+    <input node="Join_PROG_DESC">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LANGUAGE_KEY" source="LANGUAGE_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_DESC" source="PROGRAM_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_ID" source="PROGRAM_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEPART" source="DEPART"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="BRAND" source="BRAND"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="OPEN_DATE" source="OPEN_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CLOSE_DATE" source="CLOSE_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DELIVERY_FR" source="DELIVERY_FR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DELIVERY_TO" source="DELIVERY_TO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS" source="STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="INITIAL_WARN" source="INITIAL_WARN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FINAL_WARN" source="FINAL_WARN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CPROGRAM_UUID" source="CPROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_BY" source="AUDIT_CHANGED_BY"/>
+    </input>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="Join_PROG_DESC" cardinality="CN_N" joinType="leftOuter">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="LANGUAGE_KEY">
+        <descriptions defaultDescription="LANGUAGE KEY"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_DESC">
+        <descriptions defaultDescription="DESCRIPTION/NAME"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_ID">
+        <descriptions defaultDescription="PROGRAM ID"/>
+      </viewAttribute>
+      <viewAttribute id="DEPART">
+        <descriptions defaultDescription="DEPARTMENT"/>
+      </viewAttribute>
+      <viewAttribute id="BRAND">
+        <descriptions defaultDescription="BRAND"/>
+      </viewAttribute>
+      <viewAttribute id="OPEN_DATE">
+        <descriptions defaultDescription="BOOKING WINDOW OPEN"/>
+      </viewAttribute>
+      <viewAttribute id="CLOSE_DATE">
+        <descriptions defaultDescription="BOOKING WINDOW CLOSE"/>
+      </viewAttribute>
+      <viewAttribute id="DELIVERY_FR">
+        <descriptions defaultDescription="DELIVERY WINDOW FROM"/>
+      </viewAttribute>
+      <viewAttribute id="DELIVERY_TO">
+        <descriptions defaultDescription="DELIVERY WINDOW TO"/>
+      </viewAttribute>
+      <viewAttribute id="STATUS">
+        <descriptions defaultDescription="STATUS"/>
+      </viewAttribute>
+      <viewAttribute id="INITIAL_WARN" aggregationType="sum">
+        <descriptions defaultDescription="INITIAL WARNING"/>
+      </viewAttribute>
+      <viewAttribute id="FINAL_WARN" aggregationType="sum">
+        <descriptions defaultDescription="FINAL WARNING"/>
+      </viewAttribute>
+      <viewAttribute id="CPROGRAM_UUID">
+        <descriptions defaultDescription="COMPARATIVE PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="AUDIT_CHANGED_BY">
+        <descriptions defaultDescription="CHANGED BY"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PRJ_PROGRAM">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_ID" source="PROGRAM_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEPART" source="DEPART"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="BRAND" source="BRAND"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="OPEN_DATE" source="OPEN_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DELIVERY_FR" source="DELIVERY_FR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DELIVERY_TO" source="DELIVERY_TO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS" source="STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_BY" source="AUDIT_CHANGED_BY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CLOSE_DATE" source="CLOSE_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="INITIAL_WARN" source="INITIAL_WARN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FINAL_WARN" source="FINAL_WARN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CPROGRAM_UUID" source="CPROGRAM_UUID"/>
+    </input>
+    <input node="PRJ_PROGNAME">
+      <mapping xsi:type="Calculation:AttributeMapping" target="LANGUAGE_KEY" source="LANGUAGE_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_DESC" source="PROGRAM_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+    </input>
+    <joinAttribute name="PROGRAM_UUID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PROGRAM" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_ID">
+        <descriptions defaultDescription="PROGRAM ID"/>
+      </viewAttribute>
+      <viewAttribute id="DEPART">
+        <descriptions defaultDescription="DEPARTMENT"/>
+      </viewAttribute>
+      <viewAttribute id="BRAND">
+        <descriptions defaultDescription="BRAND"/>
+      </viewAttribute>
+      <viewAttribute id="OPEN_DATE">
+        <descriptions defaultDescription="BOOKING WINDOW OPEN"/>
+      </viewAttribute>
+      <viewAttribute id="DELIVERY_FR">
+        <descriptions defaultDescription="DELIVERY WINDOW FROM"/>
+      </viewAttribute>
+      <viewAttribute id="DELIVERY_TO">
+        <descriptions defaultDescription="DELIVERY WINDOW TO"/>
+      </viewAttribute>
+      <viewAttribute id="STATUS">
+        <descriptions defaultDescription="STATUS"/>
+      </viewAttribute>
+      <viewAttribute id="AUDIT_CHANGED_BY">
+        <descriptions defaultDescription="CHANGED BY"/>
+      </viewAttribute>
+      <viewAttribute id="CLOSE_DATE">
+        <descriptions defaultDescription="BOOKING WINDOW CLOSE"/>
+      </viewAttribute>
+      <viewAttribute id="INITIAL_WARN">
+        <descriptions defaultDescription="INITIAL WARNING"/>
+      </viewAttribute>
+      <viewAttribute id="FINAL_WARN">
+        <descriptions defaultDescription="FINAL WARNING"/>
+      </viewAttribute>
+      <viewAttribute id="CPROGRAM_UUID">
+        <descriptions defaultDescription="COMPARATIVE PROGRAM UUID"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PROGRAMADMIN_BOOKING_PROGRAM">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_ID" source="PROGRAM_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEPART" source="DEPART"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="BRAND" source="BRAND"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="OPEN_DATE" source="OPEN_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DELIVERY_FR" source="DELIVERY_FR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DELIVERY_TO" source="DELIVERY_TO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS" source="STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_BY" source="AUDIT_CHANGED_BY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CLOSE_DATE" source="CLOSE_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="INITIAL_WARN" source="INITIAL_WARN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FINAL_WARN" source="FINAL_WARN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CPROGRAM_UUID" source="CPROGRAM_UUID"/>
+    </input>
+    <filter>"PROGRAM_UUID" ='$$IN_PROGRAM_UUID$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PROGNAME" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="LANGUAGE_KEY">
+        <descriptions defaultDescription="LANGUAGE KEY"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_DESC">
+        <descriptions defaultDescription="DESCRIPTION/NAME"/>
+      </viewAttribute>
+    
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute></viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PROGRAMADMIN_PROG_NAME">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LANGUAGE_KEY" source="LANGUAGE_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_DESC" source="PROGRAM_DESC"/>
+    </input>
+    <filter>"PROGRAM_UUID" = '$$IN_PROGRAM_UUID$$' AND "LANGUAGE_KEY" = '$$IN_LANG$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="BOOKINGPROGRAM" cardinality="CN_N" joinType="leftOuter">
+    <viewAttributes>
+      <viewAttribute id="DEALER_CODE">
+        <descriptions defaultDescription="DEALER_CODE"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="B_STATUS">
+        <descriptions defaultDescription="BOOKING STATUS"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_ID">
+        <descriptions defaultDescription="PROGRAM ID"/>
+      </viewAttribute>
+      <viewAttribute id="LANGUAGE_KEY">
+        <descriptions defaultDescription="LANGUAGE KEY"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_DESC">
+        <descriptions defaultDescription="DESCRIPTION/NAME"/>
+      </viewAttribute>
+      <viewAttribute id="DEPART">
+        <descriptions defaultDescription="DEPARTMENT"/>
+      </viewAttribute>
+      <viewAttribute id="BRAND">
+        <descriptions defaultDescription="BRAND"/>
+      </viewAttribute>
+      <viewAttribute id="OPEN_DATE">
+        <descriptions defaultDescription="BOOKING WINDOW OPEN"/>
+      </viewAttribute>
+      <viewAttribute id="CLOSE_DATE">
+        <descriptions defaultDescription="BOOKING WINDOW CLOSE"/>
+      </viewAttribute>
+      <viewAttribute id="DELIVERY_FR">
+        <descriptions defaultDescription="DELIVERY WINDOW FROM"/>
+      </viewAttribute>
+      <viewAttribute id="DELIVERY_TO">
+        <descriptions defaultDescription="DELIVERY WINDOW TO"/>
+      </viewAttribute>
+      <viewAttribute id="STATUS">
+        <descriptions defaultDescription="STATUS"/>
+      </viewAttribute>
+      <viewAttribute id="INITIAL_WARN" aggregationType="sum">
+        <descriptions defaultDescription="INITIAL WARNING"/>
+      </viewAttribute>
+      <viewAttribute id="FINAL_WARN" aggregationType="sum">
+        <descriptions defaultDescription="FINAL WARNING"/>
+      </viewAttribute>
+      <viewAttribute id="CPROGRAM_UUID">
+        <descriptions defaultDescription="COMPARATIVE PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="AUDIT_CHANGED_BY">
+        <descriptions defaultDescription="CHANGED BY"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PRJ_PROGDESC">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LANGUAGE_KEY" source="LANGUAGE_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_DESC" source="PROGRAM_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_ID" source="PROGRAM_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEPART" source="DEPART"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="BRAND" source="BRAND"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="OPEN_DATE" source="OPEN_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CLOSE_DATE" source="CLOSE_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DELIVERY_FR" source="DELIVERY_FR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DELIVERY_TO" source="DELIVERY_TO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS" source="STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="INITIAL_WARN" source="INITIAL_WARN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FINAL_WARN" source="FINAL_WARN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CPROGRAM_UUID" source="CPROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_BY" source="AUDIT_CHANGED_BY"/>
+    </input>
+    <input node="LATEST_ST_ONLY">
+      <mapping xsi:type="Calculation:AttributeMapping" target="B_STATUS" source="B_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+    </input>
+    <joinAttribute name="DEALER_CODE"/>
+    <joinAttribute name="PROGRAM_UUID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_BP_TO1">
+    <viewAttributes>
+      <viewAttribute id="DEALER_CODE">
+        <descriptions defaultDescription="DEALER_CODE"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="B_STATUS">
+        <descriptions defaultDescription="BOOKING STATUS"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_ID">
+        <descriptions defaultDescription="PROGRAM ID"/>
+      </viewAttribute>
+      <viewAttribute id="LANGUAGE_KEY">
+        <descriptions defaultDescription="LANGUAGE KEY"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_DESC">
+        <descriptions defaultDescription="DESCRIPTION/NAME"/>
+      </viewAttribute>
+      <viewAttribute id="DEPART">
+        <descriptions defaultDescription="DEPARTMENT"/>
+      </viewAttribute>
+      <viewAttribute id="BRAND">
+        <descriptions defaultDescription="BRAND"/>
+      </viewAttribute>
+      <viewAttribute id="OPEN_DATE">
+        <descriptions defaultDescription="BOOKING WINDOW OPEN"/>
+      </viewAttribute>
+      <viewAttribute id="CLOSE_DATE">
+        <descriptions defaultDescription="BOOKING WINDOW CLOSE"/>
+      </viewAttribute>
+      <viewAttribute id="DELIVERY_FR">
+        <descriptions defaultDescription="DELIVERY WINDOW FROM"/>
+      </viewAttribute>
+      <viewAttribute id="DELIVERY_TO">
+        <descriptions defaultDescription="DELIVERY WINDOW TO"/>
+      </viewAttribute>
+      <viewAttribute id="STATUS">
+        <descriptions defaultDescription="STATUS"/>
+      </viewAttribute>
+      <viewAttribute id="INITIAL_WARN">
+        <descriptions defaultDescription="INITIAL WARNING"/>
+      </viewAttribute>
+      <viewAttribute id="FINAL_WARN">
+        <descriptions defaultDescription="FINAL WARNING"/>
+      </viewAttribute>
+      <viewAttribute id="CPROGRAM_UUID">
+        <descriptions defaultDescription="COMPARATIVE PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="AUDIT_CHANGED_BY">
+        <descriptions defaultDescription="CHANGED BY"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="BOOKINGPROGRAM">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="B_STATUS" source="B_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_ID" source="PROGRAM_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LANGUAGE_KEY" source="LANGUAGE_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_DESC" source="PROGRAM_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEPART" source="DEPART"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="BRAND" source="BRAND"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="OPEN_DATE" source="OPEN_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CLOSE_DATE" source="CLOSE_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DELIVERY_FR" source="DELIVERY_FR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DELIVERY_TO" source="DELIVERY_TO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS" source="STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="INITIAL_WARN" source="INITIAL_WARN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FINAL_WARN" source="FINAL_WARN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CPROGRAM_UUID" source="CPROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_BY" source="AUDIT_CHANGED_BY"/>
+    </input>
+  </calculationView>
+</calculationViews>
+<logicalModel id="PRJ_BP_TO1">
+  <attributes>
+    <attribute id="DEALER_CODE" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEALER_CODE"/>
+      <keyMapping columnObjectName="PRJ_BP_TO1" columnName="DEALER_CODE"/>
+    </attribute>
+    <attribute id="PROGRAM_UUID" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM UUID"/>
+      <keyMapping columnObjectName="PRJ_BP_TO1" columnName="PROGRAM_UUID"/>
+    </attribute>
+    <attribute id="B_STATUS" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="BOOKING STATUS"/>
+      <keyMapping columnObjectName="PRJ_BP_TO1" columnName="B_STATUS"/>
+    </attribute>
+    <attribute id="PROGRAM_ID" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM ID"/>
+      <keyMapping columnObjectName="PRJ_BP_TO1" columnName="PROGRAM_ID"/>
+    </attribute>
+    <attribute id="LANGUAGE_KEY" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="LANGUAGE KEY"/>
+      <keyMapping columnObjectName="PRJ_BP_TO1" columnName="LANGUAGE_KEY"/>
+    </attribute>
+    <attribute id="PROGRAM_DESC" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DESCRIPTION/NAME"/>
+      <keyMapping columnObjectName="PRJ_BP_TO1" columnName="PROGRAM_DESC"/>
+    </attribute>
+    <attribute id="DEPART" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEPARTMENT"/>
+      <keyMapping columnObjectName="PRJ_BP_TO1" columnName="DEPART"/>
+    </attribute>
+    <attribute id="BRAND" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="BRAND"/>
+      <keyMapping columnObjectName="PRJ_BP_TO1" columnName="BRAND"/>
+    </attribute>
+    <attribute id="OPEN_DATE" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="BOOKING WINDOW OPEN"/>
+      <keyMapping columnObjectName="PRJ_BP_TO1" columnName="OPEN_DATE"/>
+    </attribute>
+    <attribute id="CLOSE_DATE" order="10" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="BOOKING WINDOW CLOSE"/>
+      <keyMapping columnObjectName="PRJ_BP_TO1" columnName="CLOSE_DATE"/>
+    </attribute>
+    <attribute id="DELIVERY_FR" order="11" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DELIVERY WINDOW FROM"/>
+      <keyMapping columnObjectName="PRJ_BP_TO1" columnName="DELIVERY_FR"/>
+    </attribute>
+    <attribute id="DELIVERY_TO" order="12" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DELIVERY WINDOW TO"/>
+      <keyMapping columnObjectName="PRJ_BP_TO1" columnName="DELIVERY_TO"/>
+    </attribute>
+    <attribute id="STATUS" order="13" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="STATUS"/>
+      <keyMapping columnObjectName="PRJ_BP_TO1" columnName="STATUS"/>
+    </attribute>
+    <attribute id="INITIAL_WARN" order="14" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="INITIAL WARNING"/>
+      <keyMapping columnObjectName="PRJ_BP_TO1" columnName="INITIAL_WARN"/>
+    </attribute>
+    <attribute id="FINAL_WARN" order="15" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="FINAL WARNING"/>
+      <keyMapping columnObjectName="PRJ_BP_TO1" columnName="FINAL_WARN"/>
+    </attribute>
+    <attribute id="CPROGRAM_UUID" order="16" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="COMPARATIVE PROGRAM UUID"/>
+      <keyMapping columnObjectName="PRJ_BP_TO1" columnName="CPROGRAM_UUID"/>
+    </attribute>
+    <attribute id="AUDIT_CHANGED_BY" order="17" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CHANGED BY"/>
+      <keyMapping columnObjectName="PRJ_BP_TO1" columnName="AUDIT_CHANGED_BY"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes/>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="592.7059611313225" y="112"/>
+    
+      <rectangleSize width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="PRJ_ST_TS_LATEST" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="92.00000000000006" y="766.9999964237213"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_STATUS" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="301.99999999999983" y="766.9999964237213"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="LATEST_STATUS" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="275.33333333333314" y="606.9999976158142"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="LATEST_STATUS" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="LATEST_STATUS" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape expanded="true" modelObjectName="LATEST_ST_ONLY" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="275.3333333333331" y="501.9999976158142"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_PROGDESC" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="579.1142949308792" y="501.9999976158142"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="Join_PROG_DESC" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="579.1142949308792" y="606.9999976158142"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="PRJ_PROGRAM" modelObjectNameSpace="Join_PROG_DESC" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="PRJ_PROGNAME" modelObjectNameSpace="Join_PROG_DESC" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_PROGRAM" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="511.9999999999999" y="766.9999964237213"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="PRJ_PROGNAME" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="721.9999999999998" y="766.9999964237213"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="BOOKINGPROGRAM" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="552.4476282642125" y="341.9999988079071"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="BOOKINGPROGRAM" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="BOOKINGPROGRAM" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_BP_TO1" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="552.4476282642125" y="236.9999988079071"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

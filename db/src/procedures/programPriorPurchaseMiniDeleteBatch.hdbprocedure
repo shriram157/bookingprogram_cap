@@ -1,0 +1,28 @@
+PROCEDURE "PROCEDURES_PROGRAMPRIORPURCHASEMINIDELETEBATCH" ( 
+    IN im_details "PROGRAMADMIN_PROGRAMPRIORPURCHASESCOUNTVIEW",
+	OUT ex_error "PROCEDURES_TT_ERRORS"  ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER AS
+BEGIN
+
+/***************************** 
+ Write your procedure logic 
+ *****************************/
+declare lv_program_uuid		string;
+
+select PROGRAM_UUID
+     into lv_program_uuid
+     from :im_details; 
+
+if :lv_program_uuid = '' then
+	ex_error = select 552 as http_status_code, 
+               'The program uuid is empty' as error_message, 
+                     'The program uuid field can not be my empty' as detail from "DUMMY";
+else
+
+	delete from "CORE_OBJECT_MESSAGE"  where OBJECT_KEY IN (select OBJECT_KEY from "PROGRAMADMIN_PROG_PRIOR_PURCHASES" where PROGRAM_UUID = :lv_program_uuid group by OBJECT_KEY);
+	delete from "PROGRAMADMIN_PROG_PRIOR_PURCHASES"  where PROGRAM_UUID = :lv_program_uuid; 
+
+end if;
+
+END;

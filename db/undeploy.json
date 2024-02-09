@@ -1,0 +1,8 @@
+[
+  "src/defaults/*",
+  "src/procedures/RENAME_HDBCDS_TO_PLAIN.hdbprocedure",
+  "src/gen/*.hdbcds",
+  "src/gen/**/*.hdbview",
+  "src/gen/**/*.hdbindex",
+  "src/gen/**/*.hdbconstraint"
+]

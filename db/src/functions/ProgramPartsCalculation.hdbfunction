@@ -1,0 +1,33 @@
+FUNCTION "PROGRAMPARTSCALCULATION"(
+			im_programUUID NVARCHAR(36),
+			im_language NVARCHAR(2)
+		)
+       RETURNS TABLE (
+       	PROGRAM_UUID NVARCHAR(36),
+       	PART_NUM NVARCHAR(40),
+       	PART_DESC NVARCHAR(100),
+       	TIRESIZE NVARCHAR(40),
+       	CATEGORY_ID NVARCHAR(18),
+       	CATEGORY_DESC NVARCHAR(100),
+       	DONOTTRANSPORT NVARCHAR(1),
+       	VENDOR_ID NVARCHAR(20),
+       	VENDOR_DESC NVARCHAR(100),
+       	DETAIL NVARCHAR(255)
+       ) 
+       LANGUAGE SQLSCRIPT 
+       SQL SECURITY INVOKER AS 
+BEGIN 
+    /*****************************
+        Write your function logic
+    ****************************/
+    --- the default language is english 
+    DECLARE lv_lan 			NVARCHAR(2) default 'EN';
+
+    if :im_language is not NULL AND :im_language = 'FR' then 
+    	lv_lan = 'FR';
+    end if;
+	
+	RETURN 
+		select  A.PROGRAM_UUID, A.PART_NUM, B.PART_DESC, B.TIRESIZE, A.CATEGORY_ID, C.CATEGORY_DESC, C.DONOTTRANSPORT, A.VENDOR_ID, E.VENDOR_DESC, A.DETAIL from (SELECT PROGRAM_UUID, PART_NUM, CATEGORY_ID, VENDOR_ID, DETAIL FROM "PROGRAMADMIN_PROG_PARTS" where VALID = 'X' AND  PROGRAM_UUID =im_programUUID) as A
+		left join "PROGRAMADMIN_PART_NAME" as B on A.PART_NUM = B.PART_NUM AND B.LANGUAGE_KEY = :lv_lan left join "PROGRAMADMIN_CATEGORY_NAME" as C on A.CATEGORY_ID = C.CATEGORY_ID AND C.LANGUAGE_KEY = :lv_lan left join "PROGRAMADMIN_VENDOR_NAME" as E on A.VENDOR_ID = E.VENDOR_ID AND E.LANGUAGE_KEY = :lv_lan;
+END;

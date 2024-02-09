@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?><Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" xmlns:Variable="http://www.sap.com/ndb/BiModelVariable.ecore" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="BOOKINGPARTSDELIVERYVIEW" applyPrivilegeType="NONE" dataCategory="DEFAULT" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="BOOKINGPARTSDELIVERYVIEW"/>
+<localVariables>
+
+  <variable id="PROGRAMUUID" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="36" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable></localVariables>
+<variableMappings/>
+<dataSources>
+  <DataSource id="PROGRAMBOOKING_DELIVERY_SCHEDULE_LINE">
+    <resourceUri>PROGRAMBOOKING_DELIVERY_SCHEDULE_LINE</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMBOOKING_DEALER_BOOKING_PERIOD">
+    <resourceUri>PROGRAMBOOKING_DEALER_BOOKING_PERIOD</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMBOOKING_DEALER_BOOKING_STATUS_HIST">
+    <resourceUri>PROGRAMBOOKING_DEALER_BOOKING_STATUS_HIST</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_DELIVERY" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="SCHEDULE_DATE"/>
+      <viewAttribute id="MMYYYY"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMBOOKING_DELIVERY_SCHEDULE_LINE"/>
+    <filter>"PROGRAM_UUID" = '$$PROGRAMUUID$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_ITEM_AMOUNT" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="MMYYYY"/>
+      <viewAttribute id="PERIOD_DT"/>
+      <viewAttribute id="ORDER_QTY"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMBOOKING_DEALER_BOOKING_PERIOD"/>
+    <filter>"PROGRAM_UUID" = '$$PROGRAMUUID$$' AND "ORDER_QTY" &gt; 0</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="DELIVERLINE" cardinality="C1_N" joinType="leftOuter">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="MMYYYY"/>
+      <viewAttribute id="PERIOD_DT"/>
+      <viewAttribute id="ORDER_QTY" aggregationType="sum"/>
+      <viewAttribute id="SCHEDULE_DATE"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PRJ_ITEM_AMOUNT">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MMYYYY" source="MMYYYY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PERIOD_DT" source="PERIOD_DT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ORDER_QTY" source="ORDER_QTY"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+    </input>
+    <input node="PRJ_DELIVERY">
+      <mapping xsi:type="Calculation:AttributeMapping" target="SCHEDULE_DATE" source="SCHEDULE_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MMYYYY" source="MMYYYY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+    </input>
+    <joinAttribute name="DEALER_CODE"/>
+    <joinAttribute name="VENDOR_ID"/>
+    <joinAttribute name="CATEGORY_ID"/>
+    <joinAttribute name="MMYYYY"/>
+    <joinAttribute name="PROGRAM_UUID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_DL">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="MMYYYY"/>
+      <viewAttribute id="PERIOD_DT"/>
+      <viewAttribute id="ORDER_QTY"/>
+      <viewAttribute id="SCHEDULE_DATE"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="DELIVERLINE"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_CONFIRMED_DEALER" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="B_STATUS"/>
+      <viewAttribute id="AUDIT_CHANGED_ON"/>
+      <viewAttribute id="AUDIT_CHANGED_BY"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMBOOKING_DEALER_BOOKING_STATUS_HIST">
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_ON" source="AUDIT_CHANGED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_BY" source="AUDIT_CHANGED_BY"/>
+    </input>
+    <filter>"B_STATUS"='AT'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="BOOKING_ST" cardinality="C1_1" joinType="inner">
+    <viewAttributes>
+      <viewAttribute id="MMYYYY"/>
+      <viewAttribute id="PERIOD_DT"/>
+      <viewAttribute id="ORDER_QTY" aggregationType="sum"/>
+      <viewAttribute id="SCHEDULE_DATE"/>
+      <viewAttribute id="B_STATUS"/>
+      <viewAttribute id="AUDIT_CHANGED_ON"/>
+      <viewAttribute id="AUDIT_CHANGED_BY"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="PART_NUM"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PRJ_DL">
+      <mapping xsi:type="Calculation:AttributeMapping" target="MMYYYY" source="MMYYYY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PERIOD_DT" source="PERIOD_DT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ORDER_QTY" source="ORDER_QTY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SCHEDULE_DATE" source="SCHEDULE_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+    </input>
+    <input node="PRJ_CONFIRMED_DEALER">
+      <mapping xsi:type="Calculation:AttributeMapping" target="B_STATUS" source="B_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_ON" source="AUDIT_CHANGED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_BY" source="AUDIT_CHANGED_BY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+    </input>
+    <joinAttribute name="PROGRAM_UUID"/>
+    <joinAttribute name="DEALER_CODE"/>
+  </calculationView>
+</calculationViews>
+<logicalModel id="BOOKING_ST">
+  <attributes>
+    <attribute id="MMYYYY" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="MMYYYY"/>
+      <keyMapping columnObjectName="BOOKING_ST" columnName="MMYYYY"/>
+    </attribute>
+    <attribute id="PERIOD_DT" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VALUE FOR SORTING "/>
+      <keyMapping columnObjectName="BOOKING_ST" columnName="PERIOD_DT"/>
+    </attribute>
+    <attribute id="ORDER_QTY" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="ORDER QUANTITY"/>
+      <keyMapping columnObjectName="BOOKING_ST" columnName="ORDER_QTY"/>
+    </attribute>
+    <attribute id="SCHEDULE_DATE" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SCHEDULE DATE, MOST LIKE SORT ON DATE"/>
+      <keyMapping columnObjectName="BOOKING_ST" columnName="SCHEDULE_DATE"/>
+    </attribute>
+    <attribute id="B_STATUS" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="BOOKING STATUS"/>
+      <keyMapping columnObjectName="BOOKING_ST" columnName="B_STATUS"/>
+    </attribute>
+    <attribute id="AUDIT_CHANGED_ON" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CHANGED ON"/>
+      <keyMapping columnObjectName="BOOKING_ST" columnName="AUDIT_CHANGED_ON"/>
+    </attribute>
+    <attribute id="AUDIT_CHANGED_BY" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CHANGED BY"/>
+      <keyMapping columnObjectName="BOOKING_ST" columnName="AUDIT_CHANGED_BY"/>
+    </attribute>
+  
+    <attribute id="PROGRAM_UUID" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM_UUID"/>
+      <keyMapping columnObjectName="BOOKING_ST" columnName="PROGRAM_UUID"/>
+    </attribute>
+    <attribute id="DEALER_CODE" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEALER_CODE"/>
+      <keyMapping columnObjectName="BOOKING_ST" columnName="DEALER_CODE"/>
+    </attribute>
+    <attribute id="VENDOR_ID" order="10" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VENDOR_ID"/>
+      <keyMapping columnObjectName="BOOKING_ST" columnName="VENDOR_ID"/>
+    </attribute>
+    <attribute id="CATEGORY_ID" order="11" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CATEGORY_ID"/>
+      <keyMapping columnObjectName="BOOKING_ST" columnName="CATEGORY_ID"/>
+    </attribute>
+    <attribute id="PART_NUM" order="12" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PART_NUM"/>
+      <keyMapping columnObjectName="BOOKING_ST" columnName="PART_NUM"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes/>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="230" y="112"/>
+    
+      <rectangleSize width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="PRJ_DELIVERY" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="113" y="681"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_ITEM_AMOUNT" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="323" y="681"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="DELIVERLINE" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="232" y="521"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="DELIVERLINE" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="DELIVERLINE" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="PRJ_DL" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="302" y="386"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_CONFIRMED_DEALER" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="-26" y="378"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="BOOKING_ST" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="230" y="217"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="BOOKING_ST" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="BOOKING_ST" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="313" y="50"/>
+      <rectangleSize width="222.689453125"/>
+    </shape></shapes>
+</layout>
+</Calculation:scenario>

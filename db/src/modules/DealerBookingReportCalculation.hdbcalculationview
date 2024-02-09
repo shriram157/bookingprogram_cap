@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" xmlns:Variable="http://www.sap.com/ndb/BiModelVariable.ecore" id="DEALERBOOKINGREPORTCALCULATION" applyPrivilegeType="NONE" dataCategory="DEFAULT" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="DEALERBOOKINGREPORTCALCULATION"/>
+<localVariables>
+  <variable id="PROGRAMUID" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="36" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+  <variable id="LANGUAGE" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="2" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+</localVariables>
+<variableMappings/>
+<dataSources/>
+<snapshotProcedures/>
+<calculationViews>
+  <calculationView xsi:type="Calculation:TableFunctionView" id="TABLEFUNCTION_PERIOD_P" tableFunctionName="PROGRAMORDERREPORTCALCULATION">
+    <viewAttributes/>
+    <calculatedViewAttributes/>
+    <variableMapping xsi:type="Variable:VariableMapping">
+      <targetVariable name="IM_PROGRAMUUID"/>
+      <localVariable>PROGRAMUID</localVariable>
+    </variableMapping>
+    <variableMapping xsi:type="Variable:VariableMapping">
+      <targetVariable name="IM_LANGUAGE"/>
+      <localVariable>LANGUAGE</localVariable>
+    </variableMapping>
+  </calculationView>
+</calculationViews>
+<logicalModel id="TABLEFUNCTION_PERIOD_P" filterExpressionLanguage="SQL">
+  <attributes>
+    <attribute id="PROGRAM_UUID" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM_UUID"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="PROGRAM_UUID"/>
+    </attribute>
+    <attribute id="PROGRAM_ID" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM_ID"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="PROGRAM_ID"/>
+    </attribute>
+    <attribute id="STATUS" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="STATUS"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="STATUS"/>
+    </attribute>
+    <attribute id="VENDOR_ID" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VENDOR_ID"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="VENDOR_ID"/>
+    </attribute>
+    <attribute id="VENDOR_DESC" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VENDOR_DESC"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="VENDOR_DESC"/>
+    </attribute>
+    <attribute id="DEALER_CODE" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEALER_CODE"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="DEALER_CODE"/>
+    </attribute>
+    <attribute id="DEALER_NAME" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEALER_NAME"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="DEALER_NAME"/>
+    </attribute>
+    <attribute id="DEALER_CODE_S" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEALER_CODE_S"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="DEALER_CODE_S"/>
+    </attribute>
+    <attribute id="CATEGORY_ID" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CATEGORY_ID"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="CATEGORY_ID"/>
+    </attribute>
+    <attribute id="CATEGORY_DESC" order="10" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CATEGORY_DESC"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="CATEGORY_DESC"/>
+    </attribute>
+    <attribute id="PART_NUM" order="11" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PART_NUM"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="PART_NUM"/>
+    </attribute>
+    <attribute id="PART_DESC" order="12" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PART_DESC"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="PART_DESC"/>
+    </attribute>
+    <attribute id="DETAIL" order="13" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DETAIL"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="DETAIL"/>
+    </attribute>
+    <attribute id="MMYYYY" order="14" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="MMYYYY"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="MMYYYY"/>
+    </attribute>
+    <attribute id="ORDER_QTY" order="15" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="ORDER_QTY"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="ORDER_QTY"/>
+    </attribute>
+    <attribute id="SCHEDULE_DATE" order="16" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SCHEDULE_DATE"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="SCHEDULE_DATE"/>
+    </attribute>
+    <attribute id="DEL_METHOD" order="17" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEL_METHOD"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="DEL_METHOD"/>
+    </attribute>
+    <attribute id="DEL_METHOD_NAME" order="18" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEL_METHOD_NAME"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="DEL_METHOD_NAME"/>
+    </attribute>
+    <attribute id="SPECIAL_INSTRUCTION" order="19" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SPECIAL_INSTRUCTION"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="SPECIAL_INSTRUCTION"/>
+    </attribute>
+    <attribute id="DEL_LOCATION_ID" order="20" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEL_LOCATION_ID"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="DEL_LOCATION_ID"/>
+    </attribute>
+    <attribute id="DEL_LOCATION_NAME" order="21" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEL_LOCATION_NAME"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="DEL_LOCATION_NAME"/>
+    </attribute>
+    <attribute id="DEL_ADDRESS1" order="22" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEL_ADDRESS1"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="DEL_ADDRESS1"/>
+    </attribute>
+    <attribute id="DEL_ADDRESS2" order="23" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEL_ADDRESS2"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="DEL_ADDRESS2"/>
+    </attribute>
+    <attribute id="DEL_CITY" order="24" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEL_CITY"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="DEL_CITY"/>
+    </attribute>
+    <attribute id="DEL_PROVINCE" order="25" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEL_PROVINCE"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="DEL_PROVINCE"/>
+    </attribute>
+    <attribute id="DEL_POSTAL_CODE" order="26" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEL_POSTAL_CODE"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="DEL_POSTAL_CODE"/>
+    </attribute>
+    <attribute id="DEL_PHONE_NUMBER" order="27" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEL_PHONE_NUMBER"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="DEL_PHONE_NUMBER"/>
+    </attribute>
+    <attribute id="B_STATUS" order="28" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="B_STATUS"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="B_STATUS"/>
+    </attribute>
+  
+    <attribute id="TIRESIZE" order="29" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="TIRESIZE"/>
+  
+      <keyMapping columnObjectName="TABLEFUNCTION_PERIOD_P" columnName="TIRESIZE"/>
+  
+    </attribute>
+  </attributes>
+  <calculatedAttributes/>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+
+  <filter>&quot;ORDER_QTY&quot; IS NOT NULL AND &quot;ORDER_QTY&quot; &gt; 0</filter>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="40" y="85"/>
+    </shape>
+  
+    <shape expanded="false" modelObjectName="TABLEFUNCTION_PERIOD_P" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="-14" y="204"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

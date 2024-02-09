@@ -1,0 +1,185 @@
+/*======================= Start custom fonts and custom color on header style ==========================*/
+
+@import url('https://fonts.googleapis.com/css?family=Raleway');
+
+/*@import url('https://fonts.googleapis.com/css?family=Satisfy');*/
+
+.clCustomFont {
+    /* font-family: 'Raleway', sans-serif;*/
+    /*font-family: 'Satisfy', cursive;*/
+    font-family: 'Raleway', cursive;
+}
+
+.sapMITBFilter .sapMITBCount {
+    overflow: visible !important;
+    text-overflow: initial !important;
+}
+
+.sapContrastPlus.clCustomHeaderBg {
+    background-color: #fff!important;
+    color: #2f3c48;
+    text-shadow: none;
+}
+
+.myRedText .sapMInputBaseInner {
+    background: #ff0000;
+}
+
+.myYellowText .sapMInputBaseInner {
+    background: #fcfcba;
+}
+
+.zsapMDraftIndicator {
+    style: italic;
+    left: 1rem;
+    right: 1rem;
+    color: #dddddd;
+}
+
+.sapContrastPlus.clCustomHeaderBg .sapMBtnInner {
+    color: #2f3c48;
+    text-shadow: none;
+}
+
+.sapContrastPlus.clCustomHeaderBg .sapMText {
+    color: #2f3c48;
+}
+
+.sapContrastPlus.sapMIBar-CTX.clCustomHeaderBg .sapMBtn:hover>.sapMBtnHoverable:not(.sapMBtnActive) {
+    background-color: transparent;
+    color: #346187;
+}
+
+
+/*======================= End custom fonts and custom color on header style ==========================*/
+
+.sapContrastPlus .sapMBtn.CustomClSelected .sapMBtnInner {
+    background-color: rgba(99, 127, 153, 0.5)!important;
+    border-color: rgba(99, 127, 153, 0.5);
+}
+
+.sapMLnk.clCurrent,
+.sapMLnk.clCurrent:hover:not(.sapMLnkDsbl) {
+    color: #fff;
+    text-decoration: none!important;
+}
+
+.sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderObjectImageForce .sapUxAPObjectPageHeaderObjectImage {
+    height: auto!important;
+    outline: none;
+    border: none!important;
+    opacity: 1!important;
+    width: 8rem !important;
+}
+
+.sapContrastPlus .sapMITBFilterIcon {
+    background: #91c8f6;
+    color: #2f3c48;
+}
+
+.sapContrastPlus .sapMITBDisabled .sapMITBFilterIcon {
+    color: #91c8f6;
+    background-color: transparent;
+}
+
+.sapContrastPlus.sapMITBFilterIcon::before,
+.sapContrastPlus .sapMITBFilterIcon::before {
+    text-shadow: none!important;
+}
+
+
+/* For Icon tab bar */
+
+.ClNewECP .sapMITBTab {
+    width: 7rem!important;
+}
+
+.ClNewECP .sapMITBFilter .sapMITBText {
+    overflow: visible!important;
+    width: 7rem!important;
+}
+
+#tabHeaderDB .sapMITBSelected:hover>.sapMITBText {
+    color: #3b3f42;
+}
+
+.clClearAll {
+    height: 1;
+    width: 100%;
+}
+
+.clClearAll:after {
+    clear: both;
+    position: relative;
+    display: block;
+    content: '';
+    width: 100%;
+}
+
+.sapContrastPlus.clCustomHeaderBg .sapMText {
+    color: #2f3c48;
+}
+
+.sapContrastPlus.sapMIBar-CTX.clCustomHeaderBg .sapMBtn:hover>.sapMBtnHoverable:not(.sapMBtnActive) {
+    background-color: transparent;
+    color: #346187;
+}
+
+
+/* Customized CSS by Aarti Dhamat */
+
+.styleHLayout .sapUiHLayoutChildWrapper:nth-child(1),
+.styleHLayout .sapUiHLayoutChildWrapper:nth-child(2),
+.styleHLayout .sapUiHLayoutChildWrapper:nth-child(3) {
+    width: 40%;
+}
+
+.styleHLayout .sapMHBox .sapMFlexItem:nth-child(2) {
+    width: 100%;
+}
+
+.styleRightAlign {
+    float: right;
+    clear: right;
+}
+
+.styleFontSize {
+    font-size: 18px;
+}
+
+.styleFontSizeSmall {}
+
+.styleShortWidth {
+    width: 40% !important;
+}
+
+.formDetails .sapUiFormTitleH5 {
+    font-size: 1rem;
+    text-align: center;
+    border: 1px solid #000 !important;
+    background: #bbb;
+    font-weight: bold !important;
+}
+
+.sapContrastPlus.sapMITBFilter .sapMITBCount,
+.sapContrastPlus .sapMITBFilter .sapMITBCount {
+    color: #8a8888;
+}
+
+#tabHeaderDB .noBorderInput .sapMInputBaseContentWrapper {
+    background: none;
+    border: none;
+}
+
+html.sap-desktop .sapMDialog.smallWidth {
+    min-width: 10rem !important;
+    width: 100px !important;
+}
+
+.centerAligned {
+    text-align: center !important;
+    padding: 1rem;
+}
+
+
+/* Enter your custom styles here */

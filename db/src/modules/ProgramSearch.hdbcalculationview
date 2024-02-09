@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="PROGRAMSEARCH" applyPrivilegeType="NONE" dataCategory="DEFAULT" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="PROGRAM SEARCH VIEW"/>
+<localVariables>
+  <variable id="IN_LANG" parameter="true">
+    <descriptions defaultDescription="THE INPUT PARAMETER - LANGUAGE CODE"/>
+    <variableProperties datatype="VARCHAR" length="2" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="SingleValue"/>
+    </variableProperties>
+  </variable>
+  <variable id="IN_STATUS" parameter="true">
+    <descriptions defaultDescription="STATUS CONDITION"/>
+    <variableProperties datatype="VARCHAR" length="2" mandatory="false">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+      <defaultRange lowValue="AL"/>
+    </variableProperties>
+  </variable>
+
+  <variable id="IN_DEPART" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="4" mandatory="false">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+      <defaultRange lowValue="ALAL"/>
+    </variableProperties>
+  </variable>
+  <variable id="IN_X_STATUS" parameter="true">
+    <descriptions defaultDescription="EXCLUDED STATUS"/>
+    <variableProperties datatype="VARCHAR" length="2" mandatory="false">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+
+  <variable id="IN_BRAND" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="2" mandatory="false">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+      <defaultRange lowValue="AL"/>
+    </variableProperties>
+  </variable>
+  <variable id="IN_PNUM" parameter="true">
+    <descriptions defaultDescription="PROGRAM ID SEARCH "/>
+    <variableProperties datatype="VARCHAR" length="20" mandatory="false">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+</localVariables>
+<variableMappings/>
+<dataSources>
+  <DataSource id="PROGRAMADMIN_BOOKING_PROGRAM">
+    <resourceUri>PROGRAMADMIN_BOOKING_PROGRAM</resourceUri>
+  </DataSource>
+  <DataSource id="CORE_DEPART_NAME">
+    <resourceUri>CORE_DEPART_NAME</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_PROG_NAME">
+    <resourceUri>PROGRAMADMIN_PROG_NAME</resourceUri>
+  </DataSource>
+  <DataSource id="CORE_PROGRAM_STATUS">
+    <resourceUri>CORE_PROGRAM_STATUS</resourceUri>
+  </DataSource>
+</dataSources>
+<snapshotProcedures/>
+<calculationViews>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PROG_F_DEPT" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="PROGRAM_ID"/>
+      <viewAttribute id="DEPART"/>
+      <viewAttribute id="BRAND"/>
+      <viewAttribute id="OPEN_DATE"/>
+      <viewAttribute id="INITIAL_WARN"/>
+      <viewAttribute id="FINAL_WARN"/>
+      <viewAttribute id="DELIVERY_FR"/>
+      <viewAttribute id="DELIVERY_TO"/>
+      <viewAttribute id="STATUS"/>
+      <viewAttribute id="CLOSE_DATE"/></viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_BOOKING_PROGRAM"/>
+    <filter>'$$IN_DEPART$$'='ALAL' OR '$$IN_DEPART$$' = &quot;DEPART&quot;</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_DEPARTMENT">
+    <viewAttributes>
+      <viewAttribute id="DEPART_CODE"/>
+      <viewAttribute id="LANGUAGE_KEY"/>
+      <viewAttribute id="DEPART_NAME"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="CORE_DEPART_NAME"/>
+    <filter>&quot;LANGUAGE_KEY&quot; = '$$IN_LANG$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PROM_DESC">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="LANGUAGE_KEY"/>
+      <viewAttribute id="PROGRAM_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_PROG_NAME"/>
+    <filter>&quot;LANGUAGE_KEY&quot; = '$$IN_LANG$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_BK_STATUS" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="P_STATUS"/>
+      <viewAttribute id="LANGUAGE_KEY"/>
+      <viewAttribute id="STATUS_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="CORE_PROGRAM_STATUS"/>
+    <filter>&quot;LANGUAGE_KEY&quot; = '$$IN_LANG$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PROG_F_BRAND" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="PROGRAM_ID"/>
+      <viewAttribute id="DEPART"/>
+      <viewAttribute id="BRAND"/>
+      <viewAttribute id="OPEN_DATE"/>
+      <viewAttribute id="INITIAL_WARN"/>
+      <viewAttribute id="FINAL_WARN"/>
+      <viewAttribute id="DELIVERY_FR"/>
+      <viewAttribute id="DELIVERY_TO"/>
+      <viewAttribute id="STATUS"/>
+      <viewAttribute id="CLOSE_DATE"/></viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PRJ_PROG_F_DEPT"/>
+    <filter>&quot;BRAND&quot;='00' OR '$$IN_BRAND$$' = &quot;BRAND&quot; OR '$$IN_BRAND$$' = 'AL'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PROGRAM" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="PROGRAM_ID"/>
+      <viewAttribute id="DEPART"/>
+      <viewAttribute id="BRAND"/>
+      <viewAttribute id="OPEN_DATE"/>
+      <viewAttribute id="INITIAL_WARN"/>
+      <viewAttribute id="FINAL_WARN"/>
+      <viewAttribute id="DELIVERY_FR"/>
+      <viewAttribute id="DELIVERY_TO"/>
+      <viewAttribute id="STATUS"/>
+      <viewAttribute id="CLOSE_DATE"/></viewAttributes>
+    <calculatedViewAttributes>
+      <calculatedViewAttribute id="C_STATUS" datatype="VARCHAR" length="2" expressionLanguage="COLUMN_ENGINE">
+        <formula>if ( &quot;STATUS&quot; = 'CP', 'CP', 
+    if (daysbetween( utctolocal(utcnow(),'EST'), &quot;OPEN_DATE&quot;) &gt; 0, 'FT',
+        if (daysbetween( utctolocal(utcnow(),'EST'), &quot;CLOSE_DATE&quot;) &lt; 0, 'CL', 'OP') 
+    )
+)    
+</formula>
+      </calculatedViewAttribute>
+    </calculatedViewAttributes>
+    <input node="PRJ_PROG_F_BRAND"/>
+    <filter>'AL' = '$$IN_STATUS$$' OR &quot;C_STATUS&quot; = '$$IN_STATUS$$' 
+OR ('OX' = '$$IN_STATUS$$' AND  (&quot;C_STATUS&quot; = 'CL' OR &quot;C_STATUS&quot; = 'OP' OR &quot;C_STATUS&quot; = 'FT'))
+OR ('OE' = '$$IN_STATUS$$' AND  ( &quot;C_STATUS&quot; = 'CP' OR &quot;C_STATUS&quot; = 'CL' OR &quot;C_STATUS&quot; = 'OP' OR &quot;C_STATUS&quot; = 'FT'))</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="JOIN_PRAGRAM_1" cardinality="CN_1" joinType="referential" referentialDirection="left" multiJoinNode="JOIN_PRAGRAM" multiJoinCentralTable="PRJ_PROGRAM" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="C_STATUS"/>
+      <viewAttribute id="STATUS_DESC"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="PROGRAM_ID"/>
+      <viewAttribute id="DEPART"/>
+      <viewAttribute id="BRAND"/>
+      <viewAttribute id="OPEN_DATE"/>
+      <viewAttribute id="INITIAL_WARN" aggregationType="sum"/>
+      <viewAttribute id="FINAL_WARN" aggregationType="sum"/>
+      <viewAttribute id="DELIVERY_FR"/>
+      <viewAttribute id="DELIVERY_TO"/>
+      <viewAttribute id="CLOSE_DATE"/>
+      <viewAttribute id="STATUS"/>
+      <viewAttribute hidden="true" id="JOIN$C_STATUS$P_STATUS"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PRJ_PROGRAM">
+      <mapping xsi:type="Calculation:AttributeMapping" target="C_STATUS" source="C_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_ID" source="PROGRAM_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEPART" source="DEPART"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="BRAND" source="BRAND"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="OPEN_DATE" source="OPEN_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="INITIAL_WARN" source="INITIAL_WARN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FINAL_WARN" source="FINAL_WARN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DELIVERY_FR" source="DELIVERY_FR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DELIVERY_TO" source="DELIVERY_TO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS" source="STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CLOSE_DATE" source="CLOSE_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$C_STATUS$P_STATUS" source="C_STATUS"/>
+    </input>
+    <input node="PRJ_BK_STATUS">
+      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS_DESC" source="STATUS_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$C_STATUS$P_STATUS" source="P_STATUS"/>
+    </input>
+    <joinAttribute name="JOIN$C_STATUS$P_STATUS"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="JOIN_PRAGRAM_2" cardinality="CN_1" joinType="leftOuter" referentialDirection="left" multiJoinNode="JOIN_PRAGRAM" multiJoinCentralTable="PRJ_PROGRAM" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="DEPART_NAME"/>
+      <viewAttribute id="C_STATUS"/>
+      <viewAttribute id="STATUS_DESC"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="PROGRAM_ID"/>
+      <viewAttribute id="DEPART"/>
+      <viewAttribute id="BRAND"/>
+      <viewAttribute id="OPEN_DATE"/>
+      <viewAttribute id="INITIAL_WARN" aggregationType="sum"/>
+      <viewAttribute id="FINAL_WARN" aggregationType="sum"/>
+      <viewAttribute id="DELIVERY_FR"/>
+      <viewAttribute id="DELIVERY_TO"/>
+      <viewAttribute id="CLOSE_DATE"/>
+      <viewAttribute id="STATUS"/>
+      <viewAttribute hidden="true" id="JOIN$DEPART$DEPART_CODE"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="JOIN_PRAGRAM_1">
+      <mapping xsi:type="Calculation:AttributeMapping" target="C_STATUS" source="C_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS_DESC" source="STATUS_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_ID" source="PROGRAM_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEPART" source="DEPART"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="BRAND" source="BRAND"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="OPEN_DATE" source="OPEN_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="INITIAL_WARN" source="INITIAL_WARN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FINAL_WARN" source="FINAL_WARN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DELIVERY_FR" source="DELIVERY_FR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DELIVERY_TO" source="DELIVERY_TO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CLOSE_DATE" source="CLOSE_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS" source="STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$DEPART$DEPART_CODE" source="DEPART"/>
+    </input>
+    <input node="PRJ_DEPARTMENT">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEPART_NAME" source="DEPART_NAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$DEPART$DEPART_CODE" source="DEPART_CODE"/>
+    </input>
+    <joinAttribute name="JOIN$DEPART$DEPART_CODE"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="JOIN_PRAGRAM_3" cardinality="C1_N" joinType="leftOuter" multiJoinNode="JOIN_PRAGRAM" multiJoinCentralTable="PRJ_PROGRAM" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="LANGUAGE_KEY"/>
+      <viewAttribute id="PROGRAM_DESC"/>
+      <viewAttribute id="DEPART_NAME"/>
+      <viewAttribute id="C_STATUS"/>
+      <viewAttribute id="STATUS_DESC"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="PROGRAM_ID"/>
+      <viewAttribute id="DEPART"/>
+      <viewAttribute id="BRAND"/>
+      <viewAttribute id="OPEN_DATE"/>
+      <viewAttribute id="INITIAL_WARN" aggregationType="sum"/>
+      <viewAttribute id="FINAL_WARN" aggregationType="sum"/>
+      <viewAttribute id="DELIVERY_FR"/>
+      <viewAttribute id="DELIVERY_TO"/>
+      <viewAttribute id="CLOSE_DATE"/>
+      <viewAttribute id="STATUS"/>
+      <viewAttribute hidden="true" id="JOIN$PROGRAM_UUID$PROGRAM_UUID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="JOIN_PRAGRAM_2">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEPART_NAME" source="DEPART_NAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="C_STATUS" source="C_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS_DESC" source="STATUS_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_ID" source="PROGRAM_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEPART" source="DEPART"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="BRAND" source="BRAND"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="OPEN_DATE" source="OPEN_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="INITIAL_WARN" source="INITIAL_WARN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FINAL_WARN" source="FINAL_WARN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DELIVERY_FR" source="DELIVERY_FR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DELIVERY_TO" source="DELIVERY_TO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CLOSE_DATE" source="CLOSE_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS" source="STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$PROGRAM_UUID$PROGRAM_UUID" source="PROGRAM_UUID"/>
+    </input>
+    <input node="PRJ_PROM_DESC">
+      <mapping xsi:type="Calculation:AttributeMapping" target="LANGUAGE_KEY" source="LANGUAGE_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_DESC" source="PROGRAM_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$PROGRAM_UUID$PROGRAM_UUID" source="PROGRAM_UUID"/>
+    </input>
+    <joinAttribute name="JOIN$PROGRAM_UUID$PROGRAM_UUID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_F_PROGRAM" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="PROGRAM_ID"/>
+      <viewAttribute id="LANGUAGE_KEY"/>
+      <viewAttribute id="PROGRAM_DESC"/>
+      <viewAttribute id="DEPART_NAME"/>
+      <viewAttribute id="STATUS"/>
+      <viewAttribute id="STATUS_DESC"/>
+      <viewAttribute id="DEPART"/>
+      <viewAttribute id="BRAND"/>
+      <viewAttribute id="OPEN_DATE"/>
+      <viewAttribute id="INITIAL_WARN"/>
+      <viewAttribute id="FINAL_WARN"/>
+      <viewAttribute id="DELIVERY_FR"/>
+      <viewAttribute id="DELIVERY_TO"/>
+      <viewAttribute id="CLOSE_DATE"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="JOIN_PRAGRAM_3">
+      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS" source="C_STATUS"/></input>
+    <filter>&quot;STATUS&quot; != '$$IN_X_STATUS$$'</filter>
+  </calculationView>
+</calculationViews>
+<logicalModel id="PRJ_F_PROGRAM" filterExpressionLanguage="COLUMN_ENGINE">
+  <attributes>
+    <attribute id="PROGRAM_UUID" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM UUID"/>
+      <keyMapping columnObjectName="PRJ_F_PROGRAM" columnName="PROGRAM_UUID"/>
+    </attribute>
+    <attribute id="PROGRAM_ID" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM ID"/>
+      <keyMapping columnObjectName="PRJ_F_PROGRAM" columnName="PROGRAM_ID"/>
+    </attribute>
+    <attribute id="STATUS" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="C_STATUS"/>
+      <keyMapping columnObjectName="PRJ_F_PROGRAM" columnName="STATUS"/>
+    </attribute>
+    <attribute id="STATUS_DESC" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="STATUS DESCRIPTION/NAME"/>
+      <keyMapping columnObjectName="PRJ_F_PROGRAM" columnName="STATUS_DESC"/>
+    </attribute>
+    <attribute id="LANGUAGE_KEY" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="LANGUAGE KEY"/>
+      <keyMapping columnObjectName="PRJ_F_PROGRAM" columnName="LANGUAGE_KEY"/>
+    </attribute>
+    <attribute id="PROGRAM_DESC" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DESCRIPTION/NAME"/>
+      <keyMapping columnObjectName="PRJ_F_PROGRAM" columnName="PROGRAM_DESC"/>
+    </attribute>
+    <attribute id="DEPART" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEPARTMENT"/>
+      <keyMapping columnObjectName="PRJ_F_PROGRAM" columnName="DEPART"/>
+    </attribute>
+    <attribute id="DEPART_NAME" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEPARTMENT DESCRIPTION/NAME"/>
+      <keyMapping columnObjectName="PRJ_F_PROGRAM" columnName="DEPART_NAME"/>
+    </attribute>
+    <attribute id="BRAND" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="BRAND"/>
+      <keyMapping columnObjectName="PRJ_F_PROGRAM" columnName="BRAND"/>
+    </attribute>
+    <attribute id="OPEN_DATE" order="10" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="BOOKING WINDOW OPEN"/>
+      <keyMapping columnObjectName="PRJ_F_PROGRAM" columnName="OPEN_DATE"/>
+    </attribute>
+    <attribute id="CLOSE_DATE" order="11" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="BOOKING WINDOW CLOSE"/>
+      <keyMapping columnObjectName="PRJ_F_PROGRAM" columnName="CLOSE_DATE"/>
+    </attribute>
+    <attribute id="INITIAL_WARN" order="12" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="INITIAL WARNING"/>
+      <keyMapping columnObjectName="PRJ_F_PROGRAM" columnName="INITIAL_WARN"/>
+    </attribute>
+    <attribute id="FINAL_WARN" order="13" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="FINAL WARNING"/>
+      <keyMapping columnObjectName="PRJ_F_PROGRAM" columnName="FINAL_WARN"/>
+    </attribute>
+    <attribute id="DELIVERY_FR" order="14" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DELIVERY WINDOW FROM"/>
+      <keyMapping columnObjectName="PRJ_F_PROGRAM" columnName="DELIVERY_FR"/>
+    </attribute>
+    <attribute id="DELIVERY_TO" order="15" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DELIVERY WINDOW TO"/>
+      <keyMapping columnObjectName="PRJ_F_PROGRAM" columnName="DELIVERY_TO"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes/>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+
+  <filter>INSTR(LOWER(&quot;PROGRAM_ID&quot;), LOWER('$$IN_PNUM$$')) &gt; 0 OR INSTR(LOWER(&quot;PROGRAM_DESC&quot;), LOWER('$$IN_PNUM$$')) &gt; 0</filter>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="504" y="112"/>
+    
+      <rectangleSize width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="PRJ_PROGRAM" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="356" y="531"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_PROG_F_BRAND" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="387" y="676"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_PROG_F_DEPT" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="387" y="781"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="PRJ_DEPARTMENT" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="776" y="531"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_PROM_DESC" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="91" y="531"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_F_PROGRAM" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="478" y="236"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_BK_STATUS" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="566" y="531"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  
+  
+    <shape expanded="true" modelObjectName="JOIN_PRAGRAM" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="478" y="341"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="PRJ_PROM_DESC" modelObjectNameSpace="JOIN_PRAGRAM" modelObjectType="JoinNodeInput" multiJoinViewNodeName="JOIN_PRAGRAM">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="PRJ_DEPARTMENT" modelObjectNameSpace="JOIN_PRAGRAM" modelObjectType="JoinNodeInput" multiJoinViewNodeName="JOIN_PRAGRAM">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="PRJ_PROGRAM" modelObjectNameSpace="JOIN_PRAGRAM" modelObjectType="JoinNodeInput" multiJoinViewNodeName="JOIN_PRAGRAM">
+      <upperLeftCorner x="620" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="PRJ_BK_STATUS" modelObjectNameSpace="JOIN_PRAGRAM" modelObjectType="JoinNodeInput" multiJoinViewNodeName="JOIN_PRAGRAM">
+      <upperLeftCorner x="920" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

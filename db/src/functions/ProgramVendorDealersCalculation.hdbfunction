@@ -1,0 +1,31 @@
+FUNCTION "PROGRAMVENDORDEALERSCALCULATION"(	
+			im_programUUID NVARCHAR(36),
+			im_vendor NVARCHAR(20),
+			im_language NVARCHAR(2)
+		)
+       RETURNS TABLE (
+       	PROGRAM_UUID NVARCHAR(36),
+       	DEALER_CODE NVARCHAR(20),
+       	DEALER_CODE_S NVARCHAR(6),
+       	DEALER_NAME NVARCHAR(100)
+       ) 
+       LANGUAGE SQLSCRIPT 
+       SQL SECURITY INVOKER AS 
+BEGIN 
+    /*****************************
+        Write your function logic
+    ****************************/
+    --- the default language is english 
+    DECLARE lv_lan 			NVARCHAR(2) default 'EN';
+
+    if :im_language is not NULL AND :im_language = 'FR' then 
+    	lv_lan = 'FR';
+    end if;
+
+	RETURN
+	select A.PROGRAM_UUID, A.DEALER_CODE, B.DEALER_CODE_S, B.DEALER_NAME from ( select "PROGRAM_UUID", "DEALER_CODE" from "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" where PROGRAM_UUID = :im_programUUID AND VENDOR_ID = :im_vendor group by "PROGRAM_UUID", "DEALER_CODE") AS A 
+			left join "PROGRAMADMIN_DEALER_INFO" as B on A.DEALER_CODE = B.DEALER_CODE;
+/*		select A.PROGRAM_UUID, A.DEALER_CODE, B.DEALER_CODE_S, C.VENDOR_DESC as "DEALER_NAME" from ( select "PROGRAM_UUID", "DEALER_CODE" from "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" where PROGRAM_UUID = :im_programUUID AND VENDOR_ID = :im_vendor group by "PROGRAM_UUID", "DEALER_CODE") AS A 
+			left join "PROGRAMADMIN_DEALER_INFO" as B on A.DEALER_CODE = B.DEALER_CODE left join "PROGRAMADMIN_VENDOR_NAME" as C on A.DEALER_CODE = C.VENDOR_ID AND C.LANGUAGE_KEY = :lv_lan;
+*/
+END;

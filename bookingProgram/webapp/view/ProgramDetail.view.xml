@@ -1,0 +1,162 @@
+<mvc:View controllerName="tci.wave2.ui.bookingProgram.controller.ProgramDetail" xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:form="sap.ui.layout.form" xmlns:layout="sap.ui.layout"
+	xmlns:fb="sap.ui.comp.filterbar" xmlns:f="sap.f" xmlns="sap.m" xmlns:vm="sap.ui.comp.variants" displayBlock="true">
+	<Page showNavButton="false" floatingFooter="false" enableScrolling='false'>
+		<customHeader>
+			<core:Fragment fragmentName="tci.wave2.ui.bookingProgram.view.fragments.TopHeader" type="XML"/>
+		</customHeader>
+		<core:Fragment fragmentName="tci.wave2.ui.bookingProgram.view.fragments.ToolHeader" type="XML"/>
+		<content>
+			<Toolbar>
+				<content>
+					<Label design="Bold" text="{ path : 'viewModel>/currentProgram/programId', formatter : '.formatter.idProgram'}"
+						visible="{=!${viewModel>/currentProgram/isNew}}"/>
+					<Label text="{i18n>Label.Booking.Program.ID.Input}" labelFor="program_id" visible="{=${viewModel>/currentProgram/isNew}}"/>
+					<Input width="22rem" required="true" id="program_id" value="{viewModel>/currentProgram/programId}" type="Text" maxLength='40'
+						visible="{=${viewModel>/currentProgram/isNew}}" enabled="{=${viewModel>/displayMode} === false}"/>
+					<Button text="{i18n>Button.Submit.Order}" id="filterButton" type="Accept" iconFirst='false' icon="sap-icon://add-activity"
+						visible="{=(${viewModel>/displayMode} === true) &amp;&amp; (${viewModel>/submitable} === true)}" press="handleSummitOrder"/>
+					<ToolbarSpacer/>
+					<Title text="Close" visible="false"></Title>
+				</content>
+			</Toolbar>
+			<Toolbar height="79px" design="Solid">
+				<IconTabHeader id="idIconTabBar" backgroundDesign="Transparent" select="handleIconTabHeaderSelect" selectedKey="{viewModel>/selectedTabKey}">
+					<items>
+						<IconTabFilter icon="sap-icon://hint" iconColor="Critical" tooltip="{i18n>Label.Summary}" key="Summary"></IconTabFilter>
+						<IconTabSeparator/>
+						<IconTabFilter icon="sap-icon://sap-box" iconColor="Critical" tooltip="{i18n>Label.Category}" key="Category"
+							count="{viewModel>/currentProgram/categories/count}" enabled="{=!${viewModel>/currentProgram/isNew}}"/>
+						<IconTabSeparator icon="sap-icon://vertical-grip"/>
+						<IconTabFilter icon="sap-icon://supplier" iconColor="Critical" tooltip="{i18n>Label.Vendors}"
+							count="{viewModel>/currentProgram/vendors/count}" key="Vendor" enabled="{=!${viewModel>/currentProgram/isNew}}"/>
+						<IconTabSeparator icon="sap-icon://vertical-grip"/>
+						<IconTabFilter icon="sap-icon://travel-itinerary" iconColor="Critical" tooltip="{i18n>Label.Delivery.Method}"
+							count="{viewModel>/currentProgram/deliveryMethods/count}" key="DeliveryMethod" enabled="{=!${viewModel>/currentProgram/isNew}}"/>
+						<IconTabSeparator icon="sap-icon://vertical-grip"/>
+						<IconTabFilter icon="sap-icon://world" iconColor="Critical" tooltip="{i18n>Label.Delivery.Location}"
+							count="{viewModel>/currentProgram/deliveryLocations/count}" key="DeliveryLocation" enabled="{=!${viewModel>/currentProgram/isNew}}"/>
+						<IconTabSeparator icon="sap-icon://vertical-grip"/>
+						<IconTabFilter icon="sap-icon://inventory" iconColor="Critical" tooltip="{i18n>Label.Parts}" count="{viewModel>/currentProgram/parts/count}"
+							key="Parts" enabled="{=!${viewModel>/currentProgram/isNew}}"/>
+						<IconTabSeparator icon="sap-icon://vertical-grip"/>
+						<IconTabFilter icon="sap-icon://puzzle" iconColor="Critical" tooltip="{i18n>Label.Part.fitment}" count="{viewModel>/currentProgram/partfitments/count}"
+							key="PartFitments" enabled="{=!${viewModel>/currentProgram/isNew}}"/>
+						<IconTabSeparator icon="sap-icon://vertical-grip"/>
+						<IconTabFilter icon="sap-icon://past" iconColor="Critical" tooltip="{i18n>Label.Prior.Purchases}"
+							count="{viewModel>/currentProgram/priorPurchases/count}" key="PriorPurchases" enabled="{=!${viewModel>/currentProgram/isNew}}"/>
+					</items>
+				</IconTabHeader>
+				<ToolbarSpacer>
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="16px"/>
+					</layoutData>
+				</ToolbarSpacer>
+				<HBox visible="{=!${viewModel>/currentProgram/isNew} &amp;&amp; ${viewModel>/editable}}">
+					<Button type='Transparent' iconFirst='false' icon="sap-icon://display" visible="{=${viewModel>/displayMode} === false}"
+						press="toggleDispalyWirteMode"/>
+					<Button type='Transparent' iconFirst='false' icon="sap-icon://edit" visible="{=${viewModel>/displayMode} === true}"
+						press="toggleDispalyWirteMode"/>
+				</HBox>
+				<Text width="10px"></Text>
+			</Toolbar>
+			<NavContainer id="tabNaviContainer">
+				<Page id="Summary" showHeader="false" showFooter="false" enableScrolling="false">
+					<content>
+						<core:Fragment fragmentName="tci.wave2.ui.bookingProgram.view.fragments.ProgramSummary" type="XML"/>
+					</content>
+				</Page>
+				<Page id="Category" showHeader="false" showFooter="false" enableScrolling="false">
+					<content>
+						<core:Fragment fragmentName="tci.wave2.ui.bookingProgram.view.fragments.ProgramCategory" type="XML" id="categoryFragment"/>
+					</content>
+				</Page>
+				<Page id="Vendor" showHeader="false" showFooter="false" enableScrolling="false">
+					<content>
+						<core:Fragment fragmentName="tci.wave2.ui.bookingProgram.view.fragments.ProgramVendor" type="XML" id="vendorFragment" />
+					</content>
+				</Page>
+				<Page id="DeliveryMethod" showHeader="false" showFooter="false" enableScrolling="false">
+					<content>
+						<core:Fragment fragmentName="tci.wave2.ui.bookingProgram.view.fragments.ProgramDeliveryMethod" type="XML" id="deliveryMethodsFragment"/>
+					</content>
+				</Page>
+				<Page id="DeliveryLocation" showHeader="false" showFooter="false" enableScrolling="false">
+					<content>
+						<core:Fragment fragmentName="tci.wave2.ui.bookingProgram.view.fragments.ProgramDeliveryLocation" type="XML" id="delLocFragment"/>
+					</content>
+				</Page>
+				<Page id="Parts" showHeader="false" showFooter="false" enableScrolling="false">
+					<content>
+						<core:Fragment fragmentName="tci.wave2.ui.bookingProgram.view.fragments.ProgramParts" type="XML" id="partsFragment"/>
+					</content>
+				</Page>
+				<Page id="PartFitments" showHeader="false" showFooter="false" enableScrolling="false">
+					<content>
+						<core:Fragment fragmentName="tci.wave2.ui.bookingProgram.view.fragments.ProgramPartFitments" type="XML" id="partFitmentFragment"/>
+					</content>
+				</Page>
+				<Page id="PriorPurchases" showHeader="false" showFooter="false" enableScrolling="false">
+					<content>
+						<core:Fragment fragmentName="tci.wave2.ui.bookingProgram.view.fragments.ProgramPriorPurchases" type="XML" id="priorPurchasesFragment"/>
+					</content>
+				</Page>
+			</NavContainer>
+		</content>
+		<footer>
+			<OverflowToolbar>
+				<Button type="Back" text="{i18n>Button.Back}" press='onBack'/>
+				<ToolbarSpacer/>
+				<DraftIndicator id='draftInd'/>
+				<ToolbarSpacer/>
+				<!--<Button icon="sap-icon://message-popup" text="{=${message>/}.length}" visible="{=${message>/}.length > 0}" type="Emphasized"
+					press="handleMessagePopoverPress"/>-->
+				<Button type="Reject" text="{i18n>Button.Delete}" press='onDeleteSummary' iconFirst='true' icon="sap-icon://delete"
+					visible="{=(${viewModel>/selectedTabKey} === 'Summary' &amp;&amp; !!!${viewModel>/displayMode} &amp;&amp; !!!${viewModel>/currentProgram/isNew}) }"/>
+				<Button type="Accept" text="{i18n>Button.Save}" press='onSaveSummary' iconFirst='true' icon="sap-icon://save"
+					visible="{=(${viewModel>/selectedTabKey} === 'Summary' &amp;&amp; !!!${viewModel>/displayMode} ) }"/>
+				<!--<Button type="Accept" text="{i18n>Button.Update.Category}" press='onUpdateCategory'
+					visible="{=(${viewModel>/selectedTabKey} === 'Category' &amp;&amp; !!!${viewModel>/displayMode}) }"/>-->
+
+				<Button type="Reject" text="{i18n>Button.Delete.All}" press='onDeleteAll' iconFirst='true' icon="sap-icon://delete"
+					visible="{=(${viewModel>/selectedTabKey} !== 'Summary' &amp;&amp; !!!${viewModel>/displayMode}) }"/>
+				<Button type="Accept" text="{i18n>Button.Import.Category}" press='onImportCategory'
+					visible="{=(${viewModel>/selectedTabKey} === 'Category' &amp;&amp; !!!${viewModel>/displayMode}) }"/>
+				<Button type="Accept" text="{i18n>Button.Export.Category}" press='onExportCategory'
+					visible="{=(${viewModel>/selectedTabKey} === 'Category') }"/>
+				<Button type="Accept" text="{i18n>Button.Update.Vendor}" press='onUpdateVendor'
+					visible="{=(${viewModel>/selectedTabKey} === 'Vendor' &amp;&amp; !!!${viewModel>/displayMode}) }"/>
+				<Button type="Accept" text="{i18n>Button.Import.Vendor}" press='onImportVendor'
+					visible="{=(${viewModel>/selectedTabKey} === 'Vendor' &amp;&amp; !!!${viewModel>/displayMode}) }"/>
+				<Button type="Accept" text="{i18n>Button.Export.Vendor}" press='onExportVendor' visible="{=(${viewModel>/selectedTabKey} === 'Vendor') }"/>
+				<Button type="Emphasized" text="{i18n>Button.Export.Order.Service}" press='onExportOrder' visible="{=(${viewModel>/selectedTabKey} === 'Summary' &amp;&amp; !!${viewModel>/displayMode} ) }"/>
+				<Button type="Accept" text="{i18n>Button.Update.Delivery.Method}" press='onUpdateDeliveryMethod'
+					visible="{=(${viewModel>/selectedTabKey} === 'DeliveryMethod' &amp;&amp; !!!${viewModel>/displayMode}) }"/>
+				<Button type="Accept" text="{i18n>Button.Import.Delivery.Method}" press='onImportDeliveryMethod'
+					visible="{=(${viewModel>/selectedTabKey} === 'DeliveryMethod' &amp;&amp; !!!${viewModel>/displayMode}) }"/>
+				<Button type="Accept" text="{i18n>Button.Export.Delivery.Method}" press='onExportDeliveryMethod'
+					visible="{=(${viewModel>/selectedTabKey} === 'DeliveryMethod') }"/>
+				<!--<Button type="Accept" text="{i18n>Button.Update.Delivery.Location}" press='onUpdateDeliveryLocation'
+					visible="{=(${viewModel>/selectedTabKey} === 'DeliveryLocation' &amp;&amp; !!!${viewModel>/displayMode}) }"/>-->
+				<Button type="Accept" text="{i18n>Button.Import.Delivery.Location}" press='onImportDeliveryLocation'
+					visible="{=(${viewModel>/selectedTabKey} === 'DeliveryLocation' &amp;&amp; !!!${viewModel>/displayMode}) }"/>
+				<Button type="Accept" text="{i18n>Button.Export.Delivery.Location}" press='onExportDeliveryLocation'
+					visible="{=(${viewModel>/selectedTabKey} === 'DeliveryLocation') }"/>
+				<!--<Button type="Accept" text="{i18n>Button.Update.Parts}" press='onUpdateParts'
+					visible="{=(${viewModel>/selectedTabKey} === 'Parts' &amp;&amp; !!!${viewModel>/displayMode}) }"/>-->
+				<Button type="Accept" text="{i18n>Button.Import.Parts}" press='onImportParts'
+					visible="{=(${viewModel>/selectedTabKey} === 'Parts' &amp;&amp; !!!${viewModel>/displayMode}) }"/>
+				<Button type="Accept" text="{i18n>Button.Export.Parts}" press='onExportParts' visible="{=(${viewModel>/selectedTabKey} === 'Parts') }"/>
+				<Button type="Accept" text="{i18n>Button.Import.PartFitment}" press='onImportPartFitments'
+					visible="{=(${viewModel>/selectedTabKey} === 'PartFitments' &amp;&amp; !!!${viewModel>/displayMode}) }"/>
+				<Button type="Accept" text="{i18n>Button.Export.PartFitment}" press='onExportPartFitments' visible="{=(${viewModel>/selectedTabKey} === 'PartFitments') }"/>
+				<!--<Button type="Accept" text="{i18n>Button.Update.Prior.Purchases}" press='onUpdatePriorPurchases'
+					visible="{=(${viewModel>/selectedTabKey} === 'PriorPurchases' &amp;&amp; !!!${viewModel>/displayMode}) }"/>-->
+				<Button type="Accept" text="{i18n>Button.Import.Prior.Purchases}" press='onImportPriorPurchases'
+					visible="{=(${viewModel>/selectedTabKey} === 'PriorPurchases' &amp;&amp; !!!${viewModel>/displayMode}) }"/>
+				<Button type="Accept" text="{i18n>Button.Export.Prior.Purchases}" press='onExportPriorPurchases'
+					visible="{=(${viewModel>/selectedTabKey} === 'PriorPurchases') }"/>
+			</OverflowToolbar>
+		</footer>
+	</Page>
+</mvc:View>

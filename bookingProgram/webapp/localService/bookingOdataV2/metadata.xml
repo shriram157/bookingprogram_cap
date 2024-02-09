@@ -1,0 +1,177 @@
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" Version="1.0">
+	<edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:DataServiceVersion="2.0">
+		<Schema xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+			xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2008/09/edm"
+			Namespace="default">
+			<EntityType Name="BOOKING_PROGRAMType">
+				<Key>
+					<PropertyRef Name="PROGRAM_ID"/>
+					<PropertyRef Name="DEPART"/>
+					<PropertyRef Name="BRAND"/>
+				</Key>
+				<Property Name="PROGRAM_ID" Type="Edm.String" Nullable="false" MaxLength="20"/>
+				<Property Name="DEPART" Type="Edm.String" Nullable="false" MaxLength="2"/>
+				<Property Name="BRAND" Type="Edm.String" Nullable="false" MaxLength="2"/>
+				<Property Name="OPEN_DATE" Type="Edm.DateTime"/>
+				<Property Name="CLOSE_DATE" Type="Edm.DateTime"/>
+				<Property Name="INITIAL_WARN" Type="Edm.Decimal" Precision="2" Scale="0"/>
+				<Property Name="FINAL_WARN" Type="Edm.Decimal" Precision="2" Scale="0"/>
+				<Property Name="DELIVERY_FR" Type="Edm.DateTime"/>
+				<Property Name="DELIVERY_TO" Type="Edm.DateTime"/>
+				<Property Name="CPROGRAM_ID" Type="Edm.String" MaxLength="20"/>
+				<Property Name="STATUS" Type="Edm.String" MaxLength="10"/>
+				<Property Name="CREATED_ON" Type="Edm.DateTime"/>
+				<Property Name="CREATED_BY" Type="Edm.String" MaxLength="12"/>
+				<Property Name="CHANGED_ON" Type="Edm.DateTime"/>
+				<Property Name="CHANGED_BY" Type="Edm.String" MaxLength="12"/>
+				<NavigationProperty Name="PROGRAM_NAME" Relationship="default.PROG_NAMEType" FromRole="BOOKING_PROGRAMPrincipal"
+					ToRole="PROGRAM_NAMEDependent"/>
+			</EntityType>
+			<EntityType Name="PROGRAM_NAMEType">
+				<Key>
+					<PropertyRef Name="PROGRAM_ID"/>
+					<PropertyRef Name="DEPART"/>
+					<PropertyRef Name="BRAND"/>
+					<PropertyRef Name="LANGUAGE_KEY"/>
+				</Key>
+				<Property Name="PROGRAM_ID" Type="Edm.String" Nullable="false" MaxLength="20"/>
+				<Property Name="DEPART" Type="Edm.String" Nullable="false" MaxLength="2"/>
+				<Property Name="BRAND" Type="Edm.String" Nullable="false" MaxLength="2"/>
+				<Property Name="LANGUAGE_KEY" Type="Edm.String" Nullable="false" MaxLength="2"/>
+				<Property Name="PROGRAM_DESC" Type="Edm.String" MaxLength="100"/>
+				<Property Name="CREATED_ON" Type="Edm.DateTime"/>
+				<Property Name="CREATED_BY" Type="Edm.String" MaxLength="12"/>
+				<Property Name="CHANGED_ON" Type="Edm.DateTime"/>
+				<Property Name="CHANGED_BY" Type="Edm.String" MaxLength="12"/>
+			</EntityType>
+			<EntityType Name="STATUS_NAMEType">
+				<Key>
+					<PropertyRef Name="STATUS"/>
+					<PropertyRef Name="LANGUAGE_KEY"/>
+				</Key>
+				<Property Name="STATUS" Type="Edm.String" Nullable="false" MaxLength="10"/>
+				<Property Name="LANGUAGE_KEY" Type="Edm.String" Nullable="false" MaxLength="2"/>
+				<Property Name="STATUS_DESC" Type="Edm.String" MaxLength="20"/>
+				<Property Name="CREATED_ON" Type="Edm.DateTime"/>
+				<Property Name="CREATED_BY" Type="Edm.String" MaxLength="12"/>
+				<Property Name="CHANGED_ON" Type="Edm.DateTime"/>
+				<Property Name="CHANGED_BY" Type="Edm.String" MaxLength="12"/>
+			</EntityType>
+			<EntityType Name="PROG_VENDORType">
+				<Key>
+					<PropertyRef Name="PROGRAM_ID"/>
+					<PropertyRef Name="DEPART"/>
+					<PropertyRef Name="BRAND"/>
+					<PropertyRef Name="VENDOR_ID"/>
+				</Key>
+				<Property Name="PROGRAM_ID" Type="Edm.String" Nullable="false" MaxLength="20"/>
+				<Property Name="DEPART" Type="Edm.String" Nullable="false" MaxLength="2"/>
+				<Property Name="BRAND" Type="Edm.String" Nullable="false" MaxLength="2"/>
+				<Property Name="VENDOR_ID" Type="Edm.String" Nullable="false" MaxLength="20"/>
+				<Property Name="DISTRIBUTOR" Type="Edm.String" MaxLength="1"/>
+				<Property Name="CREATED_ON" Type="Edm.DateTime"/>
+				<Property Name="CREATED_BY" Type="Edm.String" MaxLength="12"/>
+				<Property Name="CHANGED_ON" Type="Edm.DateTime"/>
+				<Property Name="CHANGED_BY" Type="Edm.String" MaxLength="12"/>
+			</EntityType>
+			<EntityType Name="CATEGORY_NAMEType">
+				<Key>
+					<PropertyRef Name="CATEGORY_ID"/>
+					<PropertyRef Name="LANGUAGE_KEY"/>
+				</Key>
+				<Property Name="CATEGORY_ID" Type="Edm.String" Nullable="false" MaxLength="18"/>
+				<Property Name="LANGUAGE_KEY" Type="Edm.String" Nullable="false" MaxLength="2"/>
+				<Property Name="CATEGORY_DESC" Type="Edm.String" MaxLength="40"/>
+				<Property Name="CREATED_ON" Type="Edm.DateTime"/>
+				<Property Name="CREATED_BY" Type="Edm.String" MaxLength="12"/>
+				<Property Name="CHANGED_ON" Type="Edm.DateTime"/>
+				<Property Name="CHANGED_BY" Type="Edm.String" MaxLength="12"/>
+			</EntityType>
+			<EntityType Name="VENDOR_NAMEType">
+				<Key>
+					<PropertyRef Name="VENDOR_ID"/>
+					<PropertyRef Name="LANGUAGE_KEY"/>
+				</Key>
+				<Property Name="VENDOR_ID" Type="Edm.String" Nullable="false" MaxLength="20"/>
+				<Property Name="LANGUAGE_KEY" Type="Edm.String" Nullable="false" MaxLength="2"/>
+				<Property Name="CATEGORY_DESC" Type="Edm.String" MaxLength="40"/>
+				<Property Name="CREATED_ON" Type="Edm.DateTime"/>
+				<Property Name="CREATED_BY" Type="Edm.String" MaxLength="12"/>
+				<Property Name="CHANGED_ON" Type="Edm.DateTime"/>
+				<Property Name="CHANGED_BY" Type="Edm.String" MaxLength="12"/>
+			</EntityType>
+			<EntityType Name="DEL_METH_NAMEType">
+				<Key>
+					<PropertyRef Name="DEL_METHOD"/>
+					<PropertyRef Name="LANGUAGE_KEY"/>
+				</Key>
+				<Property Name="DEL_METHOD" Type="Edm.String" Nullable="false" MaxLength="20"/>
+				<Property Name="LANGUAGE_KEY" Type="Edm.String" Nullable="false" MaxLength="2"/>
+				<Property Name="DEL_METHOD_NAME" Type="Edm.String" MaxLength="40"/>
+				<Property Name="CREATED_ON" Type="Edm.DateTime"/>
+				<Property Name="CREATED_BY" Type="Edm.String" MaxLength="12"/>
+				<Property Name="CHANGED_ON" Type="Edm.DateTime"/>
+				<Property Name="CHANGED_BY" Type="Edm.String" MaxLength="12"/>
+			</EntityType>
+			<EntityType Name="DEL_LOC_NAMEType">
+				<Key>
+					<PropertyRef Name="DEL_LOCATION_ID"/>
+					<PropertyRef Name="LANGUAGE_KEY"/>
+				</Key>
+				<Property Name="DEL_LOCATION_ID" Type="Edm.String" Nullable="false" MaxLength="10"/>
+				<Property Name="LANGUAGE_KEY" Type="Edm.String" Nullable="false" MaxLength="2"/>
+				<Property Name="DEL_LOCATION_NAME" Type="Edm.String" MaxLength="50"/>
+				<Property Name="CREATED_ON" Type="Edm.DateTime"/>
+				<Property Name="CREATED_BY" Type="Edm.String" MaxLength="12"/>
+				<Property Name="CHANGED_ON" Type="Edm.DateTime"/>
+				<Property Name="CHANGED_BY" Type="Edm.String" MaxLength="12"/>
+			</EntityType>
+			<EntityType Name="BOOKING_STATUSType">
+				<Key>
+					<PropertyRef Name="B_STATUS"/>
+					<PropertyRef Name="LANGUAGE_KEY"/>
+				</Key>
+				<Property Name="B_STATUS" Type="Edm.String" Nullable="false" MaxLength="5"/>
+				<Property Name="LANGUAGE_KEY" Type="Edm.String" Nullable="false" MaxLength="2"/>
+				<Property Name="DESCRIPTION" Type="Edm.String" MaxLength="10"/>
+				<Property Name="CREATED_ON" Type="Edm.DateTime"/>
+				<Property Name="CREATED_BY" Type="Edm.String" MaxLength="12"/>
+				<Property Name="CHANGED_ON" Type="Edm.DateTime"/>
+				<Property Name="CHANGED_BY" Type="Edm.String" MaxLength="12"/>
+			</EntityType>
+			<EntityType Name="PART_NAMEType">
+				<Key>
+					<PropertyRef Name="PART_NUM"/>
+					<PropertyRef Name="LANGUAGE_KEY"/>
+				</Key>
+				<Property Name="PART_NUM" Type="Edm.String" Nullable="false" MaxLength="40"/>
+				<Property Name="LANGUAGE_KEY" Type="Edm.String" Nullable="false" MaxLength="2"/>
+				<Property Name="PART_DESC" Type="Edm.String" MaxLength="60"/>
+				<Property Name="CREATED_ON" Type="Edm.DateTime"/>
+				<Property Name="CREATED_BY" Type="Edm.String" MaxLength="12"/>
+				<Property Name="CHANGED_ON" Type="Edm.DateTime"/>
+				<Property Name="CHANGED_BY" Type="Edm.String" MaxLength="12"/>
+			</EntityType>
+			<Association Name="PROG_NAMEType">
+				<End Type="default.BOOKING_PROGRAMType" Role="BOOKING_PROGRAMPrincipal" Multiplicity="1"/>
+				<End Type="default.PROGRAM_NAMEType" Role="PROGRAM_NAMEDependent" Multiplicity="*"/>
+			</Association>
+			<EntityContainer Name="v2" m:IsDefaultEntityContainer="true">
+				<EntitySet Name="BOOKING_PROGRAM" EntityType="default.BOOKING_PROGRAMType"/>
+				<EntitySet Name="PROGRAM_NAME" EntityType="default.PROGRAM_NAMEType"/>
+				<EntitySet Name="STATUS_NAME" EntityType="default.STATUS_NAMEType"/>
+				<EntitySet Name="PROG_VENDOR" EntityType="default.PROG_VENDORType"/>
+				<EntitySet Name="CATEGORY_NAME" EntityType="default.CATEGORY_NAMEType"/>
+				<EntitySet Name="VENDOR_NAME" EntityType="default.VENDOR_NAMEType"/>
+				<EntitySet Name="DEL_METH_NAME" EntityType="default.DEL_METH_NAMEType"/>
+				<EntitySet Name="DEL_LOC_NAME" EntityType="default.DEL_LOC_NAMEType"/>
+				<EntitySet Name="BOOKING_STATUS" EntityType="default.BOOKING_STATUSType"/>
+				<EntitySet Name="PART_NAME" EntityType="default.PART_NAMEType"/>
+				<AssociationSet Name="PROG_NAME" Association="default.PROG_NAMEType">
+					<End Role="BOOKING_PROGRAMPrincipal" EntitySet="BOOKING_PROGRAM"/>
+					<End Role="PROGRAM_NAMEDependent" EntitySet="PROGRAM_NAME"/>
+				</AssociationSet>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

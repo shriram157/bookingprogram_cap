@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?><Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="MINIPROGRAMPARTSCALVIEW" applyPrivilegeType="NONE" dataCategory="DEFAULT" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="MINIPROGRAMPARTSCALVIEW"/>
+<localVariables>
+  <variable id="PROGRAMUID" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="32" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+  <variable id="LANGUAGE" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="2" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+</localVariables>
+<variableMappings/>
+<dataSources>
+  <DataSource id="PROGRAMADMIN_PROG_PARTS">
+    <resourceUri>PROGRAMADMIN_PROG_PARTS</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_PART_NAME">
+    <resourceUri>PROGRAMADMIN_PART_NAME</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_VENDOR_NAME">
+    <resourceUri>PROGRAMADMIN_VENDOR_NAME</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_CATEGORY_NAME">
+    <resourceUri>PROGRAMADMIN_CATEGORY_NAME</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PROG_PARTS" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="VALID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_PROG_PARTS"/>
+    <filter>"PROGRAM_UUID" = '$$PROGRAMUID$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PARTS_NAME" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="LANGUAGE_KEY"/>
+      <viewAttribute id="PART_DESC"/>
+    
+      <viewAttribute id="TIRESIZE"/>
+      <viewAttribute id="SPEEDRATING"/>
+      <viewAttribute id="LOADRATING"/>
+      <viewAttribute id="DEALERNET"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_PART_NAME"/>
+    <filter>"LANGUAGE_KEY" = '$$LANGUAGE$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_VENDOR_NAME" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="LANGUAGE_KEY"/>
+      <viewAttribute id="VENDOR_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_VENDOR_NAME"/>
+    <filter>"LANGUAGE_KEY" = '$$LANGUAGE$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_CATE_NAME" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="LANGUAGE_KEY"/>
+      <viewAttribute id="CATEGORY_DESC"/>
+    
+      <viewAttribute id="DONOTTRANSPORT"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_CATEGORY_NAME"/>
+    <filter>"LANGUAGE_KEY" = '$$LANGUAGE$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="JOIN_PARTS_NAME_1" cardinality="CN_N" joinType="leftOuter" multiJoinNode="JOIN_PARTS_NAME" multiJoinCentralTable="PRJ_PROG_PARTS" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="CATEGORY_DESC"/>
+      <viewAttribute id="OBJECT_KEY"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="VALID"/>
+      <viewAttribute id="DONOTTRANSPORT"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PRJ_PROG_PARTS">
+      <mapping xsi:type="Calculation:AttributeMapping" target="OBJECT_KEY" source="OBJECT_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DETAIL" source="DETAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VALID" source="VALID"/>
+    </input>
+    <input node="PRJ_CATE_NAME">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_DESC" source="CATEGORY_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DONOTTRANSPORT" source="DONOTTRANSPORT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+    </input>
+    <joinAttribute name="CATEGORY_ID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="JOIN_PARTS_NAME_2" cardinality="CN_N" joinType="leftOuter" multiJoinNode="JOIN_PARTS_NAME" multiJoinCentralTable="PRJ_PROG_PARTS" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="CATEGORY_DESC"/>
+      <viewAttribute id="VENDOR_DESC"/>
+      <viewAttribute id="OBJECT_KEY"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="VALID"/>
+      <viewAttribute id="DONOTTRANSPORT"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="JOIN_PARTS_NAME_1">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_DESC" source="CATEGORY_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="OBJECT_KEY" source="OBJECT_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DETAIL" source="DETAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VALID" source="VALID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DONOTTRANSPORT" source="DONOTTRANSPORT"/>
+    </input>
+    <input node="PRJ_VENDOR_NAME">
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_DESC" source="VENDOR_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+    </input>
+    <joinAttribute name="VENDOR_ID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="JOIN_PARTS_NAME_3" cardinality="CN_N" joinType="leftOuter" multiJoinNode="JOIN_PARTS_NAME" multiJoinCentralTable="PRJ_PROG_PARTS" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="CATEGORY_DESC"/>
+      <viewAttribute id="VENDOR_DESC"/>
+      <viewAttribute id="PART_DESC"/>
+      <viewAttribute id="OBJECT_KEY"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="VALID"/>
+      <viewAttribute id="DONOTTRANSPORT"/>
+      <viewAttribute id="TIRESIZE"/>
+      <viewAttribute id="SPEEDRATING"/>
+      <viewAttribute id="LOADRATING"/>
+      <viewAttribute id="DEALERNET"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="JOIN_PARTS_NAME_2">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_DESC" source="CATEGORY_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_DESC" source="VENDOR_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="OBJECT_KEY" source="OBJECT_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DETAIL" source="DETAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VALID" source="VALID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DONOTTRANSPORT" source="DONOTTRANSPORT"/>
+    </input>
+    <input node="PRJ_PARTS_NAME">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_DESC" source="PART_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIRESIZE" source="TIRESIZE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SPEEDRATING" source="SPEEDRATING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOADRATING" source="LOADRATING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALERNET" source="DEALERNET"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+    </input>
+    <joinAttribute name="PART_NUM"/>
+  </calculationView>
+</calculationViews>
+<logicalModel id="JOIN_PARTS_NAME_3" filterExpressionLanguage="SQL">
+  <attributes>
+    <attribute id="OBJECT_KEY" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="OBJECT KEY"/>
+      <keyMapping columnObjectName="JOIN_PARTS_NAME_3" columnName="OBJECT_KEY"/>
+    </attribute>
+    <attribute id="PROGRAM_UUID" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM UUID"/>
+      <keyMapping columnObjectName="JOIN_PARTS_NAME_3" columnName="PROGRAM_UUID"/>
+    </attribute>
+    <attribute id="VALID" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="IS VALID"/>
+      <keyMapping columnObjectName="JOIN_PARTS_NAME_3" columnName="VALID"/>
+    </attribute>
+    <attribute id="PART_NUM" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PART NUMBER"/>
+      <keyMapping columnObjectName="JOIN_PARTS_NAME_3" columnName="PART_NUM"/>
+    </attribute>
+    <attribute id="PART_DESC" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PART DESCRIPTION/NAME"/>
+      <keyMapping columnObjectName="JOIN_PARTS_NAME_3" columnName="PART_DESC"/>
+    </attribute>
+    <attribute id="CATEGORY_ID" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CATEGORY ID"/>
+      <keyMapping columnObjectName="JOIN_PARTS_NAME_3" columnName="CATEGORY_ID"/>
+    </attribute>
+    <attribute id="CATEGORY_DESC" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CATEGORY DESCRIPTION/NAME"/>
+      <keyMapping columnObjectName="JOIN_PARTS_NAME_3" columnName="CATEGORY_DESC"/>
+    </attribute>
+    <attribute id="VENDOR_ID" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VENDOR NUMBER/ID"/>
+      <keyMapping columnObjectName="JOIN_PARTS_NAME_3" columnName="VENDOR_ID"/>
+    </attribute>
+    <attribute id="VENDOR_DESC" order="10" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CATEGORY DESCRIPTION/NAME"/>
+      <keyMapping columnObjectName="JOIN_PARTS_NAME_3" columnName="VENDOR_DESC"/>
+    </attribute>
+    <attribute id="DETAIL" order="11" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DETAIL INFORMATION"/>
+      <keyMapping columnObjectName="JOIN_PARTS_NAME_3" columnName="DETAIL"/>
+    </attribute>
+  
+    <attribute id="DONOTTRANSPORT" order="13" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DONOTTRANSPORT"/>
+  
+      <keyMapping columnObjectName="JOIN_PARTS_NAME_3" columnName="DONOTTRANSPORT"/>
+  
+    </attribute>
+  
+    <attribute id="TIRESIZE" order="14" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="TIRE SIZE"/>
+      <keyMapping columnObjectName="JOIN_PARTS_NAME_3" columnName="TIRESIZE"/>
+    </attribute>
+    <attribute id="SPEEDRATING" order="15" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SPEED RATING"/>
+      <keyMapping columnObjectName="JOIN_PARTS_NAME_3" columnName="SPEEDRATING"/>
+    </attribute>
+    <attribute id="LOADRATING" order="16" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="LOAD RATING"/>
+      <keyMapping columnObjectName="JOIN_PARTS_NAME_3" columnName="LOADRATING"/>
+    </attribute>
+    <attribute id="DEALERNET" order="17" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEALER NET"/>
+      <keyMapping columnObjectName="JOIN_PARTS_NAME_3" columnName="DEALERNET"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes>
+    <calculatedAttribute id="LANGUAGE_KEY" order="3" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <keyCalculation datatype="VARCHAR" expressionLanguage="SQL" length="2">
+        <formula>'$$Language$$'</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+  
+    <calculatedAttribute id="SELECTED" order="12" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+  
+      <keyCalculation datatype="VARCHAR" expressionLanguage="SQL" length="1">
+  
+        <formula>' '</formula>
+  
+      </keyCalculation>
+  
+      </calculatedAttribute>
+  </calculatedAttributes>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+
+  <filter>"PROGRAM_UUID" = '$$PROGRAMUID$$'</filter>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="474" y="112"/>
+    
+      <rectangleSize width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="PRJ_PROG_PARTS" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="302" y="426"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_PARTS_NAME" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="722" y="426"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_VENDOR_NAME" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="512" y="426"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_CATE_NAME" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="92" y="426"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="JOIN_PARTS_NAME" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="474" y="237"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="JOIN_PARTS_NAME" modelObjectType="JoinNodeInput" multiJoinViewNodeName="JOIN_PARTS_NAME">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="JOIN_PARTS_NAME" modelObjectType="JoinNodeInput" multiJoinViewNodeName="JOIN_PARTS_NAME">
+      <upperLeftCorner x="620" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="JOIN_PARTS_NAME" modelObjectType="JoinNodeInput" multiJoinViewNodeName="JOIN_PARTS_NAME">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="JOIN_PARTS_NAME" modelObjectType="JoinNodeInput" multiJoinViewNodeName="JOIN_PARTS_NAME">
+      <upperLeftCorner x="920" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

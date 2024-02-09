@@ -1,0 +1,34 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<ViewSettingsDialog confirm="handleSortDialogConfirm" id="ProgramFilterDialogId">
+		<sortItems>
+			<ViewSettingsItem text="{i18n>Label.Program.ID}" key="PROGRAM_ID" selected="true"/>
+			<ViewSettingsItem text="{i18n>Label.Program.Desc}" key="PROGRAM_DESC"/>
+			<ViewSettingsItem text="{i18n>Label.Program.Department}" key="DEPART_NAME"/>
+			<ViewSettingsItem text="{i18n>Label.Program.Window.Open.Date}" key="OPEN_DATE"/>
+			<ViewSettingsItem text="{i18n>Label.Program.Window.Close.Date}" key="CLOSE_DATE"/>
+			<ViewSettingsItem text="{i18n>Label.Program.Status}" key="STATUS_DESC"/>
+		</sortItems>
+		<filterItems>
+			<ViewSettingsFilterItem text="{i18n>Label.Program.ID}" key="PROGRAM_ID" multiSelect="true" items="{ProgramIDFilterJSON>/}">
+				<items>
+					<ViewSettingsItem text="{ProgramIDFilterJSON>PROGRAM_ID}" key="PROGRAM_ID"/>
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="{i18n>Label.Program.Desc}" key="PROGRAM_DESC" multiSelect="true" items="{ProgramDescFilterJSON>/}">
+				<items>
+					<ViewSettingsItem text="{ProgramDescFilterJSON>PROGRAM_DESC}" key="PROGRAM_DESC"/>
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="{i18n>Label.Program.Department}" key="DEPART_NAME" multiSelect="true" items="{DepartNameFilterJSON>/}">
+				<items>
+					<ViewSettingsItem text="{DepartNameFilterJSON>DEPART_NAME}" key="DEPART_NAME"/>
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="{i18n>Label.Program.Status}" key="STATUS_DESC" multiSelect="true" items="{StatusFilterJSON>/}">
+				<items>
+					<ViewSettingsItem text="{StatusFilterJSON>STATUS_DESC}" key="STATUS_DESC"/>
+				</items>
+			</ViewSettingsFilterItem>
+		</filterItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

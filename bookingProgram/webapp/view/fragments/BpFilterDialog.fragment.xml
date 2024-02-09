@@ -1,0 +1,53 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:core="sap.ui.core">
+
+	<ViewSettingsDialog confirm="onBpConfirmViewSettingsDialog" filterDetailPageOpened="onFilterDetailPageOpened" resetFilters="resetBpFilter"
+		title="{i18n>Label.Filter.Book.Parts}">
+		<filterItems>
+			<ViewSettingsFilterItem text="{i18n>Label.Vendor}" key="2" items="{viewModel>/currentBooking/filters/bp/vendors}">
+				<items>
+					<ViewSettingsItem text="{viewModel>desc}" key="{viewModel>key}" selected='{viewModel>selected}'/>
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="{i18n>Label.Vehicle.Brand.F}" key="3" items="{viewModel>/currentBooking/filters/bp/brands}"
+				filterDetailItemsAggregationChange="onBrandFilterChange">
+				<items>
+					<ViewSettingsItem text="{viewModel>desc}" key="{viewModel>key}" selected='{viewModel>selected}'/>
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsCustomItem id="idVechileFilterItem" text="{i18n>Label.Vehicle.F}" key="4">
+				<customControl>
+					<VBox class="sapUiSmallMargin">
+						<f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12"
+							adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1"
+							singleContainerFullSize="false">
+							<f:content>
+								<Label text="{i18n>Label.Vechicle.Series}"/>
+								<ComboBox items="{viewModel>/currentBooking/filters/bp/seriesList}" selectedKey="{viewModel>/currentBooking/filters/bp/selectedSeries}"
+								selectionChange="onSeriesFilterChange">
+									<core:Item key="{viewModel>key}" text="{viewModel>desc}"/>
+								</ComboBox>
+								<Label text="{i18n>Label.Vechicle.Year}"/>
+								<MultiComboBox items="{viewModel>/currentBooking/filters/bp/yearList}" selectionChange="onYearFilterChanges"
+									selectedKeys="{viewModel>/currentBooking/filters/bp/selectedYear}"> 
+									<core:Item key="{viewModel>key}" text="{path : 'viewModel>key', formatter : '.formatter.formatYear' }"/>
+								</MultiComboBox>
+							</f:content>
+						</f:SimpleForm>
+					</VBox>
+				</customControl>
+			</ViewSettingsCustomItem>
+			<ViewSettingsFilterItem text="{i18n>Label.Parts}" key="5" items="{viewModel>/currentBooking/filters/bp/parts}">
+				<items>
+					<ViewSettingsItem text="{path : 'viewModel>key', formatter : '.formatter.partsFilter'}" key="{viewModel>key}"
+						selected='{viewModel>selected}'/>
+				</items>
+			</ViewSettingsFilterItem>
+		</filterItems>
+		<sortItems>
+			<ViewSettingsItem text="{i18n>Label.Part.Number}" key="partNumber" selected="true"/>
+			<ViewSettingsItem text="{i18n>Label.TireSize}" key="tiresize"/>
+			<ViewSettingsItem text="{i18n>Label.LoadRating}" key="loadrating"/>
+			<ViewSettingsItem text="{i18n>Label.SpeedRating}" key="speedrating"/>
+		</sortItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

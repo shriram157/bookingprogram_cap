@@ -1,0 +1,52 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:semantic="sap.f.semantic"
+	xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
+	>
+	<Dialog contentWidth="600px" contentHeight="80%" afterClose='cleanUpAddressInputDialog' afterOpen='afterAddressInputDialogOpen'
+		title="{i18n>Label.Address}" verticalScrolling='true'>
+		<buttons>
+			<Button text="{i18n>Button.Cancel}" press='onAddressInputDialogCancel'/>
+			<Button text="{i18n>Button.Ok}" press='onAddressInputDialogOk'/>			
+		</buttons>
+		<content>
+			<f:SimpleForm id="SimpleFormChange354" editable="true" layout="ResponsiveGridLayout" title="" labelSpanXL="3" labelSpanL="3"
+				labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1"
+				columnsL="1" columnsM="1" singleContainerFullSize="false">
+				<f:content>
+					
+					<Label text="{i18n>Label.Address.Line1}"/>
+					<Input id="line1" required="true" maxLength="50" change="onLine1Changed" value="{/addressDetail/line1}"/>
+					<Label text="{i18n>Label.Address.Line2}"/>
+					<Input id="line2" maxLength="50" value="{/addressDetail/line2}"/>
+					<Label text="{i18n>Label.Address.City}"/>
+					<Input id="city" required="true" maxLength="50" change="onCityChanged" value="{/addressDetail/city}"/>
+					<Label text="{i18n>Label.Address.Province}" required="true"/>
+					<Select id="province" change="onProvinceChanged" selectedKey="{/addressDetail/province}">
+						<items>
+							<core:Item text="" key=""/>
+							<core:Item text="{i18n>Label.Province.ON}" key="ON"/>
+							<core:Item text="{i18n>Label.Province.QC}" key="QC"/>
+							<core:Item text="{i18n>Label.Province.NS}" key="NS"/>
+							<core:Item text="{i18n>Label.Province.NB}" key="NB"/>
+							<core:Item text="{i18n>Label.Province.MB}" key="MB"/>
+							<core:Item text="{i18n>Label.Province.BC}" key="BC"/>
+							<core:Item text="{i18n>Label.Province.PE}" key="PE"/>
+							<core:Item text="{i18n>Label.Province.SK}" key="SK"/>
+							<core:Item text="{i18n>Label.Province.AB}" key="AB"/>
+							<core:Item text="{i18n>Label.Province.NL}" key="NL"/>
+							<core:Item text="{i18n>Label.Province.NU}" key="NU"/>
+							<core:Item text="{i18n>Label.Province.YT}" key="YT"/>
+							<core:Item text="{i18n>Label.Province.NT}" key="NT"/>
+						</items>
+					</Select>
+					<Label text="{i18n>Label.Address.Zip}"/>
+					<MaskInput id="zip" enabled='true' required="true" mask="C9C 9C9" value="{/addressDetail/zip}" placeholderSymbol="_" placeholder="{i18n>Message.information.zip.input}" change="onZipChanged">
+						<rules>
+							<MaskInputRule maskFormatSymbol="9" regex="[0-9]"/>
+							<MaskInputRule maskFormatSymbol="C" regex="[A-Za-z]"/>							
+						</rules>
+					</MaskInput>
+				</f:content>
+			</f:SimpleForm>
+		</content>
+	</Dialog>
+</core:FragmentDefinition>

@@ -1,0 +1,142 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns="sap.m">
+	<Toolbar>
+		<Title text="{path : 'viewModel>/currentProgram/deliveryLocations/countOnVendor', formatter : '.formatter.dellocCount'}" level="H5"/>
+		<ToolbarSpacer></ToolbarSpacer>
+		<Title text="{i18n>Label.Vendor} : " level="H5"/>
+		<Input width="41rem" type="Text" value="{viewModel>/currentProgram/deliveryLocations/currentVendor}" placeholder="{i18n>Label.Vendor.Number}" valueHelpOnly="true" showValueHelp="true" valueHelpRequest="handleDmVendorKeyDialogPress"/>
+
+		<!--<Select selectedKey="{viewModel>/currentProgram/deliveryLocations/currentVendor}" showSecondaryValues="false" width="41rem"
+			id="_delLocVendor" items="{path : 'dlVendorModel>/', sorter: { path: 'key' } }" change="onDelLocVendorChange">
+			<core:ListItem key="{dlVendorModel>key}"
+				text="{ parts : ['dlVendorModel>key', 'dlVendorModel>enDesc', 'dlVendorModel>frDesc'], formatter : '.formatter.dropdownFormatter' }"/>
+		</Select>-->
+	</Toolbar>
+	<Table showNoData="false" items="{viewModel>/currentProgram/deliveryLocations/newline}" visible="{=(!${viewModel>/displayMode})}">
+		<columns>
+			<Column width="40px" hAlign="Begin" vAlign="Middle">
+				<CheckBox select='toggleDelLocSelect'/>
+			</Column>
+			<Column width="6rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Delivery.Location.Id}"/>
+			</Column>
+			<Column width="8rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Delivery.Location.Name}"/>
+			</Column>
+			<Column width="14rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Address}"/>
+			</Column>
+			<Column width="6rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Phone.Number}"/>
+			</Column>
+			<Column width="1rem" minScreenWidth="Tablet" demandPopin="true" vAlign="Middle" hAlign="Center">
+				<Button type="Transparent" icon="sap-icon://delete" press='handleDeleteDelLoc' enabled="{=!${viewModel>/displayMode}}"/>
+			</Column>
+			<Column width="1rem" minScreenWidth="Tablet" demandPopin="true" vAlign="Middle" hAlign="Center">
+				<Button type="Transparent" icon="sap-icon://filter" press='handleDelLocSettings' enabled="{=!${viewModel>/displayMode}}"/>
+			</Column>
+		
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<Text></Text>
+					<Input id="addressKey" value="{viewModel>key}" enabled='true' maxLength="10" change="onIdChanged"/>
+					<Input id="addressName" value="{viewModel>name}" enabled='true' maxLength="100"/>
+					<Input id="addressField" value="{path : 'viewModel>address'}" enabled='true' valueHelpOnly="true" showValueHelp="true"
+						valueHelpRequest="handleAddressInputDialogPress"/>
+					<MaskInput id="addressTel" enabled='true' mask="(999)-999-9999" value="{viewModel>phone}" placeholderSymbol="_"
+						placeholder="{i18n>Message.information.phone.input}" change="onPhoneChanged">
+						<rules>
+							<MaskInputRule maskFormatSymbol="9" regex="[0-9]"/>
+						</rules>
+					</MaskInput>
+					<Button type='Transparent' icon="sap-icon://add" press='handleAddDelLoc' enabled="{=!${viewModel>/displayMode}}"/>
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+	<Table showNoData="false" visible="{=(!!${viewModel>/displayMode})}">
+		<columns>
+			<Column width="6rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Delivery.Location.Id}"/>
+			</Column>
+			<Column width="8rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Delivery.Location.Name}"/>
+			</Column>
+			<Column width="14rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Address}"/>
+			</Column>
+			<Column width="6rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Phone.Number}"/>
+			</Column>
+			<Column width="1rem" minScreenWidth="Tablet" demandPopin="true" vAlign="Middle" hAlign="Center">
+				<core:Icon src="sap-icon://e-care" color="#2DFA06" visible="false"/>
+			</Column>
+		</columns>
+	</Table>
+	<ScrollContainer height="{viewModel>/tabs/DeliveryLocation/contHigh}" width="100%" horizontal="true" vertical="true" focusable="true">
+		<Table alternateRowColors="true" showNoData="false" mode='SingleSelectMaster' growing="true" growingScrollToLoad="true" growingThreshold="50"
+			items="{ path: 'viewModel>/currentProgram/deliveryLocations/items' }" visible="{=(!!${viewModel>/displayMode})}" id="deliveryLocationTableNonEditable">
+			<columns>
+				<Column width="40px" hAlign="Begin" visible="{=(!${viewModel>/displayMode})}"/>
+				<Column width="6rem" vAlign="Middle"/>
+				<Column width="8rem" vAlign="Middle"/>
+				<Column width="14rem" vAlign="Middle"/>
+				<Column width="6rem" vAlign="Middle"/>
+				<Column width="1rem" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" hAlign="Center"></Column>
+			</columns>
+			<items>
+				<ColumnListItem>
+					<cells>
+						<CheckBox selected='{viewModel>selected}' select='toggleDelLocRowSelect'/>
+						<Text text="{viewModel>key}"/>
+						<Text text="{viewModel>name}"/>
+						<Text text="{viewModel>address}"/>
+						<Text text="{viewModel>phone}"/>
+						<HBox justifyContent="Center" width="100%">
+							<core:Icon src="sap-icon://message-error" class="size1" color="#ff0000" visible='{=${viewModel>hasError}}'
+											activeColor="Negative" alt="Error" press="onError" />
+						</HBox>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+		<Table alternateRowColors="true" showNoData="false" mode='SingleSelectMaster' growing="true" growingScrollToLoad="true" growingThreshold="50"
+			items="{ path: 'viewModel>/currentProgram/deliveryLocations/items' }" visible="{=(!${viewModel>/displayMode})}" id="deliveryLocationTable">
+			<columns>
+				<Column width="35px" hAlign="Begin" visible="{=(!${viewModel>/displayMode})}"/>
+				<Column width="5.1rem" vAlign="Middle"/>
+				<Column width="7rem" vAlign="Middle"/>
+				<Column width="12.2rem" vAlign="Middle"/>
+				<Column width="5.9rem" vAlign="Middle"/>
+				<Column width="1rem" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" hAlign="End"></Column>
+			</columns>
+			<items>
+				<ColumnListItem>
+					<cells>
+						<CheckBox selected='{viewModel>selected}' select='toggleDelLocRowSelect'/>
+						<Text text="{viewModel>key}"/>
+						<Input value="{viewModel>name}" enabled='true' width="100%" maxLength="100" change="onLocationLineChange"/>
+						<Input value="{path : 'viewModel>address'}" enabled='true' width="100%" valueHelpOnly="true" showValueHelp="true"
+							valueHelpRequest="handleAddressInputDialogPress" change="onLocationLineChange"/>
+						<MaskInput enabled='true' mask="(999)-999-9999" value="{viewModel>phone}" placeholderSymbol="_"
+							placeholder="{i18n>Message.information.phone.input}" change="onLocationLineChange">
+							<rules>
+								<MaskInputRule maskFormatSymbol="9" regex="[0-9]"/>
+							</rules>
+						</MaskInput>
+						<HBox justifyContent="Center" width="100%">
+							<core:Icon src="sap-icon://message-error" class="size1" color="#ff0000" visible='{=${viewModel>hasError}}'
+											activeColor="Negative" alt="Error" press="onError" />
+						</HBox>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+		<Toolbar>
+			<content>
+				<Text text=""/>
+			</content>
+		</Toolbar>
+	</ScrollContainer>
+</core:FragmentDefinition>

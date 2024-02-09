@@ -1,0 +1,36 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<ViewSettingsDialog confirm="onPartFitmentFilterConfirm" title="" id="partFitmentFilterDialogId">
+		<sortItems>
+			<ViewSettingsItem text="{i18n>Label.Part.Number}" key="PART_NUM" selected="true"/>
+			<ViewSettingsItem text="{i18n>Label.Vechicle.Model}" key="MODEL_CODE"/>
+			<ViewSettingsItem text="{i18n>Label.Vechicle.Year}" key="YEAR"/>
+			<ViewSettingsItem text="{i18n>Label.Description}" key="PART_DESC"/>
+			
+		</sortItems>
+		<filterItems>
+			<ViewSettingsFilterItem text="{i18n>Label.Part.Number}" key="PART_NUM" multiSelect="true" items="{PartNumerJSON>/}">
+				<items>
+					<ViewSettingsItem text="{PartNumerJSON>PART_NUM}" key="PART_NUM"/>
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="{i18n>Label.Vechicle.Model}" key="MODEL_CODE" multiSelect="true" items="{ModelCodeJSON>/}">
+				<items>
+					<ViewSettingsItem text="{ModelCodeJSON>MODEL_CODE}" key="MODEL_CODE"/>
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="{i18n>Label.Vechicle.Year}" key="YEAR" multiSelect="true" items="{PartsYearJSON>/}">
+				<items>
+					<ViewSettingsItem text="{PartsYearJSON>YEAR}" key="YEAR"/>
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="{i18n>Label.Description}" key="PART_DESC" multiSelect="true" items="{PartsDescJSON>/}">
+				<items>
+					<ViewSettingsItem text="{PartsDescJSON>PART_DESC}" key="PART_DESC"/>
+				</items>
+			</ViewSettingsFilterItem>
+		
+		</filterItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>
+
+<!--viewModel>/currentProgram/deliveryLocations-->

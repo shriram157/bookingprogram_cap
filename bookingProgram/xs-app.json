@@ -1,0 +1,69 @@
+{
+	"welcomeFile": "/bookingprogram/index.html",
+	"authenticationMethod": "route",
+	"logout": {
+		"logoutEndpoint": "/do/logout"
+	},
+	"routes": [{
+		"source": "^/bookingprogram/index.html",
+		"target": "index.html",
+		"localDir": "webapp",
+		"authenticationType": "xsuaa",
+		"cacheControl": "no-cache, no-store, must-revalidate",
+		"scope": [
+			"$XSAPPNAME.BookingAdmin",
+			"$XSAPPNAME.DealerBooking",
+			"$XSAPPNAME.ReadOnly"
+		]
+	}, {
+		"source": "^/bookingprogram/(.*)$",
+		"target": "$1",
+		"localDir": "webapp",
+		"authenticationType": "xsuaa",
+		"scope": [
+			"$XSAPPNAME.BookingAdmin",
+			"$XSAPPNAME.DealerBooking",
+			"$XSAPPNAME.ReadOnly"
+		]
+	},{
+		"source": "^/v2/BookingProgram/(.*)$",
+		"destination": "bookingProgram",
+		"csrfProtection": false,
+		"authenticationType": "xsuaa",
+		"scope": [
+			"$XSAPPNAME.BookingAdmin",
+			"$XSAPPNAME.DealerBooking",
+			"$XSAPPNAME.ReadOnly"
+		]
+	},  {
+		"source": "/node(.*)",
+		"destination": "api-node-backend",
+		"csrfProtection": false,
+		"authenticationType": "xsuaa",
+		"scope": [
+			"$XSAPPNAME.BookingAdmin",
+			"$XSAPPNAME.DealerBooking",
+			"$XSAPPNAME.ReadOnly"
+		]
+	}, {
+		"source": "/proxy/apic(.*)",
+		"destination": "api-node-backend",
+		"csrfProtection": false,
+		"authenticationType": "xsuaa",
+		"scope": [
+			"$XSAPPNAME.BookingAdmin",
+			"$XSAPPNAME.DealerBooking",
+			"$XSAPPNAME.ReadOnly"
+		]
+	}, {
+		"source": "/sap/opu/odata/sap/(.*)",
+		"destination": "api-node-backend",
+		"csrfProtection": false,
+		"authenticationType": "xsuaa",
+		"scope": [
+			"$XSAPPNAME.BookingAdmin",
+			"$XSAPPNAME.DealerBooking",
+			"$XSAPPNAME.ReadOnly"
+		]
+	}]
+}

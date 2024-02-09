@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?><Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="MINIPROGRAMPARTFITMENTCALVIEW" applyPrivilegeType="NONE" dataCategory="DEFAULT" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="MINIPROGRAMPARTFITMENTCALVIEW"/>
+<localVariables>
+  <variable id="PROGRAMUID" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="32" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+  <variable id="LANGUAGE" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="2" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+</localVariables>
+<variableMappings/>
+<dataSources>
+  <DataSource id="PROGRAMADMIN_PROG_PART_FITMENT">
+    <resourceUri>PROGRAMADMIN_PROG_PART_FITMENT</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_PART_NAME">
+    <resourceUri>PROGRAMADMIN_PART_NAME</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_MODEL_NAME">
+    <resourceUri>PROGRAMADMIN_MODEL_NAME</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_VEHICLE_MODEL">
+    <resourceUri>PROGRAMADMIN_VEHICLE_MODEL</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_PROG_PARTS">
+    <resourceUri>PROGRAMADMIN_PROG_PARTS</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_TCISERIES">
+    <resourceUri>PROGRAMADMIN_TCISERIES</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PROG_PF" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="MODEL_CODE"/>
+      <viewAttribute id="YEAR"/>
+      <viewAttribute id="VALID"/>
+    
+      <viewAttribute id="SERIES_CODE"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_PROG_PART_FITMENT"/>
+    <filter>"PROGRAM_UUID" = '$$PROGRAMUID$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PARTS_NAME" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="LANGUAGE_KEY"/>
+      <viewAttribute id="PART_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_PART_NAME"/>
+    <filter>"LANGUAGE_KEY" = '$$LANGUAGE$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_MODEL_NAME" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="MODEL_CODE"/>
+      <viewAttribute id="LANGUAGE_KEY"/>
+      <viewAttribute id="MODEL_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_MODEL_NAME"/>
+    <filter>"LANGUAGE_KEY" = '$$LANGUAGE$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_BRAND_MODEL">
+    <viewAttributes>
+      <viewAttribute id="MODEL_CODE"/>
+      <viewAttribute id="BRAND"/>
+      <viewAttribute id="BRAND_NAME"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_VEHICLE_MODEL"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PARTS" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="VALID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_PROG_PARTS"/>
+    <filter>"PROGRAM_UUID" = '$$PROGRAMUID$$' AND "VALID" = 'X'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_SERIES">
+    <viewAttributes>
+      <viewAttribute id="SERIES_CODE"/>
+      <viewAttribute id="SERIES_DESC"/>
+    
+      <viewAttribute id="LANGUAGE_KEY"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_TCISERIES"/>
+    <filter>"LANGUAGE_KEY" = '$$LANGUAGE$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="JOIN_PROG_PF_NAME_1" cardinality="CN_N" joinType="leftOuter" multiJoinNode="JOIN_PROG_PF_NAME" multiJoinCentralTable="PRJ_PROG_PF" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="VALID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="MODEL_CODE"/>
+      <viewAttribute id="YEAR"/>
+      <viewAttribute id="SERIES_CODE"/>
+      <viewAttribute id="SERIES_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PRJ_PROG_PF">
+      <mapping xsi:type="Calculation:AttributeMapping" target="OBJECT_KEY" source="OBJECT_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODEL_CODE" source="MODEL_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="YEAR" source="YEAR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VALID" source="VALID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_CODE" source="SERIES_CODE"/>
+    </input>
+    <input node="PRJ_SERIES">
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_DESC" source="SERIES_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_CODE" source="SERIES_CODE"/>
+    </input>
+    <joinAttribute name="SERIES_CODE"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="JOIN_PROG_PF_NAME_2" cardinality="CN_N" joinType="leftOuter" multiJoinNode="JOIN_PROG_PF_NAME" multiJoinCentralTable="PRJ_PROG_PF" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="VALID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="MODEL_CODE"/>
+      <viewAttribute id="YEAR"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="SERIES_CODE"/>
+      <viewAttribute id="SERIES_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="JOIN_PROG_PF_NAME_1">
+      <mapping xsi:type="Calculation:AttributeMapping" target="OBJECT_KEY" source="OBJECT_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VALID" source="VALID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODEL_CODE" source="MODEL_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="YEAR" source="YEAR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_CODE" source="SERIES_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_DESC" source="SERIES_DESC"/>
+    </input>
+    <input node="PRJ_PARTS">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DETAIL" source="DETAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+    </input>
+    <joinAttribute name="PART_NUM"/>
+    <joinAttribute name="PROGRAM_UUID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="JOIN_PROG_PF_NAME_3" cardinality="CN_N" joinType="leftOuter" multiJoinNode="JOIN_PROG_PF_NAME" multiJoinCentralTable="PRJ_PROG_PF" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="VALID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="MODEL_CODE"/>
+      <viewAttribute id="MODEL_DESC"/>
+      <viewAttribute id="YEAR"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="SERIES_CODE"/>
+      <viewAttribute id="SERIES_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="JOIN_PROG_PF_NAME_2">
+      <mapping xsi:type="Calculation:AttributeMapping" target="OBJECT_KEY" source="OBJECT_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VALID" source="VALID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODEL_CODE" source="MODEL_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="YEAR" source="YEAR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DETAIL" source="DETAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_CODE" source="SERIES_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_DESC" source="SERIES_DESC"/>
+    </input>
+    <input node="PRJ_MODEL_NAME">
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODEL_DESC" source="MODEL_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODEL_CODE" source="MODEL_CODE"/>
+    </input>
+    <joinAttribute name="MODEL_CODE"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="JOIN_PROG_PF_NAME_4" cardinality="CN_N" joinType="leftOuter" multiJoinNode="JOIN_PROG_PF_NAME" multiJoinCentralTable="PRJ_PROG_PF" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="VALID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="PART_DESC"/>
+      <viewAttribute id="MODEL_CODE"/>
+      <viewAttribute id="MODEL_DESC"/>
+      <viewAttribute id="YEAR"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="SERIES_CODE"/>
+      <viewAttribute id="SERIES_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="JOIN_PROG_PF_NAME_3">
+      <mapping xsi:type="Calculation:AttributeMapping" target="OBJECT_KEY" source="OBJECT_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VALID" source="VALID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODEL_CODE" source="MODEL_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODEL_DESC" source="MODEL_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="YEAR" source="YEAR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DETAIL" source="DETAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_CODE" source="SERIES_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_DESC" source="SERIES_DESC"/>
+    </input>
+    <input node="PRJ_PARTS_NAME">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_DESC" source="PART_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+    </input>
+    <joinAttribute name="PART_NUM"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="JOIN_PROG_PF_NAME_5" cardinality="CN_N" joinType="leftOuter" multiJoinNode="JOIN_PROG_PF_NAME" multiJoinCentralTable="PRJ_PROG_PF" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="VALID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="PART_DESC"/>
+      <viewAttribute id="BRAND"/>
+      <viewAttribute id="BRAND_NAME"/>
+      <viewAttribute id="MODEL_CODE"/>
+      <viewAttribute id="MODEL_DESC"/>
+      <viewAttribute id="YEAR"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="SERIES_CODE"/>
+      <viewAttribute id="SERIES_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="JOIN_PROG_PF_NAME_4">
+      <mapping xsi:type="Calculation:AttributeMapping" target="OBJECT_KEY" source="OBJECT_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VALID" source="VALID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_DESC" source="PART_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODEL_CODE" source="MODEL_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODEL_DESC" source="MODEL_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="YEAR" source="YEAR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DETAIL" source="DETAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_CODE" source="SERIES_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_DESC" source="SERIES_DESC"/>
+    </input>
+    <input node="PRJ_BRAND_MODEL">
+      <mapping xsi:type="Calculation:AttributeMapping" target="BRAND" source="BRAND"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="BRAND_NAME" source="BRAND_NAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MODEL_CODE" source="MODEL_CODE"/>
+    </input>
+    <joinAttribute name="MODEL_CODE"/>
+  </calculationView>
+</calculationViews>
+<logicalModel id="JOIN_PROG_PF_NAME_5" filterExpressionLanguage="SQL">
+  <attributes>
+    <attribute id="OBJECT_KEY" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="OBJECT KEY"/>
+      <keyMapping columnObjectName="JOIN_PROG_PF_NAME_5" columnName="OBJECT_KEY"/>
+    </attribute>
+    <attribute id="PROGRAM_UUID" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM UUID"/>
+      <keyMapping columnObjectName="JOIN_PROG_PF_NAME_5" columnName="PROGRAM_UUID"/>
+    </attribute>
+    <attribute id="VALID" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="IS VALID"/>
+      <keyMapping columnObjectName="JOIN_PROG_PF_NAME_5" columnName="VALID"/>
+    </attribute>
+    <attribute id="DETAIL" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DETAIL INFORMATION"/>
+      <keyMapping columnObjectName="JOIN_PROG_PF_NAME_5" columnName="DETAIL"/>
+    </attribute>
+    <attribute id="BRAND" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="BRAND"/>
+      <keyMapping columnObjectName="JOIN_PROG_PF_NAME_5" columnName="BRAND"/>
+    </attribute>
+    <attribute id="BRAND_NAME" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="BRAND NAME"/>
+      <keyMapping columnObjectName="JOIN_PROG_PF_NAME_5" columnName="BRAND_NAME"/>
+    </attribute>
+    <attribute id="MODEL_CODE" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VEHICLE - TOYOTA MODEL CODE"/>
+      <keyMapping columnObjectName="JOIN_PROG_PF_NAME_5" columnName="MODEL_CODE"/>
+    </attribute>
+    <attribute id="MODEL_DESC" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VEHICLE MODEL DESCRIPTION/NAME"/>
+      <keyMapping columnObjectName="JOIN_PROG_PF_NAME_5" columnName="MODEL_DESC"/>
+    </attribute>
+    <attribute id="YEAR" order="10" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VEHICLE - TOYOTA MODEL YEAR"/>
+      <keyMapping columnObjectName="JOIN_PROG_PF_NAME_5" columnName="YEAR"/>
+    </attribute>
+  
+    <attribute id="SERIES_CODE" order="12" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SERIES_CODE"/>
+  
+      <keyMapping columnObjectName="JOIN_PROG_PF_NAME_5" columnName="SERIES_CODE"/>
+  
+    </attribute>
+    <attribute id="SERIES_DESC" order="13" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SERIES_DESC"/>
+      <keyMapping columnObjectName="JOIN_PROG_PF_NAME_5" columnName="SERIES_DESC"/>
+    </attribute>
+  
+    <attribute id="PART_NUM" order="14" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PART_NUM"/>
+      <keyMapping columnObjectName="JOIN_PROG_PF_NAME_5" columnName="PART_NUM"/>
+    </attribute>
+    <attribute id="PART_DESC" order="15" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PART_DESC"/>
+      <keyMapping columnObjectName="JOIN_PROG_PF_NAME_5" columnName="PART_DESC"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes>
+    <calculatedAttribute id="LANGUAGE_KEY" order="3" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <keyCalculation datatype="VARCHAR" expressionLanguage="SQL" length="2">
+        <formula>'$$Language$$'</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+  
+    <calculatedAttribute id="SELECTED" order="11" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+  
+      <keyCalculation datatype="VARCHAR" expressionLanguage="SQL" length="1">
+  
+        <formula>' '</formula>
+  
+      </keyCalculation>
+  
+      </calculatedAttribute>
+  </calculatedAttributes>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+
+  <filter>"PROGRAM_UUID" = '$$PROGRAMUID$$'</filter>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="40" y="85"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="PRJ_PROG_PF" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="-198" y="359"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_PARTS_NAME" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="226" y="369"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_MODEL_NAME" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="423" y="369"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_BRAND_MODEL" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="2" y="369"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_PARTS" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="612" y="369"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_SERIES" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="826" y="369"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  
+  
+    <shape expanded="true" modelObjectName="JOIN_PROG_PF_NAME" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="110" y="220"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="JOIN_PROG_PF_NAME" modelObjectType="JoinNodeInput" multiJoinViewNodeName="JOIN_PROG_PF_NAME">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="JOIN_PROG_PF_NAME" modelObjectType="JoinNodeInput" multiJoinViewNodeName="JOIN_PROG_PF_NAME">
+      <upperLeftCorner x="620" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="JOIN_PROG_PF_NAME" modelObjectType="JoinNodeInput" multiJoinViewNodeName="JOIN_PROG_PF_NAME">
+      <upperLeftCorner x="920" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="JOIN_PROG_PF_NAME" modelObjectType="JoinNodeInput" multiJoinViewNodeName="JOIN_PROG_PF_NAME">
+      <upperLeftCorner x="1220" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="JOIN_PROG_PF_NAME" modelObjectType="JoinNodeInput" multiJoinViewNodeName="JOIN_PROG_PF_NAME">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="JOIN_PROG_PF_NAME" modelObjectType="JoinNodeInput" multiJoinViewNodeName="JOIN_PROG_PF_NAME">
+      <upperLeftCorner x="1520" y="30"/>
+      <rectangleSize width="250"/>
+    </shape></shapes>
+</layout>
+</Calculation:scenario>

@@ -1,0 +1,196 @@
+PROCEDURE "PROCEDURES_PROGRAMPARTFITMENTCREATE" ( 
+    IN im_details "PROGRAMADMIN_PROGRAMPARTFITMENTVIEW",
+	OUT ex_error "PROCEDURES_TT_ERRORS"  ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER AS
+BEGIN
+USING SQLSCRIPT_STRING AS LIB;
+/***************************** 
+ Write your procedure logic 
+ *****************************/
+declare lv_object_key		string;
+declare lv_program_uuid		string;
+declare lv_valid	 		string;
+declare lv_part_num			string;
+declare lv_model_code		string;
+declare lv_series_code		string;
+declare lv_year		 		string;
+declare lv_en_part_desc		string;
+declare lv_fr_part_desc 	string;
+declare lv_en_model_desc	string;
+declare lv_fr_model_desc	string;
+declare lv_en_series_desc	string;
+declare lv_fr_series_desc	string;
+declare lv_brand			string;
+declare lv_brand_name		string;
+declare lv_changed_by		string;
+declare lv_count			integer; 
+declare lv_count_en			integer; 
+declare lv_count_fr			integer; 
+declare lv_count_x			integer; 
+
+declare lv_count_er			integer default 0; 
+declare lv_count_part		integer default 0; 
+declare lv_batch_mode 		string;
+declare lv_duplicated		boolean default false; 
+declare lv_updateDesc		boolean default false; 
+declare lv_error_codes		string;
+declare lv_errorCodeArray	NVARCHAR(8) ARRAY;
+declare lv_errorCodesLen	integer default 0; 
+declare lv_tempStr			string; 
+DECLARE i           		INTEGER      = 1;
+
+
+select "OBJECT_KEY","PROGRAM_UUID","PART_NUM","MODEL_CODE","SERIES_CODE","YEAR","VALID","BATCH_MODE","ERROR_CODES","EN_MODEL_DESC","FR_MODEL_DESC","EN_SERIES_DESC","FR_SERIES_DESC","BRAND","BRAND_NAME","CHANGED_BY"
+     into lv_object_key,lv_program_uuid,lv_part_num,lv_model_code,lv_series_code,lv_year,lv_valid,lv_batch_mode,lv_error_codes,lv_en_model_desc,lv_fr_model_desc, lv_en_series_desc, lv_fr_series_desc,lv_brand,lv_brand_name,lv_changed_by
+     from :im_details; 
+
+
+if :lv_program_uuid = '' then
+  ex_error = select 552 as http_status_code, 
+               'The Program UUID is empty' as error_message, 
+                     'The program uuid field can not be my empty' as detail from "DUMMY";
+
+else
+
+  select count(*) into lv_count  from "PROGRAMADMIN_PROG_PART_FITMENT" where PROGRAM_UUID = :lv_program_uuid AND PART_NUM = lv_part_num AND MODEL_CODE = :lv_model_code AND YEAR = :lv_year;
+  if lv_count > 0 then
+	lv_duplicated := true;
+  end if; 
+  
+  if :lv_batch_mode = 'X' then
+  	if :lv_valid <> 'X' THEN 
+      if :lv_error_codes is not NULL then 
+	    lv_errorCodeArray := LIB:SPLIT_TO_ARRAY(:lv_error_codes,',');
+        FOR i IN 1..CARDINALITY(:lv_errorCodeArray) DO
+		  lv_tempStr := :lv_errorCodeArray[:i];
+		  select count(*) into lv_count_er  from "CORE_OBJECT_MESSAGE" where OBJECT_KEY = lv_object_key AND ERROR_CODE = :lv_tempStr;
+		  if :lv_count_er < 1 then
+			insert into "CORE_OBJECT_MESSAGE" ("OBJECT_KEY","ERROR_CODE","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+	          values(lv_object_key,lv_tempStr,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+		  end if;
+		END FOR;		
+	  end if;    	
+	end if;
+
+--  check the part is exist or not. part is invalid
+	select count(*) into lv_count_part from "PROGRAMADMIN_PROG_PARTS" where PROGRAM_UUID = :lv_program_uuid AND PART_NUM = :lv_part_num;
+    if :lv_count_part < 1  then
+	  insert into "CORE_OBJECT_MESSAGE" ("OBJECT_KEY","ERROR_CODE","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+	    values(lv_object_key,'BP01045',CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	  --- the check is failed  
+	  lv_valid := '';
+	end if;
+    
+	-- -- if :lv_duplicated = false then
+	--   select count(*) into lv_count_en  from "PROGRAMADMIN_PART_NAME" where LANGUAGE_KEY = 'EN' AND PART_NUM = :lv_part_num;
+	--   if lv_count_en < 1 then
+	--     insert into "PROGRAMADMIN_PART_NAME" ("PART_NUM","LANGUAGE_KEY","PART_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+ --          values(lv_part_num,'EN',lv_en_part_desc,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	--   end if;
+
+	--   select count(*) into lv_count_fr  from "PROGRAMADMIN_PART_NAME" where LANGUAGE_KEY = 'FR' AND PART_NUM = :lv_part_num;
+	--   if lv_count_fr < 1 then
+	--     insert into "PROGRAMADMIN_PART_NAME" ("PART_NUM","LANGUAGE_KEY","PART_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+ --          values(lv_part_num,'FR',lv_fr_part_desc,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	--   end if;
+	-- -- end if;
+
+    insert into "PROGRAMADMIN_PROG_PART_FITMENT" ("OBJECT_KEY","PROGRAM_UUID","PART_NUM","MODEL_CODE","SERIES_CODE","YEAR","VALID","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+	  values(lv_object_key,lv_program_uuid,lv_part_num,lv_model_code,lv_series_code,lv_year,lv_valid,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+
+    if :lv_valid = 'X' then
+		upsert "PROGRAMADMIN_VEHICLE_MODEL"("MODEL_CODE", "BRAND", "BRAND_NAME", "AUDIT_CREATED_ON", "AUDIT_CREATED_BY", "AUDIT_CHANGED_ON", "AUDIT_CHANGED_BY")
+		values(:lv_model_code, :lv_brand, :lv_brand_name, CURRENT_TIMESTAMP, :lv_changed_by, CURRENT_TIMESTAMP, :lv_changed_by);
+		
+	
+    end if;
+
+--     select count(*) into lv_count_x  from "PROGRAMADMIN_VEHICLE_MODEL" where MODEL_CODE = :lv_model_code;
+
+-- --  save the model inforamtion
+--     if lv_count_x < 1 then
+-- 		insert into "PROGRAMADMIN_VEHICLE_MODEL"("MODEL_CODE", "BRAND", "BRAND_NAME", "AUDIT_CREATED_ON", "AUDIT_CREATED_BY", "AUDIT_CHANGED_ON", "AUDIT_CHANGED_BY")
+-- 		values(:lv_model_code, :lv_brand, :lv_brand_name, CURRENT_TIMESTAMP, :lv_changed_by, CURRENT_TIMESTAMP, :lv_changed_by);
+-- 	end if;	 
+
+  else
+
+    if lv_duplicated = true then
+	  ex_error = select 551 as http_status_code, 
+               'The Record already exist' as error_message, 
+                     'The Record already exist, can not insert' as detail from "DUMMY";
+  
+    else
+	  lv_valid := 'X';  
+      insert into "PROGRAMADMIN_PROG_PART_FITMENT" ("OBJECT_KEY","PROGRAM_UUID","PART_NUM","MODEL_CODE","SERIES_CODE","YEAR","VALID","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+	    values(lv_object_key,lv_program_uuid,lv_part_num,lv_model_code,lv_series_code,lv_year,lv_valid,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	       
+	  select count(*) into lv_count_en  from "PROGRAMADMIN_MODEL_NAME" where LANGUAGE_KEY = 'EN' AND MODEL_CODE = :lv_model_code;
+	  if lv_count_en > 0 then
+	    update "PROGRAMADMIN_MODEL_NAME" set MODEL_DESC = :lv_en_model_desc, 
+	    		"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP,
+				"AUDIT_CHANGED_BY" = :lv_changed_by
+			where "MODEL_CODE" = :lv_model_code AND LANGUAGE_KEY = 'EN';
+	  else
+	    insert into "PROGRAMADMIN_MODEL_NAME" ("MODEL_CODE","SERIES_CODE","LANGUAGE_KEY","MODEL_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+           values(lv_model_code,lv_series_code,'EN',lv_en_model_desc,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	  end if;
+
+	  select count(*) into lv_count_fr  from "PROGRAMADMIN_MODEL_NAME" where LANGUAGE_KEY = 'FR' AND  MODEL_CODE = :lv_model_code;
+	
+	  if lv_count_fr > 0 then
+	    update "PROGRAMADMIN_MODEL_NAME" set MODEL_DESC = :lv_en_model_desc, 
+	    		"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP,
+				"AUDIT_CHANGED_BY" = :lv_changed_by
+			where "MODEL_CODE" = :lv_model_code AND LANGUAGE_KEY = 'FR';
+
+	  else
+	    insert into "PROGRAMADMIN_MODEL_NAME" ("MODEL_CODE","SERIES_CODE","LANGUAGE_KEY","MODEL_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+           values(lv_model_code,lv_series_code,'FR',lv_fr_model_desc,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	  end if;
+	  
+	  select count(*) into lv_count_en  from "PROGRAMADMIN_TCISERIES" where LANGUAGE_KEY = 'EN' AND SERIES_CODE = :lv_series_code;
+	  if lv_count_en > 0 then
+	    update "PROGRAMADMIN_TCISERIES" set SERIES_DESC = :lv_en_series_desc, 
+	    		"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP,
+				"AUDIT_CHANGED_BY" = :lv_changed_by
+			where "SERIES_CODE" = :lv_series_code AND LANGUAGE_KEY = 'EN';
+	  else
+	    insert into "PROGRAMADMIN_TCISERIES" ("SERIES_CODE","LANGUAGE_KEY","SERIES_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+           values(lv_series_code,'EN',lv_en_series_desc,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	  end if;
+
+	  select count(*) into lv_count_fr  from "PROGRAMADMIN_TCISERIES" where LANGUAGE_KEY = 'FR' AND  SERIES_CODE = :lv_series_code;
+	
+	  if lv_count_fr > 0 then
+	    update "PROGRAMADMIN_TCISERIES" set SERIES_DESC = :lv_fr_series_desc, 
+	    		"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP,
+				"AUDIT_CHANGED_BY" = :lv_changed_by
+			where "SERIES_CODE" = :lv_series_code AND LANGUAGE_KEY = 'FR';
+
+	  else
+	    insert into "PROGRAMADMIN_TCISERIES" ("SERIES_CODE","LANGUAGE_KEY","SERIES_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+           values(lv_series_code,'FR',lv_fr_series_desc,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	  end if;
+	  
+	  select count(*) into lv_count_x  from "PROGRAMADMIN_VEHICLE_MODEL" where MODEL_CODE = :lv_model_code;
+	
+	  if lv_count_x > 0 then
+		update	"PROGRAMADMIN_VEHICLE_MODEL" set BRAND = :lv_brand, BRAND_NAME = :lv_brand_name,
+				"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP,
+				"AUDIT_CHANGED_BY" = :lv_changed_by
+				where "MODEL_CODE" = :lv_model_code;
+	  else
+		insert into "PROGRAMADMIN_VEHICLE_MODEL"("MODEL_CODE", "BRAND", "BRAND_NAME", "AUDIT_CREATED_ON", "AUDIT_CREATED_BY", "AUDIT_CHANGED_ON", "AUDIT_CHANGED_BY")
+		values(:lv_model_code, :lv_brand, :lv_brand_name, CURRENT_TIMESTAMP, :lv_changed_by, CURRENT_TIMESTAMP, :lv_changed_by);
+	  end if;	 
+	       
+    end if;
+  
+  end if;
+  
+
+end if;
+
+END;

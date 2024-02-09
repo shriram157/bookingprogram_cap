@@ -1,0 +1,26 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog contentWidth="400px"
+		
+		noDataText="{i18n>Label.Select.Parts}"
+		title="{i18n>Label.Select.Parts}"
+		search="handleCatPartsSearch"
+		liveChange = "handleCatPartsSearch"
+		confirm="handleCatPartsSearchDialogClose"
+		cancel="handleCatPartSearchDialogClose"
+		growingThreshold="20" 
+		items="{
+			path: '/ZC_Product_CategorySet'
+		}" >
+		<StandardListItem 
+			title="{PRODH}"
+			description="{VTEXT}"
+			icon="sap-icon://inventory"
+			iconDensityAware="false"
+			iconInset="false"
+			type="Active" />
+	</SelectDialog>
+</core:FragmentDefinition>
+
+

@@ -1,0 +1,125 @@
+<mvc:View controllerName="tci.wave2.ui.bookingProgram.controller.SearchProgram" xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:form="sap.ui.layout.form" xmlns:layout="sap.ui.layout"
+	xmlns:fb="sap.ui.comp.filterbar" xmlns:f="sap.f" xmlns="sap.m" xmlns:vm="sap.ui.comp.variants" displayBlock="true">
+	<Page showNavButton="false" floatingFooter="false" enableScrolling='false'>
+		<customHeader>
+			<core:Fragment fragmentName="tci.wave2.ui.bookingProgram.view.fragments.TopHeader" type="XML"/>
+		</customHeader>
+		<core:Fragment fragmentName="tci.wave2.ui.bookingProgram.view.fragments.ToolHeader" type="XML"/>
+		<content>
+			<Toolbar>
+				<content>
+					<Text text="{path : 'viewModel>/filteredItems', formatter:'.formatter.totalPrograms' }"/>
+					<ToolbarSpacer/>
+					<SearchField id="oidSearch" placeholder='{i18n>Label.Program.ID} ' showRefreshButton='true' liveChange='onLiveChange' search='onSearch'
+						width='450px'/>
+					<!--<Button id="sortButton" type='Transparent' icon="sap-icon://sort" press="onSetting" visible="true"/>-->
+					<Button id="filterButton" type='Transparent' icon="sap-icon://collapse" press="onExpandFilter"/>
+				</content>
+			</Toolbar>
+			<fb:FilterBar reset="onReset" header="" showClearOnFB="false" showRestoreOnFB="true" advancedMode="false" filterBarExpanded="true"
+				search="onSearch" showRestoreButton="false" showClearButton="true" useToolbar='false' showGoOnFB='false'
+				visible="{viewModel>/filterPanelEnable}" showFilterConfiguration='false'>
+				<fb:filterItems>
+					<fb:FilterItem name="A" label="{i18n>Label.Department}" labelTooltip="{i18n>Label.Department}">
+						<fb:control>
+							<Select id="programDepartment" selectedKey="{viewModel>/filters/department}" showSecondaryValues="false" width='15%' change="prepareSearch">
+								<items>
+									<core:Item text="{i18n>Department.all}" key="AAAA"/>
+									<core:Item text="Parts" key="D001"/>
+									<core:Item text="Service Retention" key="D002"/>
+									<core:Item text="Accessories" key="D003"/>
+								</items>
+							</Select>
+						</fb:control>
+					</fb:FilterItem>
+					<fb:FilterItem name="B" label="{i18n>Label.Status}" labelTooltip="{i18n>Label.Status}">
+						<fb:control>
+							<Select id="programStatus" width="15%" selectedKey="{viewModel>/filters/status}" change="prepareSearch">
+								<items>
+									<core:Item text="{i18n>Status.All}" key="AL"/>
+									<core:Item text="{i18n>Status.Future}" key="FT"/>
+									<core:Item text="{i18n>Status.Open}" key="OP"/>
+									<core:Item text="{i18n>Status.Closed}" key="CL"/>
+									<core:Item text="{i18n>Status.Completed}" key="CP"/>
+								</items>
+							</Select>
+						</fb:control>
+					</fb:FilterItem>
+				</fb:filterItems>
+			</fb:FilterBar>
+			<Table id="idProductsTableHeader" showNoData="false">
+				<columns>
+					<Column width="40%">
+						<Label text="{i18n>Label.Program.ID}"/>
+					</Column>
+					<Column width="40%" minScreenWidth="Tablet" demandPopin="true" hAlign="Begin">
+						<Label text="{i18n>Label.Program.Desc}"/>
+					</Column>
+					<Column width="20%" minScreenWidth="Tablet" demandPopin="true" hAlign="Center">
+						<Label text="{i18n>Label.Program.Department}"/>
+					</Column>
+					<Column width="20%" minScreenWidth="Tablet" demandPopin="false" hAlign="Center">
+						<Label text="{i18n>Label.Program.Window.Open.Date}"/>
+					</Column>
+					<Column width="20%" minScreenWidth="Tablet" demandPopin="false" hAlign="Center">
+						<Label text="{i18n>Label.Program.Window.Close.Date}"/>
+					</Column>
+					<Column width="20%" minScreenWidth="Tablet" demandPopin="false" hAlign="Center">
+						<Label text="{i18n>Label.Program.Status}"/>
+					</Column>
+					<Column width="36px" hAlign="Center">
+						<FlexBox height="50px" alignItems="End" justifyContent="End">
+							<items>
+									<core:Icon tooltip="{i18n>ToolTip.Sort.Button}" color='#666666' src="sap-icon://sort" press="handleSortButtonPressed" visible="true"
+									width="22px"/>
+								<core:Icon id="addButton" src="sap-icon://add" color='#00bfff' press="onAdd" visible="{=(!${viewModel>/readOnly} ) }" width="24px"/>
+							</items>
+						</FlexBox>
+					</Column>
+				</columns>
+			</Table>
+			<ScrollContainer id='flexContainer' height="{viewModel>/contHigh}" width="100%" horizontal="true" vertical="true" focusable="true">
+				<Table id="idProductsTable" mode='SingleSelectMaster' updateFinished="onUpdateFinished" selectionChange="onItemDetail"
+					sticky="{['sap.m.Sticky.ColumnHeaders', 'sap.m.Sticky.HeaderToolbar','sap.m.Sticky.InfoToolbar']}">
+					<columns>
+						<Column width="40%"/>
+						<Column width="40%" minScreenWidth="Tablet" demandPopin="true" hAlign="Begin"/>
+						<Column width="20%" minScreenWidth="Tablet" demandPopin="true" hAlign="Center"/>
+						<Column width="20%" minScreenWidth="Tablet" demandPopin="false" hAlign="Center"/>
+						<Column width="20%" minScreenWidth="Tablet" demandPopin="false" hAlign="Center"/>
+						<Column width="20%" minScreenWidth="Tablet" demandPopin="false" hAlign="Center"/>
+						<Column width="36px" hAlign="End"/>
+					</columns>
+					<items>
+						<ColumnListItem type="Active" press="onItemPressed" id="rowT">
+							<cells>
+								<Link text="{PROGRAM_ID}" enabled='false'/>
+								<Text text="{PROGRAM_DESC}"/>
+								<Text text="{path : 'DEPART_NAME'}"/>
+								<Text text="{path: 'OPEN_DATE', formatter:'.formatter.onlyDate'}"/>
+								<Text text="{path: 'CLOSE_DATE', formatter:'.formatter.onlyDate'}"/>
+								<Text text="{path : 'STATUS_DESC'}"/>
+								<HBox justifyContent='End' alignItems='End'>
+									<core:Icon src="sap-icon://feeder-arrow" color='#00bfff'/>
+								</HBox>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+			<OverflowToolbar>
+				<!--<Button icon="sap-icon://message-popup" text="{=${message>/}.length}" visible="{=${message>/}.length > 0}" type="Emphasized"
+					press="handleMessagePopoverPress"/>-->
+				<ToolbarSpacer/>
+			</OverflowToolbar>	
+			</ScrollContainer>
+		</content>
+		<footer>
+			<OverflowToolbar>
+				<!--<Button icon="sap-icon://message-popup" text="{=${message>/}.length}" visible="{=${message>/}.length > 0}" type="Emphasized"
+					press="handleMessagePopoverPress"/>-->
+				<ToolbarSpacer/>
+			</OverflowToolbar>
+		</footer>
+	</Page>
+</mvc:View>

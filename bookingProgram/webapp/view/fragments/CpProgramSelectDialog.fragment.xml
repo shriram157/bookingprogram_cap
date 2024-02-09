@@ -1,0 +1,18 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<SelectDialog contentWidth="650px" noDataText="{i18n>Label.Select.CProgram}" title="{i18n>Label.Select.CProgram}"
+		search="handleProgramSearch" liveChange="handleProgramSearch" confirm="handleProgramDialogClose" cancel="handleProgramDialogClose"
+		growingThreshold="20" items="{
+			path : '',
+			sorter :  [{ path : 'PROGRAM_ID', descending : false }]
+		}">
+		<ObjectListItem title="{PROGRAM_ID} - {DEPART_NAME} " type="Active" >
+			<firstStatus>
+				<ObjectStatus text="{path : 'STATUS', formatter : '.formatter.programStatus'}" />
+			</firstStatus>
+			<attributes>
+				<!--<ObjectAttribute text="{}"/>-->
+				<ObjectAttribute text="{ parts: [{ path : 'OPEN_DATE'},{path : 'CLOSE_DATE'}], formatter : '.formatter.openPGPeriod' }"/>
+			</attributes>
+		</ObjectListItem>
+	</SelectDialog>
+</core:FragmentDefinition>

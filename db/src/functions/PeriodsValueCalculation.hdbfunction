@@ -1,0 +1,138 @@
+FUNCTION "PERIODSVALUECALCULATION"(
+			im_programUUID NVARCHAR(36),
+			im_dealerCode NVARCHAR(20)			
+		)
+       RETURNS TABLE (
+       	PROGRAM_UUID NVARCHAR(36),
+       	DEALER_CODE NVARCHAR(20),
+       	PART_NUM NVARCHAR(40),
+       	VENDOR_ID NVARCHAR(20),
+		F0_PERIOD NVARCHAR(6),
+		F0_VALUE DECIMAL(13,0),
+		F1_PERIOD NVARCHAR(6),
+		F1_VALUE DECIMAL(13,0),
+		F2_PERIOD NVARCHAR(6),
+		F2_VALUE DECIMAL(13,0),
+		F3_PERIOD NVARCHAR(6),
+		F3_VALUE DECIMAL(13,0),
+		F4_PERIOD NVARCHAR(6),
+		F4_VALUE DECIMAL(13,0),
+		F5_PERIOD NVARCHAR(6),
+		F5_VALUE DECIMAL(13,0)
+       ) 
+       LANGUAGE SQLSCRIPT 
+       SQL SECURITY INVOKER AS 
+BEGIN 
+    /*****************************
+        Write your function logic
+    ****************************/
+    DECLARE lv_f0 			NVARCHAR(6) = null;
+    DECLARE lv_f0_enabled	NVARCHAR(1) = '';    
+    DECLARE lv_f1			NVARCHAR(6) = null;
+    DECLARE lv_f1_enabled	NVARCHAR(1) = '';     
+    DECLARE lv_f2			NVARCHAR(6) = null;
+    DECLARE lv_f2_enabled	NVARCHAR(1) = '';   
+    DECLARE lv_f3			NVARCHAR(6) = null;
+    DECLARE lv_f3_enabled	NVARCHAR(1) = '';   
+    DECLARE lv_f4			NVARCHAR(6) = null;
+    DECLARE lv_f4_enabled	NVARCHAR(1) = '';   
+    DECLARE lv_f5			NVARCHAR(6) = null;
+    DECLARE lv_f5_enabled	NVARCHAR(1) = '';  
+    
+    SELECT F0_PERIOD, F0_ENABLED, F1_PERIOD,F1_ENABLED,F2_PERIOD,F2_ENABLED,F3_PERIOD,F3_ENABLED,F4_PERIOD,F4_ENABLED,F5_PERIOD,F5_ENABLED
+    into lv_f0,lv_f0_enabled,lv_f1,lv_f1_enabled,lv_f2,lv_f2_enabled,lv_f3,lv_f3_enabled,lv_f4,lv_f4_enabled,lv_f5,lv_f5_enabled FROM "PERIODSCALCULATION"(:im_programUUID);
+
+	/*set the fx value to null if not allowed*/
+    IF (:lv_f0_enabled is null OR lv_f0_enabled <> 'X') 
+    THEN
+    	lv_f0 := null;
+    END IF;
+
+    IF (:lv_f1_enabled is null OR lv_f1_enabled <> 'X') 
+    THEN
+    	lv_f1 := null;
+    END IF;
+
+    IF (:lv_f2_enabled is null OR lv_f2_enabled <> 'X') 
+    THEN
+    	lv_f2 := null;
+    END IF;
+		
+    IF (:lv_f3_enabled is null OR lv_f3_enabled <> 'X') 
+    THEN
+    	lv_f3 := null;
+    END IF;
+
+    IF (:lv_f4_enabled is null OR lv_f4_enabled <> 'X') 
+    THEN
+    	lv_f4 := null;
+    END IF;
+
+    IF (:lv_f5_enabled is null OR lv_f5_enabled <> 'X') 
+    THEN
+    	lv_f5 := null;
+    END IF;
+
+	RETURN 
+
+ 	  select A.PROGRAM_UUID as PROGRAM_UUID,
+       	A.DEALER_CODE AS  DEALER_CODE ,
+       	A.PART_NUM AS PART_NUM,
+       	A.VENDOR_ID AS VENDOR_ID ,
+		:lv_f0 AS F0_PERIOD,
+		CASE WHEN lv_f0 is not NULL 
+			THEN
+			 IFNULL ( (select x0.ORDER_QTY from "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" AS x0 
+				where x0.PROGRAM_UUID = A.PROGRAM_UUID AND  x0.DEALER_CODE = A.DEALER_CODE AND x0.PART_NUM = A.PART_NUM
+				AND x0.VENDOR_ID = A.VENDOR_ID AND x0.MMYYYY = :lv_f0) , 0 )
+			ELSE
+			 0
+		END AS F0_VALUE,
+		:lv_f1 AS F1_PERIOD,
+		CASE WHEN lv_f1 is not NULL 
+			THEN
+			 IFNULL( (select x1.ORDER_QTY from "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" AS x1 
+				where x1.PROGRAM_UUID = A.PROGRAM_UUID AND  x1.DEALER_CODE = A.DEALER_CODE AND x1.PART_NUM = A.PART_NUM
+				AND x1.VENDOR_ID = A.VENDOR_ID AND x1.MMYYYY = :lv_f1) , 0)
+			ELSE
+			 0
+		END AS F1_VALUE,
+		:lv_f2 AS F2_PERIOD,
+		CASE WHEN lv_f2 is not NULL 
+			THEN
+			 IFNULL( (select x2.ORDER_QTY from "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" AS x2 
+				where x2.PROGRAM_UUID = A.PROGRAM_UUID AND  x2.DEALER_CODE = A.DEALER_CODE AND x2.PART_NUM = A.PART_NUM
+				AND x2.VENDOR_ID = A.VENDOR_ID AND x2.MMYYYY = :lv_f2 ) , 0)
+			ELSE
+			 0
+		END AS F2_VALUE,
+		:lv_f3 AS F3_PERIOD, 
+		CASE WHEN lv_f3 is not NULL 
+			THEN
+			 IFNULL( (select x3.ORDER_QTY from "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" AS x3 
+				where x3.PROGRAM_UUID = A.PROGRAM_UUID AND  x3.DEALER_CODE = A.DEALER_CODE AND x3.PART_NUM = A.PART_NUM
+				AND x3.VENDOR_ID = A.VENDOR_ID AND x3.MMYYYY = :lv_f3) , 0)
+			ELSE
+			 0
+		END AS F3_VALUE,
+		:lv_f4 AS F4_PERIOD,
+		CASE WHEN lv_f4 is not NULL 
+			THEN
+			 IFNULL( (select x4.ORDER_QTY from "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" AS x4 
+				where x4.PROGRAM_UUID = A.PROGRAM_UUID AND  x4.DEALER_CODE = A.DEALER_CODE AND x4.PART_NUM = A.PART_NUM
+				AND x4.VENDOR_ID = A.VENDOR_ID AND x4.MMYYYY = :lv_f4 ) , 0)
+			ELSE
+			 0
+		END AS F4_VALUE,
+		:lv_f5 AS F5_PERIOD,
+		CASE WHEN lv_f5 is not NULL 
+			THEN
+			 IFNULL( (select x5.ORDER_QTY from "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" AS x5 
+				where x5.PROGRAM_UUID = A.PROGRAM_UUID AND  x5.DEALER_CODE = A.DEALER_CODE AND x5.PART_NUM = A.PART_NUM
+				AND x5.VENDOR_ID = A.VENDOR_ID AND x5.MMYYYY = :lv_f5 ) , 0)
+			ELSE
+			 0
+		END AS F5_VALUE
+	  from "PROGRAMBOOKING_DEALERBOOKINGPERIODKEYVIEW" AS A where A.PROGRAM_UUID = :im_programUUID AND A.DEALER_CODE = :im_dealerCode;	     
+
+END;

@@ -1,0 +1,90 @@
+PROCEDURE "PROCEDURES_PROGRAMDELIVERYLOCATIONUPDATE" ( 
+    IN it_new "PROGRAMADMIN_PROGRAMDELIVERYLOCATIONVIEW",
+    IN it_old "PROGRAMADMIN_PROGRAMDELIVERYLOCATIONVIEW",
+	OUT ex_error "PROCEDURES_TT_ERRORS"  ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER AS
+BEGIN
+
+/***************************** 
+ Write your procedure logic 
+ *****************************/
+declare lv_object_key		string;
+declare lv_program_uuid		string;
+declare lv_valid	 		string;
+declare lv_vendor_type		string;
+
+declare lv_programid		string;
+declare lv_department_id	string;
+declare lv_brand_id 		string;
+declare lv_vendor_id 		string;
+declare lv_location_id 		string;
+declare lv_location_desc	string;
+declare lv_lang				string;
+declare lv_lang_x			string;
+declare lv_changed_by		string;
+
+declare lv_address1 		string;
+declare lv_address2			string;
+declare lv_city				string;
+declare lv_province			string;
+declare lv_zip				string;
+declare lv_phone			string;
+
+declare lv_count			integer; 
+declare lv_count_en			integer; 
+declare lv_count_fr			integer; 
+
+select "OBJECT_KEY","PROGRAM_UUID","VENDOR_ID","DEL_LOCATION_ID","LANG","DEL_LOCATION_NAME","VENDOR_TYPE","VALID","CHANGED_BY","DEL_ADDRESS1","DEL_ADDRESS2","DEL_CITY","DEL_PROVINCE","DEL_POSTAL_CODE","DEL_PHONE_NUMBER"
+     into lv_object_key,lv_program_uuid,lv_vendor_id,lv_location_id,lv_lang,lv_location_desc,lv_vendor_type,lv_valid,lv_changed_by,lv_address1,lv_address2,lv_city,lv_province,lv_zip,lv_phone
+     from :it_new; 
+
+if :lv_program_uuid = '' then
+  ex_error = select 552 as http_status_code, 
+               'The Program UUID is empty' as error_message, 
+                     'The program uuid field can not be my empty' as detail from "DUMMY";
+else
+	lv_lang := upper(:lv_lang);
+
+	select count(*) into lv_count  from "PROGRAMADMIN_PROG_DEL_LOCATION" where OBJECT_KEY = :lv_object_key;
+	
+	if :lv_count > 0 then
+		update "PROGRAMADMIN_PROG_DEL_LOCATION" 
+			set DEL_PHONE_NUMBER = :lv_phone,  "ADDRESS_DEL_ADDRESS1" = :lv_address1, "ADDRESS_DEL_ADDRESS2" = :lv_address2, "ADDRESS_DEL_CITY" = :lv_city, "ADDRESS_DEL_PROVINCE" = :lv_province, "ADDRESS_DEL_POSTAL_CODE" = :lv_zip, 
+			"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP, "AUDIT_CHANGED_BY" = :lv_changed_by
+		where OBJECT_KEY = :lv_object_key; 
+		
+		select count(*) into lv_count  from "PROGRAMADMIN_DEL_LOC_NAME" where LANGUAGE_KEY = :lv_lang AND OBJECT_KEY = :lv_object_key;
+
+		if :lv_count <= 0 then
+	    	insert into "PROGRAMADMIN_DEL_LOC_NAME" ("OBJECT_KEY","LANGUAGE_KEY","DEL_LOCATION_NAME","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+        	 values(:lv_object_key,:lv_lang,:lv_location_desc,CURRENT_TIMESTAMP,:lv_changed_by,CURRENT_TIMESTAMP,:lv_changed_by);
+    	else       
+	    	update "PROGRAMADMIN_DEL_LOC_NAME" set DEL_LOCATION_NAME= :lv_location_desc, 
+	    		"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP,
+				"AUDIT_CHANGED_BY" = :lv_changed_by
+			where "OBJECT_KEY" = :lv_object_key AND LANGUAGE_KEY = :lv_lang;
+		end if;
+	
+		if :lv_lang ='EN' then 
+			lv_lang_x := 'FR';
+		else 
+			lv_lang_x := 'EN';
+		end if;	
+
+		select count(*) into lv_count  from "PROGRAMADMIN_DEL_LOC_NAME" where LANGUAGE_KEY = :lv_lang_X AND OBJECT_KEY = :lv_object_key;
+		if :lv_count <= 0 then
+	    	insert into "PROGRAMADMIN_DEL_LOC_NAME" ("OBJECT_KEY","LANGUAGE_KEY","DEL_LOCATION_NAME","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+        	values(:lv_object_key,:lv_lang_x,:lv_location_desc,CURRENT_TIMESTAMP,:lv_changed_by,CURRENT_TIMESTAMP,:lv_changed_by);
+		end if;
+	
+	else 
+		ex_error = select 554 as http_status_code, 
+               'The Record no found ' as error_message, 
+                     'The Record no found, can not update' as detail from "DUMMY";
+
+	end if;
+
+end if;
+
+END;

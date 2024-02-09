@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?><Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="MINIPROGRAMVENDORCALVIEW" applyPrivilegeType="NONE" dataCategory="DEFAULT" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="MINIPROGRAMVENDORCALVIEW"/>
+<localVariables>
+  <variable id="PROGRAMUID" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="32" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+  <variable id="LANGUAGE" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="2" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+</localVariables>
+<variableMappings/>
+<dataSources>
+  <DataSource id="PROGRAMADMIN_PROG_VENDOR">
+    <resourceUri>PROGRAMADMIN_PROG_VENDOR</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_VENDOR_NAME">
+    <resourceUri>PROGRAMADMIN_VENDOR_NAME</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PROG_VENDOR" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY">
+        <descriptions defaultDescription="OBJECT KEY"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="VENDOR_ID">
+        <descriptions defaultDescription="VENDOR NUMBER"/>
+      </viewAttribute>
+      <viewAttribute id="DISTRIBUTOR">
+        <descriptions defaultDescription="DISTRIBUTOR YES X OR NO"/>
+      </viewAttribute>
+      <viewAttribute id="VALID">
+        <descriptions defaultDescription="IS VALID"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PROGRAMADMIN_PROG_VENDOR">
+      <mapping xsi:type="Calculation:AttributeMapping" target="OBJECT_KEY" source="OBJECT_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DISTRIBUTOR" source="DISTRIBUTOR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VALID" source="VALID"/>
+    </input>
+    <filter>"PROGRAM_UUID" = '$$PROGRAMUID$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_VENDOR_NAME" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="VENDOR_ID">
+        <descriptions defaultDescription="CATEGORY ID"/>
+      </viewAttribute>
+      <viewAttribute id="LANGUAGE_KEY">
+        <descriptions defaultDescription="LANGUAGE KEY"/>
+      </viewAttribute>
+      <viewAttribute id="VENDOR_DESC">
+        <descriptions defaultDescription="CATEGORY DESCRIPTION/NAME"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PROGRAMADMIN_VENDOR_NAME">
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LANGUAGE_KEY" source="LANGUAGE_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_DESC" source="VENDOR_DESC"/>
+    </input>
+    <filter>"LANGUAGE_KEY" = '$$LANGUAGE$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="JOIN_PROG_VENDOR" cardinality="CN_N" joinType="leftOuter">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY">
+        <descriptions defaultDescription="OBJECT KEY"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="VALID">
+        <descriptions defaultDescription="IS VALID"/>
+      </viewAttribute>
+      <viewAttribute id="VENDOR_ID">
+        <descriptions defaultDescription="VENDOR NUMBER"/>
+      </viewAttribute>
+      <viewAttribute id="VENDOR_DESC">
+        <descriptions defaultDescription="CATEGORY DESCRIPTION/NAME"/>
+      </viewAttribute>
+      <viewAttribute id="DISTRIBUTOR">
+        <descriptions defaultDescription="DISTRIBUTOR YES X OR NO"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PRJ_PROG_VENDOR">
+      <mapping xsi:type="Calculation:AttributeMapping" target="OBJECT_KEY" source="OBJECT_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DISTRIBUTOR" source="DISTRIBUTOR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VALID" source="VALID"/>
+    </input>
+    <input node="PRJ_VENDOR_NAME">
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_DESC" source="VENDOR_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+    </input>
+    <joinAttribute name="VENDOR_ID"/>
+  </calculationView>
+</calculationViews>
+<logicalModel id="JOIN_PROG_VENDOR" filterExpressionLanguage="SQL">
+  <attributes>
+    <attribute id="OBJECT_KEY" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="OBJECT KEY"/>
+      <keyMapping columnObjectName="JOIN_PROG_VENDOR" columnName="OBJECT_KEY"/>
+    </attribute>
+    <attribute id="PROGRAM_UUID" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM UUID"/>
+      <keyMapping columnObjectName="JOIN_PROG_VENDOR" columnName="PROGRAM_UUID"/>
+    </attribute>
+    <attribute id="VALID" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="IS VALID"/>
+      <keyMapping columnObjectName="JOIN_PROG_VENDOR" columnName="VALID"/>
+    </attribute>
+    <attribute id="VENDOR_ID" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VENDOR NUMBER"/>
+      <keyMapping columnObjectName="JOIN_PROG_VENDOR" columnName="VENDOR_ID"/>
+    </attribute>
+    <attribute id="VENDOR_DESC" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CATEGORY DESCRIPTION/NAME"/>
+      <keyMapping columnObjectName="JOIN_PROG_VENDOR" columnName="VENDOR_DESC"/>
+    </attribute>
+    <attribute id="DISTRIBUTOR" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DISTRIBUTOR YES X OR NO"/>
+      <keyMapping columnObjectName="JOIN_PROG_VENDOR" columnName="DISTRIBUTOR"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes>
+    <calculatedAttribute id="LANGUAGE_KEY" order="3" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <keyCalculation datatype="VARCHAR" expressionLanguage="SQL" length="2">
+        <formula>'$$Language$$'</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+  
+    <calculatedAttribute id="SELECTED" order="8" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <keyCalculation datatype="VARCHAR" expressionLanguage="SQL" length="1">
+        <formula>' '</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+  </calculatedAttributes>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+
+  <filter>"PROGRAM_UUID" = '$$PROGRAMUID$$'</filter>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="238" y="112"/>
+    
+      <rectangleSize width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="PRJ_PROG_VENDOR" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="92" y="396"/>
+      <rectangleSize height="30" width="181"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_VENDOR_NAME" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="323" y="396"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="JOIN_PROG_VENDOR" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="238" y="237"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="JOIN_PROG_VENDOR" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="JOIN_PROG_VENDOR" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

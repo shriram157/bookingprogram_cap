@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="PROGRAMSTATUSCALCULATION" applyPrivilegeType="NONE" dataCategory="DEFAULT" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="PROGRAMSTATUSCALCULATION"/>
+<localVariables>
+  <variable id="PROGRAMUID" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="36" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+</localVariables>
+<variableMappings/>
+<dataSources>
+  <DataSource id="PROGRAMADMIN_BOOKING_PROGRAM">
+    <resourceUri>PROGRAMADMIN_BOOKING_PROGRAM</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMBOOKING_DEALER_BOOKING_STATUS_HIST">
+    <resourceUri>PROGRAMBOOKING_DEALER_BOOKING_STATUS_HIST</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews>
+  <calculationView xsi:type="Calculation:ProjectionView" id="Projection_1" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="PROGRAM_ID"/>
+      <viewAttribute id="DEPART"/>
+      <viewAttribute id="BRAND"/>
+      <viewAttribute id="OPEN_DATE"/>
+      <viewAttribute id="CLOSE_DATE"/>
+      <viewAttribute id="INITIAL_WARN"/>
+      <viewAttribute id="FINAL_WARN"/>
+      <viewAttribute id="DELIVERY_FR"/>
+      <viewAttribute id="DELIVERY_TO"/>
+      <viewAttribute id="STATUS"/>
+      <viewAttribute id="CPROGRAM_UUID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_BOOKING_PROGRAM"/>
+    <filter>"PROGRAM_UUID" = '$$PROGRAMUID$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="Projection_2" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="B_STATUS"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMBOOKING_DEALER_BOOKING_STATUS_HIST"/>
+    <filter>"PROGRAM_UUID" = '$$PROGRAMUID$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="Join_1" cardinality="C1_N" joinType="leftOuter">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="PROGRAM_ID"/>
+      <viewAttribute id="DEPART"/>
+      <viewAttribute id="BRAND"/>
+      <viewAttribute id="OPEN_DATE"/>
+      <viewAttribute id="CLOSE_DATE"/>
+      <viewAttribute id="INITIAL_WARN" aggregationType="sum"/>
+      <viewAttribute id="FINAL_WARN" aggregationType="sum"/>
+      <viewAttribute id="DELIVERY_FR"/>
+      <viewAttribute id="DELIVERY_TO"/>
+      <viewAttribute id="STATUS"/>
+      <viewAttribute id="CPROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="B_STATUS"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="Projection_1">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_ID" source="PROGRAM_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEPART" source="DEPART"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="BRAND" source="BRAND"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="OPEN_DATE" source="OPEN_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CLOSE_DATE" source="CLOSE_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="INITIAL_WARN" source="INITIAL_WARN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FINAL_WARN" source="FINAL_WARN"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DELIVERY_FR" source="DELIVERY_FR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DELIVERY_TO" source="DELIVERY_TO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS" source="STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CPROGRAM_UUID" source="CPROGRAM_UUID"/>
+    </input>
+    <input node="Projection_2">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="B_STATUS" source="B_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+    </input>
+    <joinAttribute name="PROGRAM_UUID"/>
+  </calculationView>
+</calculationViews>
+<logicalModel id="Join_1">
+  <attributes>
+    <attribute id="PROGRAM_UUID" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM UUID"/>
+      <keyMapping columnObjectName="Join_1" columnName="PROGRAM_UUID"/>
+    </attribute>
+    <attribute id="PROGRAM_ID" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM ID"/>
+      <keyMapping columnObjectName="Join_1" columnName="PROGRAM_ID"/>
+    </attribute>
+    <attribute id="DEPART" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEPARTMENT"/>
+      <keyMapping columnObjectName="Join_1" columnName="DEPART"/>
+    </attribute>
+    <attribute id="BRAND" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="BRAND"/>
+      <keyMapping columnObjectName="Join_1" columnName="BRAND"/>
+    </attribute>
+    <attribute id="OPEN_DATE" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="BOOKING WINDOW OPEN"/>
+      <keyMapping columnObjectName="Join_1" columnName="OPEN_DATE"/>
+    </attribute>
+    <attribute id="CLOSE_DATE" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="BOOKING WINDOW CLOSE"/>
+      <keyMapping columnObjectName="Join_1" columnName="CLOSE_DATE"/>
+    </attribute>
+    <attribute id="INITIAL_WARN" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="INITIAL WARNING"/>
+      <keyMapping columnObjectName="Join_1" columnName="INITIAL_WARN"/>
+    </attribute>
+    <attribute id="FINAL_WARN" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="FINAL WARNING"/>
+      <keyMapping columnObjectName="Join_1" columnName="FINAL_WARN"/>
+    </attribute>
+    <attribute id="DELIVERY_FR" order="10" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DELIVERY WINDOW FROM"/>
+      <keyMapping columnObjectName="Join_1" columnName="DELIVERY_FR"/>
+    </attribute>
+    <attribute id="DELIVERY_TO" order="11" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DELIVERY WINDOW TO"/>
+      <keyMapping columnObjectName="Join_1" columnName="DELIVERY_TO"/>
+    </attribute>
+    <attribute id="STATUS" order="12" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="STATUS"/>
+      <keyMapping columnObjectName="Join_1" columnName="STATUS"/>
+    </attribute>
+    <attribute id="CPROGRAM_UUID" order="13" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="COMPARATIVE PROGRAM UUID"/>
+      <keyMapping columnObjectName="Join_1" columnName="CPROGRAM_UUID"/>
+    </attribute>
+    <attribute id="DEALER_CODE" order="14" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEALER CODE"/>
+      <keyMapping columnObjectName="Join_1" columnName="DEALER_CODE"/>
+    </attribute>
+    <attribute id="B_STATUS" order="15" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="BOOKING STATUS"/>
+      <keyMapping columnObjectName="Join_1" columnName="B_STATUS"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes>
+    <calculatedAttribute id="C_STATUS" order="1" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <keyCalculation datatype="VARCHAR" expressionLanguage="COLUMN_ENGINE" length="10">
+        <formula>if ( "STATUS" = 'CP', 'CP', 
+    if (daysbetween( utctolocal(utcnow(),'EST'), "OPEN_DATE") &gt; 0, 'FT',
+        if (daysbetween( utctolocal(utcnow(),'EST'), "CLOSE_DATE") &lt; 0, 'CL', 'OP') 
+    )
+)    
+</formula>
+      </keyCalculation>
+    </calculatedAttribute>
+  </calculatedAttributes>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/></logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="40" y="85"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="Projection_1" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="-54" y="398"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="Projection_2" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="257" y="398"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="Join_1" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="103" y="216"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="Projection_1" modelObjectNameSpace="Join_1" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="183"/>
+    </shape>
+    <shape modelObjectName="Projection_2" modelObjectNameSpace="Join_1" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="175"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

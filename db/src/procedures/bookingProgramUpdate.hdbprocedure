@@ -1,0 +1,258 @@
+PROCEDURE "PROCEDURES_BOOKINGPROGRAMUPDATE" ( 
+    IN it_new "PROGRAMADMIN_BOOKINGPROGRAMVIEW",
+    IN it_old "PROGRAMADMIN_BOOKINGPROGRAMVIEW",
+	OUT ex_error "PROCEDURES_TT_ERRORS"  ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER AS
+BEGIN
+
+/***************************** 
+ Write your procedure logic 
+ *****************************/
+declare lv_program_uuid			string;
+declare lv_new_programid		string;
+declare lv_new_department_id	string;
+declare lv_new_brand_id 		string;
+declare lv_new_open_date 		DATE;
+declare lv_new_close_date 		DATE;
+declare lv_new_delivery_fr		DATE;
+declare lv_new_delivery_to 		DATE;
+declare lv_new_init_warm		integer;
+declare lv_new_final_warm		integer;
+declare lv_new_comparative_uuid	string;
+declare lv_new_status			string;
+declare lv_new_en_desc			string;
+declare lv_new_fr_desc			string;
+declare lv_new_changed_by		string;
+
+
+declare lv_old_programid		string;
+declare lv_old_department_id	string;
+declare lv_old_brand_id 		string;
+declare lv_old_open_date 		DATE;
+declare lv_old_close_date 		DATE;
+declare lv_old_delivery_fr		DATE;
+declare lv_old_delivery_to 		DATE;
+declare lv_old_init_warm		integer;
+declare lv_old_final_warm		integer;
+declare lv_old_comparative_uuid	string;
+declare lv_old_status			string;
+declare lv_old_en_desc			string;
+declare lv_old_fr_desc			string;
+declare lv_old_changed_by		string;
+
+declare lv_has_change_sumamry	integer; 
+declare lv_has_change_endesc	integer; 
+declare lv_has_change_frdesc	integer; 
+declare lv_count				integer; 
+declare lv_has_error			boolean default false; 
+
+lv_has_change_sumamry	:=  0; 
+lv_has_change_endesc	:=  0; 
+lv_has_change_frdesc	:=  0; 
+lv_count				:= 0;
+
+select	PROGRAM_UUID,
+		BRAND,
+		OPEN_DATE,
+		CLOSE_DATE,
+		INITIAL_WARN,
+		FINAL_WARN,
+		DELIVERY_FR,
+		DELIVERY_TO,
+		CPROGRAM_UUID,
+		STATUS,
+		EN_DESC,
+		FR_DESC,
+		CHANGED_BY
+   into lv_program_uuid,
+		lv_new_brand_id,
+		lv_new_open_date,
+		lv_new_close_date,
+		lv_new_init_warm,
+		lv_new_final_warm,
+		lv_new_delivery_fr,
+		lv_new_delivery_to,
+		lv_new_comparative_uuid,
+		lv_new_status,
+		lv_new_en_desc,
+		lv_new_fr_desc,
+		lv_new_changed_by
+   from :it_new; 
+
+select	BRAND,
+		OPEN_DATE,
+		CLOSE_DATE,
+		INITIAL_WARN,
+		FINAL_WARN,
+		DELIVERY_FR,
+		DELIVERY_TO,
+		CPROGRAM_UUID,
+		STATUS,
+		EN_DESC,
+		FR_DESC,
+		CHANGED_BY
+   into lv_old_brand_id,
+		lv_old_open_date,
+		lv_old_close_date,
+		lv_old_init_warm,
+		lv_old_final_warm,
+		lv_old_delivery_fr,
+		lv_old_delivery_to,
+		lv_old_comparative_uuid,
+		lv_old_status,
+		lv_old_en_desc,
+		lv_old_fr_desc,
+		lv_old_changed_by
+   from :it_old; 
+
+if 	:lv_new_open_date is NULL OR :lv_new_open_date = :lv_old_open_date then 
+	lv_new_open_date := :lv_old_open_date;
+else 	
+	lv_has_change_sumamry := 1;
+end if;
+
+if 	:lv_new_close_date is NULL OR :lv_new_close_date = :lv_old_close_date then 
+	lv_new_close_date := :lv_old_close_date;
+else 	
+	lv_has_change_sumamry := 1;
+end if;
+
+if 	:lv_new_init_warm is NULL OR :lv_new_init_warm = :lv_old_init_warm then 
+	lv_new_init_warm := :lv_old_init_warm;
+else 	
+	lv_has_change_sumamry := 1;
+end if;
+
+if 	:lv_new_final_warm is NULL OR :lv_new_final_warm = :lv_old_final_warm then 
+	lv_new_final_warm := :lv_old_final_warm;
+else 	
+	lv_has_change_sumamry := 1;
+end if;
+
+if 	:lv_new_delivery_fr is NULL OR :lv_new_delivery_fr = :lv_old_delivery_fr then 
+	lv_new_delivery_fr := :lv_old_delivery_fr;
+else 	
+	lv_has_change_sumamry := 1;
+end if;
+
+if 	:lv_new_delivery_to is NULL OR :lv_new_delivery_to = :lv_old_delivery_to then 
+	lv_new_delivery_to := :lv_old_delivery_to;
+else 	
+	lv_has_change_sumamry := 1;
+end if;
+
+if 	:lv_new_comparative_uuid is NULL OR :lv_new_comparative_uuid = :lv_old_comparative_uuid then 
+	lv_new_comparative_uuid := :lv_old_comparative_uuid;
+else 	
+	lv_has_change_sumamry := 1;
+end if;
+
+if 	:lv_new_status is NULL OR :lv_new_status = :lv_old_status then 
+	lv_new_status := :lv_old_status;
+else 	
+	lv_has_change_sumamry := 1;
+end if;
+
+if 	:lv_new_brand_id is NULL OR :lv_new_brand_id = :lv_old_brand_id then 
+	lv_new_brand_id := :lv_old_brand_id;
+else 	
+	-- check  the error 
+	lv_count				:= 0;
+	if :lv_old_brand_id = '00' AND :lv_new_brand_id = '10' then 
+		select count(*) into lv_count from "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" where PROGRAM_UUID = :lv_program_uuid;
+		--select count(*) into lv_count from "PROGRAMADMIN_PROG_PART_FITMENT" where MODEL_CODE IN (select MODEL_CODE from "PROGRAMADMIN_VEHICLE_MODEL" where BRAND = '20');
+	elseif :lv_old_brand_id = '00' AND :lv_new_brand_id = '20' then 
+		select count(*) into lv_count from "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" where PROGRAM_UUID = :lv_program_uuid;
+		--select count(*) into lv_count from "PROGRAMADMIN_PROG_PART_FITMENT" where MODEL_CODE IN (select MODEL_CODE from "PROGRAMADMIN_VEHICLE_MODEL" where BRAND = '10');
+	elseif :lv_old_brand_id = '10' AND :lv_new_brand_id = '20' then 
+		select count(*) into lv_count from "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" where PROGRAM_UUID = :lv_program_uuid;
+		--select count(*) into lv_count from "PROGRAMADMIN_PROG_PART_FITMENT" where MODEL_CODE IN (select MODEL_CODE from "PROGRAMADMIN_VEHICLE_MODEL" where BRAND = '10');
+	elseif :lv_old_brand_id = '20' AND :lv_new_brand_id = '10' then 
+		select count(*) into lv_count from "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" where PROGRAM_UUID = :lv_program_uuid;
+		--select count(*) into lv_count from "PROGRAMADMIN_PROG_PART_FITMENT" where MODEL_CODE IN (select MODEL_CODE from "PROGRAMADMIN_VEHICLE_MODEL" where BRAND = '20');
+	end if;
+	
+	if lv_count > 0  then 
+		ex_error = select 556 as http_status_code, 
+               'BP02001' as error_message, 
+                     'The brand already been referenced' as detail from "DUMMY";
+
+		lv_has_error = true; 
+	end if;
+	lv_has_change_sumamry := 1;
+end if;
+
+if 	:lv_new_changed_by is NULL OR :lv_new_changed_by = :lv_old_changed_by then 
+	lv_new_changed_by := :lv_old_changed_by;
+end if;
+
+if 	:lv_new_en_desc is NULL OR :lv_new_en_desc = :lv_old_en_desc then 
+	lv_new_en_desc := :lv_old_en_desc;
+else 	
+	lv_has_change_endesc := 1;
+end if;
+
+if 	:lv_new_fr_desc is NULL OR :lv_new_fr_desc = :lv_old_fr_desc then 
+	lv_new_fr_desc := :lv_old_fr_desc;
+else 	
+	lv_has_change_frdesc := 1;
+end if;
+
+if lv_has_error = false then 
+if :lv_has_change_sumamry > 0 then 
+    update "PROGRAMADMIN_BOOKING_PROGRAM" 
+    	set "BRAND"			= :lv_new_brand_id,
+    		"OPEN_DATE" 	= :lv_new_open_date,
+			"CLOSE_DATE"	= :lv_new_close_date ,
+			"INITIAL_WARN"	= :lv_new_init_warm,
+			"FINAL_WARN"	= :lv_new_final_warm,
+			"DELIVERY_FR"	= :lv_new_delivery_fr,
+			"DELIVERY_TO"	= :lv_new_delivery_to,
+			"CPROGRAM_UUID"	= :lv_new_comparative_uuid,
+			"STATUS"		= :lv_new_status,
+			"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP,
+			"AUDIT_CHANGED_BY" = :lv_new_changed_by
+      where "PROGRAM_UUID" = :lv_program_uuid;
+end if;
+
+if :lv_has_change_endesc >0 then 
+	select count(*) into lv_count from "PROGRAMADMIN_PROG_NAME" where "PROGRAM_UUID" = :lv_program_uuid AND "LANGUAGE_KEY" = 'EN'; 
+	if :lv_count > 0 then 
+	    update "PROGRAMADMIN_PROG_NAME" 
+    		set "PROGRAM_DESC" 	= :lv_new_en_desc,
+				"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP,
+				"AUDIT_CHANGED_BY" = :lv_new_changed_by
+    	 where "PROGRAM_UUID" = :lv_program_uuid AND "LANGUAGE_KEY" = 'EN'; 
+	else
+	    insert into "PROGRAMADMIN_PROG_NAME" 
+           values(:lv_program_uuid,'EN',:lv_new_en_desc,CURRENT_TIMESTAMP,:lv_new_changed_by,CURRENT_TIMESTAMP,:lv_new_changed_by);
+	end if;
+	lv_count := 0;
+end if;
+
+
+if :lv_has_change_frdesc >0 then 
+	select count(*) into lv_count from "PROGRAMADMIN_PROG_NAME" where "PROGRAM_UUID" = :lv_program_uuid AND "LANGUAGE_KEY" = 'FR'; 
+	if :lv_count > 0 then 
+	    update "PROGRAMADMIN_PROG_NAME" 
+    		set "PROGRAM_DESC" 	= :lv_new_fr_desc,
+				"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP,
+				"AUDIT_CHANGED_BY" = :lv_new_changed_by
+    	 where "PROGRAM_UUID" = :lv_program_uuid AND "LANGUAGE_KEY" = 'FR'; 
+	else
+	    insert into "PROGRAMADMIN_PROG_NAME" 
+           values(:lv_program_uuid,'FR',:lv_new_fr_desc,CURRENT_TIMESTAMP,:lv_new_changed_by,CURRENT_TIMESTAMP,:lv_new_changed_by);
+	end if;
+	lv_count := 0;
+end if;
+
+if :lv_has_change_frdesc = 0 AND :lv_has_change_endesc = 0 AND :lv_has_change_sumamry = 0 then
+	ex_error = select 304 as http_status_code, 
+               'The Record not need update' as error_message, 
+                     'The Record not need update' as detail from "DUMMY";
+end if;
+
+end if;
+
+END;

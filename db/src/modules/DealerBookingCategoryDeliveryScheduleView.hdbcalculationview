@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?><Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="DEALERBOOKINGCATEGORYDELIVERYSCHEDULEVIEW" applyPrivilegeType="NONE" dataCategory="DEFAULT" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="DEALERBOOKINGCATEGORYDELIVERYSCHEDULEVIEW"/>
+<localVariables/>
+<variableMappings/>
+<dataSources>
+  <DataSource id="PROGRAMBOOKING_DEALER_BOOKING_PERIOD">
+    <resourceUri>PROGRAMBOOKING_DEALER_BOOKING_PERIOD</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMBOOKING_DELIVERY_SCHEDULE_LINE">
+    <resourceUri>PROGRAMBOOKING_DELIVERY_SCHEDULE_LINE</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PERIOD_DEL_AMT">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="MMYYYY"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="ORDER_QTY"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMBOOKING_DEALER_BOOKING_PERIOD"/></calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_DEL_SCHE_LINE">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="MMYYYY"/>
+      <viewAttribute id="COUNTER"/>
+      <viewAttribute id="SCHEDULE_DATE"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMBOOKING_DELIVERY_SCHEDULE_LINE"/></calculationView>
+  <calculationView xsi:type="Calculation:AggregationView" id="AGG_BOOK_DEL_AMT">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="MMYYYY"/>
+      <viewAttribute id="ORDER_QTY" aggregationType="sum"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PRJ_PERIOD_DEL_AMT"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="PRJ_DEL_AMT_DATE" cardinality="C1_N" joinType="leftOuter" referentialDirection="left">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="MMYYYY"/>
+      <viewAttribute id="ORDER_QTY" aggregationType="sum"/>
+      <viewAttribute id="COUNTER" aggregationType="sum"/>
+      <viewAttribute id="SCHEDULE_DATE"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="AGG_BOOK_DEL_AMT">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MMYYYY" source="MMYYYY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ORDER_QTY" source="ORDER_QTY"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+    </input>
+    <input node="PRJ_DEL_SCHE_LINE">
+      <mapping xsi:type="Calculation:AttributeMapping" target="COUNTER" source="COUNTER"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SCHEDULE_DATE" source="SCHEDULE_DATE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MMYYYY" source="MMYYYY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+    </input>
+    <joinAttribute name="DEALER_CODE"/>
+    <joinAttribute name="VENDOR_ID"/>
+    <joinAttribute name="CATEGORY_ID"/>
+    <joinAttribute name="MMYYYY"/>
+    <joinAttribute name="PROGRAM_UUID"/>
+  </calculationView>
+</calculationViews>
+<logicalModel id="PRJ_DEL_AMT_DATE" filterExpressionLanguage="SQL">
+  <attributes>
+    <attribute id="PROGRAM_UUID" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM UUID"/>
+      <keyMapping columnObjectName="PRJ_DEL_AMT_DATE" columnName="PROGRAM_UUID"/>
+    </attribute>
+    <attribute id="DEALER_CODE" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEALER CODE"/>
+      <keyMapping columnObjectName="PRJ_DEL_AMT_DATE" columnName="DEALER_CODE"/>
+    </attribute>
+    <attribute id="VENDOR_ID" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VENDOR NUMBER"/>
+      <keyMapping columnObjectName="PRJ_DEL_AMT_DATE" columnName="VENDOR_ID"/>
+    </attribute>
+    <attribute id="CATEGORY_ID" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CATEGORY ATRIBUTES"/>
+      <keyMapping columnObjectName="PRJ_DEL_AMT_DATE" columnName="CATEGORY_ID"/>
+    </attribute>
+    <attribute id="MMYYYY" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="MMYYYY"/>
+      <keyMapping columnObjectName="PRJ_DEL_AMT_DATE" columnName="MMYYYY"/>
+    </attribute>
+    <attribute id="ORDER_QTY" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="ORDER QUANTITY"/>
+      <keyMapping columnObjectName="PRJ_DEL_AMT_DATE" columnName="ORDER_QTY"/>
+    </attribute>
+    <attribute id="COUNTER" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SEQUENCE COUNTER, AKA A LINE NUMBER, MAY BE HAS NO USE"/>
+      <keyMapping columnObjectName="PRJ_DEL_AMT_DATE" columnName="COUNTER"/>
+    </attribute>
+    <attribute id="SCHEDULE_DATE" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SCHEDULE DATE, MOST LIKE SORT ON DATE"/>
+      <keyMapping columnObjectName="PRJ_DEL_AMT_DATE" columnName="SCHEDULE_DATE"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes/>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+
+  <filter>"ORDER_QTY" IS NOT NULL AND "ORDER_QTY" &gt; 0</filter>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="213" y="112"/>
+    
+      <rectangleSize width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="PRJ_PERIOD_DEL_AMT" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="91" y="481"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_DEL_SCHE_LINE" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="301" y="376"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="AGG_BOOK_DEL_AMT" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="91" y="376"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_DEL_AMT_DATE" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="213" y="217"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="PRJ_DEL_AMT_DATE" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="PRJ_DEL_AMT_DATE" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

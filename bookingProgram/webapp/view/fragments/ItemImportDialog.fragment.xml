@@ -1,0 +1,231 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:semantic="sap.f.semantic"
+	xmlns:u="sap.ui.unified" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
+	>
+	<Dialog contentHeight="80%" afterClose='cleanUpItemImportDialog' afterOpen='afterItemImportDialogOpen' contentWidth="80%" title="{/title}"
+		verticalScrolling='false'>
+		<customData ></customData>
+		<buttons>
+			<Button text="{i18n>Button.Cancel}" press='onItemImportDialogCancel' visible="{=!${/isOk}}" enabled="{=!${/isProgressing}}"/>
+			<Button text="{i18n>Button.Import.Upload.Data}" press='onItemImportDialogStartUpload' id="startUpload" enabled='false'
+				visible="{=!${/isOk}}"/>
+			<Button text="{i18n>Button.Ok}" press='onItemImportDialogOk' visible="{=${/isOk}}" enabled="{=!${/isProgressing}}"/>
+		</buttons>
+		<content>
+			<ProgressIndicator class="sapUiSmallMarginBottom" percentValue="{/progressValue}" displayValue="{/progressValueP}" showValue="true"
+				state="Success" displayOnly="true" visible="{=${/showBar}}" height="06%" width="100%"/>
+			<Toolbar>
+				<content>
+					<ToolbarSpacer/>
+					<u:FileUploader id="fileUploader" name="myFileUpload" uploadUrl="upload/" sameFilenameAllowed="true" tooltip="{i18n>ToolTip.Upload.Button}"
+						width="100%" style="Emphasized" enabled="{=!${/isProgressing}}"/>
+					<Button text="Upload File" press="handleUploadPress" type="Accept" icon="sap-icon://upload" enabled="{=!${/isProgressing}}"/>
+				</content>
+			</Toolbar>
+			<ScrollContainer height="100%" width="100%" horizontal="true" vertical="true" focusable="true">
+				<Table inset="false" items="{ path: '/currentImportitems' }" visible="{=(${/currentTab} === 'Category') }" growing="true"
+					growingThreshold="200">
+					<columns>
+						<Column width="12rem">
+							<Text text="{i18n>Label.Category}"/>
+						</Column>
+						<Column width="6rem" hAlign="End">
+							<Text text="{i18n>Label.Status}"/>
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem>
+							<cells>
+								<Text text="{category}"/>
+								<Text text="{path : 'status', formatter : '.formatter.importSatus'}"/>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+				<Table inset="false" items="{ path: '/currentImportitems' }" visible="{=(${/currentTab} === 'Vendor') }" growing="true"
+					growingThreshold="200">
+					<columns>
+						<Column width="12rem">
+							<Text text="{i18n>Label.Vendor.Number}"/>
+						</Column>
+						<Column width="5rem" hAlign="Center">
+							<Text text="{i18n>Label.Distributor}"/>
+						</Column>
+						<Column width="6rem" hAlign="End">
+							<Text text="{i18n>Label.Status}"/>
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem>
+							<cells>
+								<Text text="{vendorid}"/>
+								<HBox justifyContent="Center">
+									<core:Icon src="sap-icon://accept" color="#ADD8E6" visible="{=${isDistributor}}"/>
+								</HBox>
+								<Text text="{path : 'status', formatter : '.formatter.importSatus'}"/>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+				<Table inset="false" items="{ path: '/currentImportitems' }" visible="{=(${/currentTab} === 'DeliveryMethod') }" growing="true"
+					growingThreshold="200">
+					<columns>
+						<Column width="12rem">
+							<Text text="{i18n>Label.Category.Code}"/>
+						</Column>
+						<Column width="12rem">
+							<Text text="{i18n>Label.Vendor.Number}"/>
+						</Column>
+						<Column width="12rem">
+							<Text text="{i18n>Label.Delivery.Method}"/>
+						</Column>
+						<Column width="6rem" hAlign="End">
+							<Text text="{i18n>Label.Status}"/>
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem>
+							<cells>
+								<Text text="{category}"/>
+								<Text text="{vendorid}"/>
+								<Text text="{path : 'delMethod', formatter : '.formatter.dmFormatterX'}"/>
+								<Text text="{path : 'status', formatter : '.formatter.importSatus'}"/>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+				<Table inset="false" items="{ path: '/currentImportitems' }" visible="{=(${/currentTab} === 'DeliveryLocation') }" growing="true"
+					growingThreshold="200">
+					<!--	growingScrollToLoad="true">-->
+					<columns>
+						<Column width="6rem" visible="true">
+							<Text text="{i18n>Label.Vendor.Number}"/>
+						</Column>
+						<Column width="6rem">
+							<Text text="{i18n>Label.Delivery.Location.Id}"/>
+						</Column>
+						<Column width="10rem">
+							<Text text="{i18n>Label.Delivery.Location.Name}"/>
+						</Column>
+						<Column width="7rem">
+							<Text text="{i18n>Label.Address12}"/>
+						</Column>
+						<Column width="4rem">
+							<Text text="{i18n>Label.Address.City}"/>
+						</Column>
+						<Column width="5rem">
+							<Text text="{i18n>Label.Address.Province}"/>
+						</Column>
+						<Column width="6rem" hAlign="Right">
+							<Text text="{i18n>Label.Address.Zip}"/>
+						</Column>
+						<Column width="8rem" hAlign="Right">
+							<Text text="{i18n>Label.Phone.Number}"/>
+						</Column>
+						<Column width="5rem" hAlign="End">
+							<Text text="{i18n>Label.Status}"/>
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem>
+							<cells>
+								<Text text="{vendorid}"/>
+								<Text text="{locationid}"/>
+								<FormattedText htmlText="{parts : [{path : 'frenchName'},{ path : 'englishName'} ], formatter : '.formatter.twoLine' }"/>
+								<FormattedText htmlText="{parts : [{path : 'address2'},{ path : 'address1'} ], formatter : '.formatter.twoLine' }"/>
+								<Text text="{city}"/>
+								<Text text="{province}"/>
+								<Text text="{path : 'zip', formatter : '.formatter.maskZip'}"/>
+								<Text text="{path : 'phone', formatter : '.formatter.maskPhone'}"/>
+								<Text text="{path : 'status', formatter : '.formatter.importSatus'}"/>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+				<Table inset="false" items="{ path: '/currentImportitems' }" visible="{=(${/currentTab} === 'Part') }" growing="true" growingThreshold="200">
+					<columns>
+						<Column >
+							<Text text="{i18n>Label.Part.Number}"/>
+						</Column>
+						<Column >
+							<Text text="{i18n>Label.Vendor.Number}"/>
+						</Column>
+						<Column >
+							<Text text="{i18n>Label.Category}"/>
+						</Column>
+						<Column width="6rem" hAlign="End">
+							<Text text="{i18n>Label.Status}"/>
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem>
+							<cells>
+								<Text text="{part}"/>
+								<Text text="{vendorid}"/>
+								<Text text="{category}"/>
+								<Text text="{path : 'status', formatter : '.formatter.importSatus'}"/>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+				<Table inset="false" items="{ path: '/currentImportitems' }" visible="{=(${/currentTab} === 'PartFitment') }" growing="true"
+					growingThreshold="200">
+					<columns>
+						<Column >
+							<Text text="{i18n>Label.Part.Number}"/>
+						</Column>
+						<Column width="6rem">
+							<Text text="{i18n>Label.Vechicle.Model}"/>
+						</Column>
+						<Column width="6rem">
+							<Text text="{i18n>Label.Vechicle.Year}"/>
+						</Column>
+						<Column width="6rem" hAlign="End">
+							<Text text="{i18n>Label.Status}"/>
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem>
+							<cells>
+								<Text text="{part}"/>
+								<Text text="{model}"/>
+								<Text text="{year}"/>
+								<Text text="{path : 'status', formatter : '.formatter.importSatus'}"/>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+				<Table inset="false" items="{ path: '/currentImportitems' }" visible="{=(${/currentTab} === 'PriorPurchase') }" growing="true"
+					growingThreshold="200">
+					<columns>
+						<Column >
+							<Text text="{i18n>Label.Dealer.Code}"/>
+						</Column>
+						<!--<Column >
+						<Text text="{i18n>Label.Dealer.BP.Code}"/>
+					</Column>-->
+						<Column width="10rem">
+							<Text text="{i18n>Label.Part.Number}"/>
+						</Column>
+						<Column width="6rem">
+							<Text text="{i18n>Label.Prior.Purchase}"/>
+						</Column>
+						<Column width="6rem" hAlign="End">
+							<Text text="{i18n>Label.Status}"/>
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem>
+							<cells>
+								<Text text="{dealer}"/>
+								<!--<Text text="{dealerBp}"/>-->
+								<Text text="{part}"/>
+								<Text text="{pp}"/>
+								<Text text="{path : 'status', formatter : '.formatter.importSatus'}"/>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+			</ScrollContainer>
+		</content>
+	</Dialog>
+</core:FragmentDefinition>

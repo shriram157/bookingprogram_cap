@@ -1,0 +1,87 @@
+PROCEDURE "PROCEDURES_PROGRAMCATEGORYUPDATE" ( 
+	IN it_new "PROGRAMADMIN_PROGRAMCATEGORYVIEW",
+    IN it_old "PROGRAMADMIN_PROGRAMCATEGORYVIEW",
+	OUT ex_error "PROCEDURES_TT_ERRORS"  ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER AS
+BEGIN
+
+/***************************** 
+ Write your procedure logic 
+ *****************************/
+declare lv_object_key		string;
+declare lv_program_uuid		string;
+declare lv_department_id	string;
+declare lv_brand_id 		string;
+declare lv_valid	 		string;
+declare lv_category_id 		string;
+declare lv_en_desc			string;
+declare lv_fr_desc			string;
+declare lv_donottransport   string;
+declare lv_changed_by		string;
+declare lv_count			integer; 
+declare lv_count1			integer; 
+declare lv_count_en			integer; 
+declare lv_count_fr			integer; 
+declare lv_old_en_desc		string;
+declare lv_old_fr_desc		string;
+
+declare lv_count_er			integer default 0; 
+declare lv_count_cat		integer default 0; 
+declare lv_count_ven		integer default 0; 
+declare lv_batch_mode 		string;
+declare lv_duplicated		boolean default false; 
+declare lv_updateDesc		boolean default false; 
+declare lv_error_codes		string;
+declare lv_errorCodeArray	NVARCHAR(8) ARRAY;
+declare lv_errorCodesLen	integer default 0; 
+declare lv_tempStr			string; 
+DECLARE i           		INTEGER      = 1;
+
+select "OBJECT_KEY","PROGRAM_UUID","CATEGORY_ID","VALID","BATCH_MODE","ERROR_CODES","EN_DESC","FR_DESC","DONOTTRANSPORT","CHANGED_BY"
+     into lv_object_key,lv_program_uuid,lv_category_id,lv_valid,lv_batch_mode,lv_error_codes,lv_en_desc,lv_fr_desc,lv_donottransport,lv_changed_by
+     from :it_new; 
+
+if :lv_program_uuid = '' then
+  ex_error = select 552 as http_status_code, 
+               'The Program UUID is empty' as error_message, 
+                     'The program uuid field can not be my empty' as detail from "DUMMY";
+else
+  /***************************** 
+	check the keys
+  *****************************/
+	select count(*) into lv_count from "PROGRAMADMIN_PROG_CATEGORY" where PROGRAM_UUID = :lv_program_uuid AND CATEGORY_ID = :lv_category_id;
+
+	if lv_count > 0 then
+		select count(*) into lv_count_en  from "PROGRAMADMIN_CATEGORY_NAME" where LANGUAGE_KEY = 'EN' AND CATEGORY_ID = :lv_category_id;
+
+		if lv_count_en > 0 then
+	    	update "PROGRAMADMIN_CATEGORY_NAME" set CATEGORY_DESC= :lv_en_desc,
+	    		DONOTTRANSPORT = :lv_donottransport,
+	    		"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP,
+				"AUDIT_CHANGED_BY" = :lv_changed_by
+			where "CATEGORY_ID" = :lv_category_id AND LANGUAGE_KEY = 'EN';
+		else
+	    	insert into "PROGRAMADMIN_CATEGORY_NAME" 
+        	values(lv_category_id,'EN',lv_en_desc,lv_donottransport,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+		end if;
+
+		select count(*) into lv_count_fr  from "PROGRAMADMIN_CATEGORY_NAME" where LANGUAGE_KEY = 'FR' AND CATEGORY_ID = :lv_category_id;
+		
+		if lv_count_fr > 0 then
+	    	update "PROGRAMADMIN_CATEGORY_NAME" set CATEGORY_DESC = :lv_fr_desc, 
+	    		DONOTTRANSPORT = :lv_donottransport,
+	    		"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP,
+				"AUDIT_CHANGED_BY" = :lv_changed_by
+			where "CATEGORY_ID" = :lv_category_id AND LANGUAGE_KEY = 'FR';
+		else
+	    	insert into "PROGRAMADMIN_CATEGORY_NAME" 
+        	values(lv_category_id,'FR',lv_fr_desc,lv_donottransport,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+		end if;
+	else
+			ex_error = select 554 as http_status_code, 
+               'The Record no found ' as error_message, 
+                     'The Record no found, can not update' as detail from "DUMMY";
+	end if;		
+end if;
+END;

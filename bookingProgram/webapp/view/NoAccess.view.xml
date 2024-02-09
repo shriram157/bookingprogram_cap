@@ -1,0 +1,7 @@
+<mvc:View controllerName="tci.wave2.ui.bookingProgram.controller.NoAccess" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+	<MessagePage id="page" title="{i18n>noAccessTitle}" text="{i18n>noAccessText}" icon="sap-icon://document" showNavButton="false">
+		<buttons>
+			<Button text="{i18n>Button.Reload}" press="onReload"/>
+		</buttons>
+	</MessagePage>
+</mvc:View>

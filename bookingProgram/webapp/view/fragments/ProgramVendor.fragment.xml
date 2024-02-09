@@ -1,0 +1,88 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns="sap.m">
+	<Table showNoData="false" items="{viewModel>/currentProgram/vendors/newline}" visible="{=(!${viewModel>/displayMode} ) }">
+		<columns>
+			<Column width="26px" vAlign="Middle" hAlign="Begin">
+				<CheckBox select='toggleVendorSelect'/>
+			</Column>
+			<Column width="10rem" vAlign="Middle">
+				<Label design="Bold" text="{i18n>Label.Vendor.Number}"></Label>
+			</Column>
+			<Column width="17.5rem" vAlign="Middle">
+				<Label design="Bold" text="{i18n>Label.Vendor.Name}"></Label>
+			</Column>
+			<Column width="11.3rem" minScreenWidth="Tablet" demandPopin="true" vAlign="Middle" hAlign="Center">
+				<Label design="Bold" text="{i18n>Label.Distributor}"></Label>
+			</Column>
+			<Column width="1rem" minScreenWidth="Tablet" demandPopin="true" vAlign="Middle" hAlign="Center">
+				<Button type="Transparent" icon="sap-icon://delete" press='handleVendorDelete' enabled="{=!${viewModel>/displayMode}}"/>
+			</Column>
+			<Column width="1rem" minScreenWidth="Tablet" demandPopin="true" vAlign="Middle" hAlign="Center">
+				<Button type="Transparent" icon="sap-icon://filter" press='handleVendorSettings' enabled="{=!${viewModel>/displayMode}}"/>
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<Text></Text>
+					<Input type="Text" value="{viewModel>key}" placeholder="{i18n>Label.Vendor.Number}" valueHelpOnly="true" showValueHelp="true" valueHelpRequest="handleVendorKeyDialogPress"/>
+					<Text text="{viewModel>desc}"/>
+					<CheckBox selected="{viewModel>isDistributor}" />
+					<Button type='Transparent' icon="sap-icon://add" press='handleVendorAdd' enabled="{=!${viewModel>/displayMode}}"/>
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+	<Table showNoData="false"  visible="{=(!!${viewModel>/displayMode} ) }">
+		<columns>
+			<Column width="40px" vAlign="Middle" hAlign="Begin" visible="{=(!${viewModel>/displayMode} ) }">
+			</Column>
+			<Column width="10rem" vAlign="Middle">
+				<Label design="Bold" text="{i18n>Label.Vendor.Number}"></Label>
+			</Column>
+			<Column width="15.7rem" vAlign="Middle">
+				<Label design="Bold" text="{i18n>Label.Vendor.Name}"></Label>
+			</Column>
+			<Column width="13.5rem" minScreenWidth="Tablet" demandPopin="true" vAlign="Middle" hAlign="Center">
+				<Label design="Bold" text="{i18n>Label.Distributor}"></Label>
+			</Column>
+			<Column width="1rem" minScreenWidth="Tablet" demandPopin="true" vAlign="Middle" hAlign="Center">
+			</Column>
+		</columns>
+	</Table>
+
+	<ScrollContainer height="{viewModel>/tabs/Vendor/contHigh}" width="100%" horizontal="true" vertical="true" focusable="true">
+		<Table id="vendorTable" alternateRowColors="true" showNoData="false" mode='SingleSelectMaster' growing="true" growingScrollToLoad="true" growingThreshold="50" 	>
+			<columns>
+				<!--<Column width="40px" vAlign="Middle" hAlign="Begin" visible="{=(!${viewModel>/displayMode} ) }"/> -->
+				<Column width="10rem" vAlign="Middle"/>
+				<Column width="16rem" vAlign="Middle"/>
+				<Column width="13rem" vAlign="Middle" hAlign="Center"/>
+				<Column width="1rem" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" hAlign="Center"/>
+			</columns>
+			<items>
+				<ColumnListItem id="vendorRowT">
+					<cells>
+						<!--<CheckBox selected='{viewModel>selected}' select='toggleVendorRowSelect'/> -->
+						<Text text="{path: 'VENDOR_ID' }"></Text>
+						<Text text="{path: 'VENDOR_DESC' }"></Text>
+
+						<HBox justifyContent="Center">
+							<CheckBox selected="{=(${DISTRIBUTOR} === 'X')}" select = "onToggleVendorAsDistibutor" visible="{=(!${viewModel>/displayMode})}"/>
+							<!--<core:Icon src="sap-icon://accept" color="#ADD8E6" visible="{=(${DISTRIBUTOR} === 'X') &amp;&amp; (${viewModel>/displayMode} === true)}"/>-->
+							<!--<core:Icon src="sap-icon://accept" color="#ADD8E6" visible="{=(${DISTRIBUTOR} === 'X')}"/>-->
+						</HBox>
+						<HBox justifyContent="Center" width="100%">
+							<core:Icon src="sap-icon://message-error" class="size1" color="#ff0000" visible="{=!(${VALID} === 'X')}"
+											activeColor="Negative" alt="Error" press="onErrorX" />
+						</HBox>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+		<Toolbar>
+			<content>
+				<Text text=""/>
+			</content>
+		</Toolbar>
+	</ScrollContainer>
+</core:FragmentDefinition>

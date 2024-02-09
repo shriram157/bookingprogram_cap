@@ -1,0 +1,28 @@
+PROCEDURE "PROCEDURES_PROGRAMPARTFITMENTDELETEALL" ( 
+    IN im_program_uuid NVARCHAR(36),
+	OUT ex_code INT  ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER AS
+BEGIN
+
+/***************************** 
+ Write your procedure logic 
+ *****************************/
+declare lv_count			int;
+declare lv_count_1			int;
+
+
+select count(*) into lv_count from "PROGRAMADMIN_PROG_PART_FITMENT" where PROGRAM_UUID = :im_program_uuid ; 
+
+if :lv_count > 0 then
+	select count(*) into lv_count_1 from "CORE_OBJECT_MESSAGE"  where OBJECT_KEY IN (select OBJECT_KEY from "PROGRAMADMIN_PROG_PART_FITMENT" where PROGRAM_UUID = :im_program_uuid group by OBJECT_KEY);
+	if :lv_count_1 > 0 then
+		delete from "CORE_OBJECT_MESSAGE"  where OBJECT_KEY IN (select OBJECT_KEY from "PROGRAMADMIN_PROG_PART_FITMENT" where PROGRAM_UUID = :im_program_uuid group by OBJECT_KEY);
+	end if;	
+	delete from "PROGRAMADMIN_PROG_PART_FITMENT"  where PROGRAM_UUID = :im_program_uuid ;  
+
+end if;
+
+ex_code := 0;
+
+END;

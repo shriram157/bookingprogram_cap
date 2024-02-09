@@ -1,0 +1,16 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<ViewSettingsDialog confirm="onDsConfirmViewSettingsDialog" title="{i18n>Label.Filter.Schedule.Delivery}">
+		<sortItems>
+			<ViewSettingsItem text="{i18n>Label.Category}" key="categoryDesc" selected="true"/>
+			<ViewSettingsItem text="{i18n>Label.Vendor}" key="vendorDesc"/>
+			<ViewSettingsItem text="{i18n>Label.Delivery.Method}" key="deliveryMethod"/>
+		</sortItems>
+		<filterItems>
+			<ViewSettingsFilterItem text="{i18n>Label.Category}" key="1" items="{viewModel>/currentBooking/filters/ds/category}">
+				<items>
+					<ViewSettingsItem text="{viewModel>desc}" key="{viewModel>key}" selected='{viewModel>selected}'/>
+				</items>
+			</ViewSettingsFilterItem>
+		</filterItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

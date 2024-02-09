@@ -1,0 +1,21 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog contentWidth="650px"
+		
+		noDataText="{i18n>Label.Select.Vendor}"
+		title="{i18n>Label.Select.Vendor}"
+		liveChange = "handleDmVenSearch"
+		confirm="handleDmVenSearchDialogClose"
+		cancel="handleDmVenSearchDialogClose"
+		growingThreshold="20" 
+		items="{ path : '/'	}" >
+		<StandardListItem 
+			description="{VENDOR_ID}"
+			title="{VENDOR_DESC}"
+			icon="sap-icon://supplier"
+			iconDensityAware="false"
+			iconInset="false"
+			type="Active" />
+	</SelectDialog>
+</core:FragmentDefinition>

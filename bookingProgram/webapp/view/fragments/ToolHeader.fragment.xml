@@ -1,0 +1,31 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns="sap.m" xmlns:tnt="sap.tnt">
+	<tnt:ToolHeader>
+		<!--
+		<Text text="{/userInfo/userTypeName}"/>
+		<Text text=" | "/>
+		<Text text="{/selectedBP/dealerCode}"/>
+		<Text text=" - "/>
+		<Text text="{/selectedBP/bpName}"/>
+		-->
+		<ObjectStatus id="tci_clock" class="myClock" text="" state="Success"/>
+		<ToolbarSpacer>
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="16px"/>
+			</layoutData>
+		</ToolbarSpacer>
+		<IconTabHeader id="iconTabHeader" selectedKey="{/tabKey}" select="onHeaderMenu" backgroundDesign="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true"/>
+			</layoutData>
+			<items>
+				<IconTabFilter text="{i18n>headerMenu.ManageBook}" key="MB"/>
+				<IconTabFilter text="{i18n>headerMenu.ProgramAdmin}" key="PA" visible="{/visiblePA}" />
+			</items>
+		</IconTabHeader>
+		<Button icon="sap-icon://account" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow"/>
+			</layoutData>
+		</Button>
+	</tnt:ToolHeader>
+</core:FragmentDefinition>

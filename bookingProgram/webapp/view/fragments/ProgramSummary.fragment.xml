@@ -1,0 +1,82 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns="sap.m">
+	<ScrollContainer height="64%" width="100%" horizontal="true" vertical="true" focusable="true">
+		<VBox class="sapUiSmallMargin">
+			<form:SimpleForm id="SimpleFormChange" editable="true" layout="ResponsiveGridLayout" title="{i18n>Label.Summary}" labelSpanXL="4"
+				labelSpanL="4" labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+				columnsXL="2" columnsL="2" columnsM="1" singleContainerFullSize="false">
+				<form:content>
+					<core:Title text="{i18n>Label.Basic}"/>
+					<Label text="{i18n>Label.Status}" required='true'/>
+					<Select selectedKey="{viewModel>/currentProgram/summary/status}" enabled="false" >
+						<items>
+							<core:Item text="{i18n>Status.Future}" key="FT"/>
+							<core:Item text="{i18n>Status.Open}" key="OP"/>
+							<core:Item text="{i18n>Status.Closed}" key="CL"/>
+							<core:Item text="{i18n>Status.Completed}" key="CP"/>
+						</items>
+					</Select>
+					<Label text="{i18n>Label.Department}" required='true'/>
+					<Select selectedKey="{viewModel>/currentProgram/summary/department}" enabled="false" items="{ path: 'depModel>/' }">
+						<core:ListItem key="{depModel>key}" text="{depModel>name}" />
+					</Select>
+					<Label text="{i18n>Label.Description.English}" labelFor="enDesc"/>
+					<TextArea id="enDesc" required='true' value="{viewModel>/currentProgram/summary/enDesc}" maxLength="100"
+						enabled="{=${viewModel>/displayMode} === false}" change="onEnDescChange"/>
+					<Label text="{i18n>Label.Description.French}" labelFor="frDesc"/>
+					<TextArea id='frDesc' required='true' value="{viewModel>/currentProgram/summary/frDesc}" maxLength="100"
+						enabled="{=${viewModel>/displayMode} === false}" change="onFrDescChange"/>
+					<Label text="{i18n>Label.Dealer.Participating}" required='true'/>
+					<!--<RadioButtonGroup columns="2" select="onBackgroundDesignSelect" selectedIndex="{viewModel>/currentProgram/summary/dealerGroup}" enabled="{=${viewModel>/displayMode} === false}" >
+						<buttons>
+							<RadioButton text="{i18n>Label.Toyota}"></RadioButton>
+							<RadioButton text="{i18n>Label.Lexus}"></RadioButton>
+						</buttons>
+					</RadioButtonGroup>-->
+					<CheckBox id="check1" text="{i18n>Label.Toyota}" selected="{viewModel>/currentProgram/summary/dealerToyota}" enabled="{=${viewModel>/displayMode} === false}" >
+						<layoutData>
+							<l:GridData span="XL2 L3 M4 S4"/>
+						</layoutData>						
+					</CheckBox>
+					<CheckBox id="check2" text="{i18n>Label.Lexus}" selected="{viewModel>/currentProgram/summary/dealerLexus}" enabled="{=${viewModel>/displayMode} === false}"  >
+						<layoutData>
+							<l:GridData span="XL2 L3 M4 S4"/>
+						</layoutData>						
+					</CheckBox>
+					
+					<core:Title text="{i18n>Label.Booking.Window}"/>
+					<Label text="{i18n>Label.Open.Close}" required='true'/>
+					<DatePicker required='true' value="{viewModel>/currentProgram/summary/bWindowOpen}" valueFormat="yyyy-MM-dd" displayFormat="yyyy-MM-dd" maxDate="{viewModel>/currentProgram/summary/bWindowCloseDate}"
+						enabled="{=${viewModel>/displayMode} === false}" change="onWoChange" id="wOpenUi"/>
+					<DatePicker value="{viewModel>/currentProgram/summary/bWindowClose}" valueFormat="yyyy-MM-dd" displayFormat="yyyy-MM-dd" minDate="{viewModel>/currentProgram/summary/bWindowOpenDate}"
+						enabled="{=${viewModel>/displayMode} === false}" change="onWcChange" id="wCloseUi"/>
+					<Label text="{i18n>Label.Initial.Warning}" required='true'/>
+					<StepInput value="{viewModel>/currentProgram/summary/initialWaringDays}" min='{viewModel>/currentProgram/summary/finalWarningDays}' max='61' enabled="{=${viewModel>/displayMode} === false}"
+						change="onChange" id="initialWaringDays">
+						<layoutData>
+							<l:GridData span="XL2 L3 M4 S4"/>
+						</layoutData>
+					</StepInput>
+					<Text text="{i18n>Label.Days.Before.Close}"></Text>
+					<Label text="{i18n>Label.Final.Warning}" required='true'/>
+					<StepInput value="{viewModel>/currentProgram/summary/finalWarningDays}" enabled="{=${viewModel>/displayMode} === false}" change="onChange"
+						min="1" max="60" id="finalWarningDays">
+						<layoutData>
+							<l:GridData span="XL2 L3 M4 S4"/>
+						</layoutData>
+					</StepInput>
+					<Text text="{i18n>Label.Days.Before.Close}"></Text>
+					<core:Title text="{i18n>Label.Delivery.Window}"/>
+					<Label text="{i18n>Label.From.To}" required='true'/>
+					<DatePicker value="{viewModel>/currentProgram/summary/deliveryFrom}" valueFormat="yyyy-MM-dd" displayFormat="yyyy-MM-dd" minDate="{viewModel>/currentProgram/summary/bWindowCloseDate}" 
+						enabled="{=${viewModel>/displayMode} === false}" change="onDfChange" id="dFromUi"/>
+					<DatePicker value="{viewModel>/currentProgram/summary/deliveryTO}" valueFormat="yyyy-MM-dd" displayFormat="yyyy-MM-dd" minDate="{viewModel>/currentProgram/summary/deliveryFromDate}"
+						enabled="{=${viewModel>/displayMode} === false}" change="onDtChange"  id="dToUi"/>
+					<core:Title text="{i18n>Label.Comparative.Program}"/>
+					<Label text="{i18n>Label.ID}"/>
+					<Input value="{viewModel>/currentProgram/summary/cpprogram/id}" type="Text" maxLength='20' enabled="{=${viewModel>/displayMode} === false}"
+						valueHelpOnly="true" showValueHelp="true" valueHelpRequest="handleProgramDialogPress"/>
+				</form:content>
+			</form:SimpleForm>
+		</VBox>
+	</ScrollContainer>
+</core:FragmentDefinition>

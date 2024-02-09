@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?><Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="MINIPROGRAMDELIVERYLOCATIONCALVIEW" applyPrivilegeType="NONE" dataCategory="DEFAULT" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="MINIPROGRAMDELIVERYLOCATIONCALVIEW"/>
+<localVariables>
+  <variable id="PROGRAMUID" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="32" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+  <variable id="LANGUAGE" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="2" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+</localVariables>
+<variableMappings/>
+<dataSources>
+  <DataSource id="PROGRAMADMIN_PROG_DEL_LOCATION">
+    <resourceUri>PROGRAMADMIN_PROG_DEL_LOCATION</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_DEL_LOC_NAME">
+    <resourceUri>PROGRAMADMIN_DEL_LOC_NAME</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews>
+  <calculationView xsi:type="Calculation:JoinView" id="JOIN_PROG_DEL_LOC_NAM" cardinality="CN_N" joinType="leftOuter">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="VALID"/>
+      <viewAttribute id="VENDOR_TYPE"/>
+      <viewAttribute id="DEL_LOCATION_ID"/>
+      <viewAttribute id="DEL_LOCATION_NAME"/>
+      <viewAttribute id="DEL_PHONE_NUMBER"/>
+      <viewAttribute id="DEL_ADDRESS1"/>
+      <viewAttribute id="DEL_ADDRESS2"/>
+      <viewAttribute id="DEL_CITY"/>
+      <viewAttribute id="DEL_PROVINCE"/>
+      <viewAttribute id="DEL_POSTAL_CODE"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PRJ_PRODELLOC">
+      <mapping xsi:type="Calculation:AttributeMapping" target="OBJECT_KEY" source="OBJECT_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VALID" source="VALID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_TYPE" source="VENDOR_TYPE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_LOCATION_ID" source="DEL_LOCATION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_PHONE_NUMBER" source="DEL_PHONE_NUMBER"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_ADDRESS1" source="DEL_ADDRESS1"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_ADDRESS2" source="DEL_ADDRESS2"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_CITY" source="DEL_CITY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_PROVINCE" source="DEL_PROVINCE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_POSTAL_CODE" source="DEL_POSTAL_CODE"/>
+    </input>
+    <input node="PRJ_DEL_NAME">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_LOCATION_NAME" source="DEL_LOCATION_NAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="OBJECT_KEY" source="OBJECT_KEY"/>
+    </input>
+    <joinAttribute name="OBJECT_KEY"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PRODELLOC" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="VALID"/>
+      <viewAttribute id="VENDOR_TYPE"/>
+      <viewAttribute id="DEL_LOCATION_ID"/>
+      <viewAttribute id="DEL_PHONE_NUMBER"/>
+      <viewAttribute id="DEL_ADDRESS1"/>
+      <viewAttribute id="DEL_ADDRESS2"/>
+      <viewAttribute id="DEL_CITY"/>
+      <viewAttribute id="DEL_PROVINCE"/>
+      <viewAttribute id="DEL_POSTAL_CODE"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_PROG_DEL_LOCATION">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_ADDRESS1" source="ADDRESS_DEL_ADDRESS1"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_ADDRESS2" source="ADDRESS_DEL_ADDRESS2"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_CITY" source="ADDRESS_DEL_CITY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_PROVINCE" source="ADDRESS_DEL_PROVINCE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_POSTAL_CODE" source="ADDRESS_DEL_POSTAL_CODE"/>
+    </input>
+    <filter>"PROGRAM_UUID" = '$$PROGRAMUID$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_DEL_NAME" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="DEL_LOCATION_NAME"/>
+    
+      <viewAttribute id="OBJECT_KEY"/>
+      <viewAttribute id="LANGUAGE_KEY"/></viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_DEL_LOC_NAME"/>
+    <filter>"LANGUAGE_KEY" = '$$LANGUAGE$$'</filter>
+  </calculationView>
+</calculationViews>
+<logicalModel id="JOIN_PROG_DEL_LOC_NAM">
+  <attributes>
+    <attribute id="OBJECT_KEY" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="OBJECT KEY/ DELIVERY LOCATION UUID"/>
+      <keyMapping columnObjectName="JOIN_PROG_DEL_LOC_NAM" columnName="OBJECT_KEY"/>
+    </attribute>
+    <attribute id="PROGRAM_UUID" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM UUID"/>
+      <keyMapping columnObjectName="JOIN_PROG_DEL_LOC_NAM" columnName="PROGRAM_UUID"/>
+    </attribute>
+    <attribute id="VENDOR_ID" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VENDOR NUMBER/ID"/>
+      <keyMapping columnObjectName="JOIN_PROG_DEL_LOC_NAM" columnName="VENDOR_ID"/>
+    </attribute>
+    <attribute id="VALID" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="IS VALID"/>
+      <keyMapping columnObjectName="JOIN_PROG_DEL_LOC_NAM" columnName="VALID"/>
+    </attribute>
+    <attribute id="DEL_LOCATION_ID" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DELIVERY LOCATION ID"/>
+      <keyMapping columnObjectName="JOIN_PROG_DEL_LOC_NAM" columnName="DEL_LOCATION_ID"/>
+    </attribute>
+    <attribute id="DEL_LOCATION_NAME" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DELIVERY LOCATION DESCRIPTION/NAME"/>
+      <keyMapping columnObjectName="JOIN_PROG_DEL_LOC_NAM" columnName="DEL_LOCATION_NAME"/>
+    </attribute>
+    <attribute id="DEL_PHONE_NUMBER" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PHONE NUMBER"/>
+      <keyMapping columnObjectName="JOIN_PROG_DEL_LOC_NAM" columnName="DEL_PHONE_NUMBER"/>
+    </attribute>
+    <attribute id="DEL_ADDRESS1" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="ADDRESS 1"/>
+      <keyMapping columnObjectName="JOIN_PROG_DEL_LOC_NAM" columnName="DEL_ADDRESS1"/>
+    </attribute>
+    <attribute id="DEL_ADDRESS2" order="10" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="ADDRESS 2"/>
+      <keyMapping columnObjectName="JOIN_PROG_DEL_LOC_NAM" columnName="DEL_ADDRESS2"/>
+    </attribute>
+    <attribute id="DEL_CITY" order="11" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CITY"/>
+      <keyMapping columnObjectName="JOIN_PROG_DEL_LOC_NAM" columnName="DEL_CITY"/>
+    </attribute>
+    <attribute id="DEL_PROVINCE" order="12" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROVINCE"/>
+      <keyMapping columnObjectName="JOIN_PROG_DEL_LOC_NAM" columnName="DEL_PROVINCE"/>
+    </attribute>
+    <attribute id="DEL_POSTAL_CODE" order="13" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="POSTAL CODE"/>
+      <keyMapping columnObjectName="JOIN_PROG_DEL_LOC_NAM" columnName="DEL_POSTAL_CODE"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes>
+    <calculatedAttribute id="LANGUAGE_KEY" order="4" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <keyCalculation datatype="VARCHAR" expressionLanguage="SQL" length="2">
+        <formula>'$$Language$$'</formula>
+      </keyCalculation>
+    </calculatedAttribute>
+  
+    <calculatedAttribute id="SELECTED" order="14" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+  
+      <keyCalculation datatype="VARCHAR" expressionLanguage="SQL" length="1">
+  
+        <formula>' '</formula>
+  
+      </keyCalculation>
+  
+    </calculatedAttribute>
+  </calculatedAttributes>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/></logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="40" y="85"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="JOIN_PROG_DEL_LOC_NAM" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="-131" y="229"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="JOIN_PROG_DEL_LOC_NAM" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="JOIN_PROG_DEL_LOC_NAM" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_PRODELLOC" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="-196" y="369"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_DEL_NAME" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="55" y="360"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

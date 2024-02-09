@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?><Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="DEALERBOOKINGCATEGORYDELIVERYVIEW" applyPrivilegeType="NONE" dataCategory="DEFAULT" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="DEALERBOOKINGCATEGORYDELIVERYVIEW"/>
+<localVariables>
+  <variable id="DEALERCODE" parameter="true">
+    <descriptions defaultDescription="DEALER CODE">
+      <comment text="Dealer Code"/>
+    </descriptions>
+    <variableProperties datatype="NVARCHAR" length="20" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+  <variable id="LANG" parameter="true">
+    <descriptions defaultDescription="LANGUAGE KEY ">
+      <comment text="Language Key "/>
+    </descriptions>
+    <variableProperties datatype="NVARCHAR" length="2" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+      <defaultRange lowValue="EN"/>
+    </variableProperties>
+  </variable>
+
+  <variable id="PROGRAMUUID" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="36" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+</localVariables>
+<variableMappings/>
+<dataSources>
+  <DataSource id="PROGRAMADMIN_PROG_PARTS">
+    <resourceUri>PROGRAMADMIN_PROG_PARTS</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMBOOKING_DELIVERY_SCHEDULE">
+    <resourceUri>PROGRAMBOOKING_DELIVERY_SCHEDULE</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_CATEGORY_NAME">
+    <resourceUri>PROGRAMADMIN_CATEGORY_NAME</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_VENDOR_NAME">
+    <resourceUri>PROGRAMADMIN_VENDOR_NAME</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews>
+  <calculationView xsi:type="Calculation:ProjectionView" id="BOOKING_PROGRAM" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="VENDOR_ID"/>
+    
+      <viewAttribute id="PROGRAM_UUID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_PROG_PARTS"/>
+    <filter>"PROGRAM_UUID" = '$$PROGRAMUUID$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:AggregationView" id="BOOKING_PROG_AGG">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="PART_NUM_CT" aggregationType="count"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="BOOKING_PROGRAM">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM_CT" source="PART_NUM"/></input>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_DEL_RECORD" filterExpressionLanguage="SQL">
+    <viewAttributes>
+    
+      <viewAttribute id="PROGRAM_UUID"/>
+    
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="DEL_METHOD"/>
+      <viewAttribute id="DEL_LOCATION_UUID"/>
+      <viewAttribute id="SPECIAL_INSTRUCTION"/>
+      <viewAttribute id="B_STATUS"/>
+      <viewAttribute id="AUDIT_CHANGED_ON"/>
+      <viewAttribute id="AUDIT_CHANGED_BY"/></viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMBOOKING_DELIVERY_SCHEDULE">
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_ON" source="AUDIT_CHANGED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_BY" source="AUDIT_CHANGED_BY"/></input>
+    <filter>"DEALER_CODE" = '$$DEALERCODE$$' AND "PROGRAM_UUID" = '$$PROGRAMUUID$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="BOOKING_DEL">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="VENDOR_ID"/>
+    </viewAttributes>
+    <calculatedViewAttributes>
+      <calculatedViewAttribute id="REDEALERCODE" datatype="NVARCHAR" length="20" expressionLanguage="SQL">
+        <formula>'$$DealerCode$$'</formula>
+      </calculatedViewAttribute>
+    </calculatedViewAttributes>
+    <input node="BOOKING_PROG_AGG"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_CATE_LANG" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="LANGUAGE_KEY"/>
+      <viewAttribute id="CATEGORY_DESC"/>
+    
+      <viewAttribute id="DONOTTRANSPORT"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_CATEGORY_NAME"/>
+    <filter>"LANGUAGE_KEY" ='$$LANG$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_VENDOR_N_V" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="LANGUAGE_KEY"/>
+      <viewAttribute id="VENDOR_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_VENDOR_NAME"/>
+    <filter>"LANGUAGE_KEY" = '$$LANG$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="REDEALERCODE"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="DEL_METHOD"/>
+      <viewAttribute id="DEL_LOCATION_UUID"/>
+      <viewAttribute id="SPECIAL_INSTRUCTION"/>
+      <viewAttribute id="B_STATUS"/>
+      <viewAttribute id="AUDIT_CHANGED_ON"/>
+      <viewAttribute id="AUDIT_CHANGED_BY"/></viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAM_BOOKING_J"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="PROGRAM_BOOKING_J" cardinality="C1_N" joinType="leftOuter">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="REDEALERCODE"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="DEL_METHOD"/>
+      <viewAttribute id="DEL_LOCATION_UUID"/>
+      <viewAttribute id="SPECIAL_INSTRUCTION"/>
+      <viewAttribute id="B_STATUS"/>
+      <viewAttribute id="AUDIT_CHANGED_ON"/>
+      <viewAttribute id="AUDIT_CHANGED_BY"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="BOOKING_DEL">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REDEALERCODE" source="REDEALERCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+    </input>
+    <input node="PRJ_DEL_RECORD">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_METHOD" source="DEL_METHOD"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SPECIAL_INSTRUCTION" source="SPECIAL_INSTRUCTION"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="B_STATUS" source="B_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_ON" source="AUDIT_CHANGED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_BY" source="AUDIT_CHANGED_BY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_LOCATION_UUID" source="DEL_LOCATION_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+    </input>
+    <joinAttribute name="CATEGORY_ID"/>
+    <joinAttribute name="VENDOR_ID"/>
+    <joinAttribute name="PROGRAM_UUID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="PROG_BOOK_LANG_1" cardinality="CN_1" joinType="leftOuter" referentialDirection="left" multiJoinNode="PROG_BOOK_LANG" multiJoinCentralTable="PRJ_" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="REDEALERCODE"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="VENDOR_DESC"/>
+      <viewAttribute id="DEL_METHOD"/>
+      <viewAttribute id="DEL_LOCATION_UUID"/>
+      <viewAttribute id="SPECIAL_INSTRUCTION"/>
+      <viewAttribute id="B_STATUS"/>
+      <viewAttribute id="AUDIT_CHANGED_ON"/>
+      <viewAttribute id="AUDIT_CHANGED_BY"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PRJ_">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REDEALERCODE" source="REDEALERCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_METHOD" source="DEL_METHOD"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SPECIAL_INSTRUCTION" source="SPECIAL_INSTRUCTION"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="B_STATUS" source="B_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_ON" source="AUDIT_CHANGED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_BY" source="AUDIT_CHANGED_BY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_LOCATION_UUID" source="DEL_LOCATION_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+    </input>
+    <input node="PRJ_VENDOR_N_V">
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_DESC" source="VENDOR_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+    </input>
+    <joinAttribute name="VENDOR_ID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="PROG_BOOK_LANG_2" cardinality="CN_1" joinType="leftOuter" referentialDirection="left" multiJoinNode="PROG_BOOK_LANG" multiJoinCentralTable="PRJ_" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="REDEALERCODE"/>
+      <viewAttribute id="LANGUAGE_KEY"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="CATEGORY_DESC"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="VENDOR_DESC"/>
+      <viewAttribute id="DEL_METHOD"/>
+      <viewAttribute id="DEL_LOCATION_UUID"/>
+      <viewAttribute id="SPECIAL_INSTRUCTION"/>
+      <viewAttribute id="B_STATUS"/>
+      <viewAttribute id="AUDIT_CHANGED_ON"/>
+      <viewAttribute id="AUDIT_CHANGED_BY"/>
+      <viewAttribute id="DONOTTRANSPORT"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROG_BOOK_LANG_1">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REDEALERCODE" source="REDEALERCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_DESC" source="VENDOR_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_METHOD" source="DEL_METHOD"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEL_LOCATION_UUID" source="DEL_LOCATION_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SPECIAL_INSTRUCTION" source="SPECIAL_INSTRUCTION"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="B_STATUS" source="B_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_ON" source="AUDIT_CHANGED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_BY" source="AUDIT_CHANGED_BY"/>
+    </input>
+    <input node="PRJ_CATE_LANG">
+      <mapping xsi:type="Calculation:AttributeMapping" target="LANGUAGE_KEY" source="LANGUAGE_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_DESC" source="CATEGORY_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DONOTTRANSPORT" source="DONOTTRANSPORT"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+    </input>
+    <joinAttribute name="CATEGORY_ID"/>
+  </calculationView>
+</calculationViews>
+<logicalModel id="PROG_BOOK_LANG_2">
+  <attributes>
+    <attribute id="PROGRAM_UUID" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM UUID"/>
+      <keyMapping columnObjectName="PROG_BOOK_LANG_2" columnName="PROGRAM_UUID"/>
+    </attribute>
+    <attribute id="DEALER_CODE" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEALER CODE"/>
+      <keyMapping columnObjectName="PROG_BOOK_LANG_2" columnName="REDEALERCODE"/>
+    </attribute>
+    <attribute id="DEALER_CODE_EXIST" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEALER CODE EXISTING"/>
+      <keyMapping columnObjectName="PROG_BOOK_LANG_2" columnName="DEALER_CODE"/>
+    </attribute>
+    <attribute id="LANGUAGE_KEY" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="LANGUAGE KEY"/>
+      <keyMapping columnObjectName="PROG_BOOK_LANG_2" columnName="LANGUAGE_KEY"/>
+    </attribute>
+    <attribute id="CATEGORY_ID" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CATEGORY"/>
+      <keyMapping columnObjectName="PROG_BOOK_LANG_2" columnName="CATEGORY_ID"/>
+    </attribute>
+    <attribute id="CATEGORY_DESC" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CATEGORY DESCRIPTION"/>
+      <keyMapping columnObjectName="PROG_BOOK_LANG_2" columnName="CATEGORY_DESC"/>
+    </attribute>
+    <attribute id="VENDOR_ID" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VENDOR NUMBER"/>
+      <keyMapping columnObjectName="PROG_BOOK_LANG_2" columnName="VENDOR_ID"/>
+    </attribute>
+    <attribute id="VENDOR_DESC" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CATEGORY DESCRIPTION"/>
+      <keyMapping columnObjectName="PROG_BOOK_LANG_2" columnName="VENDOR_DESC"/>
+    </attribute>
+    <attribute id="DEL_METHOD" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DELIVERY METHOD ID - FK"/>
+      <keyMapping columnObjectName="PROG_BOOK_LANG_2" columnName="DEL_METHOD"/>
+    </attribute>
+    <attribute id="DEL_LOCATION_UUID" order="10" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DELIVERY LOCATION UUID"/>
+      <keyMapping columnObjectName="PROG_BOOK_LANG_2" columnName="DEL_LOCATION_UUID"/>
+    </attribute>
+    <attribute id="SPECIAL_INSTRUCTION" order="11" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VENDOR NUMBER"/>
+      <keyMapping columnObjectName="PROG_BOOK_LANG_2" columnName="SPECIAL_INSTRUCTION"/>
+    </attribute>
+    <attribute id="B_STATUS" order="12" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="BOOKING STATUS"/>
+      <keyMapping columnObjectName="PROG_BOOK_LANG_2" columnName="B_STATUS"/>
+    </attribute>
+    <attribute id="AUDIT_CHANGED_ON" order="13" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CHANGED ON"/>
+      <keyMapping columnObjectName="PROG_BOOK_LANG_2" columnName="AUDIT_CHANGED_ON"/>
+    </attribute>
+    <attribute id="AUDIT_CHANGED_BY" order="14" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CHANGED BY"/>
+      <keyMapping columnObjectName="PROG_BOOK_LANG_2" columnName="AUDIT_CHANGED_BY"/>
+    </attribute></attributes>
+  <calculatedAttributes/>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="370" y="112"/>
+    
+      <rectangleSize width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="BOOKING_PROGRAM" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="321" y="906"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="BOOKING_PROG_AGG" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="321" y="801"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="PRJ_DEL_RECORD" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="484" y="656"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="BOOKING_DEL" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="274" y="666"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_CATE_LANG" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="92" y="371"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_VENDOR_N_V" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="593" y="371"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="383" y="381"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PROGRAM_BOOKING_J" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="383" y="496"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="PROGRAM_BOOKING_J" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="PROGRAM_BOOKING_J" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="PROG_BOOK_LANG" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="370" y="217"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="PROG_BOOK_LANG" modelObjectType="JoinNodeInput" multiJoinViewNodeName="PROG_BOOK_LANG">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="PROG_BOOK_LANG" modelObjectType="JoinNodeInput" multiJoinViewNodeName="PROG_BOOK_LANG">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="PROG_BOOK_LANG" modelObjectType="JoinNodeInput" multiJoinViewNodeName="PROG_BOOK_LANG">
+      <upperLeftCorner x="304" y="202"/>
+      <rectangleSize width="250"/>
+    </shape></shapes>
+</layout>
+</Calculation:scenario>

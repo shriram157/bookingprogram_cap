@@ -1,0 +1,47 @@
+PROCEDURE "PROCEDURES_PROGRAMDELIVERYMETHODDELETE" ( 
+    IN im_details "PROGRAMADMIN_PROGRAMDELIVERYMETHODVIEW",
+	OUT ex_error "PROCEDURES_TT_ERRORS"  ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER AS
+BEGIN
+
+/***************************** 
+ Write your procedure logic 
+ *****************************/
+declare lv_program_uuid		string;
+declare lv_object_key		string;
+declare lv_valid			string;
+declare lv_del_method 		string;
+declare lv_has_error 		boolean default false;
+declare lv_dealerbokoing_count int default 0;          
+
+select OBJECT_KEY
+     into lv_object_key
+     from :im_details; 
+
+if :lv_object_key = '' then
+	ex_error = select 552 as http_status_code, 
+               'BP01051' as error_message, 
+                     'The Obejct key field of program delivery method can not be empty' as detail from "DUMMY";
+else
+	select "PROGRAM_UUID", "DEL_METHOD", "VALID" into lv_program_uuid, lv_del_method, lv_valid from "PROGRAMADMIN_PROG_DEL_METHOD" where OBJECT_KEY = :lv_object_key ;
+	if :lv_valid = 'X' then 
+	
+	  select count(*) into lv_dealerbokoing_count from "PROGRAMBOOKING_DELIVERY_SCHEDULE" where PROGRAM_UUID = :lv_program_uuid AND DEL_METHOD = :lv_del_method ;  
+ 	  if lv_dealerbokoing_count > 0 then 
+		ex_error = select 556 as http_status_code, 
+               'BP01052' as error_message, 
+                     'The delivery method has associated dealer booking' as detail from "DUMMY";
+    	lv_has_error = true;                 
+	  end if;
+	end if;  
+
+end if;
+
+if :lv_has_error = false then 
+	delete from "CORE_OBJECT_MESSAGE"  where OBJECT_KEY = :lv_object_key ; 
+	delete from "PROGRAMADMIN_PROG_DEL_METHOD"  where OBJECT_KEY = :lv_object_key ;  
+end if;
+
+
+END;

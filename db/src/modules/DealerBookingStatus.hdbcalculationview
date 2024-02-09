@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?><Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="DEALERBOOKINGSTATUS" applyPrivilegeType="NONE" dataCategory="DEFAULT" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="DEALERBOOKINGSTATUS"/>
+<localVariables>
+  <variable id="IN_DEALER_CODE" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="20" mandatory="false">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+  <variable id="IN_PROGRAM_UUID" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="36" mandatory="false">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+
+  <variable id="IN_LANG" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="2" mandatory="false">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+</localVariables>
+<variableMappings/>
+<dataSources>
+  <DataSource id="PROGRAMBOOKING_DEALER_BOOKING_STATUS_HIST">
+    <resourceUri>PROGRAMBOOKING_DEALER_BOOKING_STATUS_HIST</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMBOOKING_DEALERBOOKINGLATESTSTATUSTIMEVIEW">
+    <resourceUri>PROGRAMBOOKING_DEALERBOOKINGLATESTSTATUSTIMEVIEW</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_DEALER_INFO">
+    <resourceUri>PROGRAMADMIN_DEALER_INFO</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_HISTS" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY">
+        <descriptions defaultDescription="OBJECT KEY"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_CODE">
+        <descriptions defaultDescription="DEALER CODE"/>
+      </viewAttribute>
+      <viewAttribute id="B_STATUS">
+        <descriptions defaultDescription="BOOKING STATUS"/>
+      </viewAttribute>
+      <viewAttribute id="AUDIT_CREATED_ON">
+        <descriptions defaultDescription="CREATED ON"/>
+      </viewAttribute>
+      <viewAttribute id="AUDIT_CREATED_BY">
+        <descriptions defaultDescription="CREATED BY"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PROGRAMBOOKING_DEALER_BOOKING_STATUS_HIST">
+      <mapping xsi:type="Calculation:AttributeMapping" target="OBJECT_KEY" source="OBJECT_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="B_STATUS" source="B_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CREATED_ON" source="AUDIT_CREATED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CREATED_BY" source="AUDIT_CREATED_BY"/>
+    </input>
+    <filter>"DEALER_CODE" = '$$IN_DEALER_CODE$$' AND "PROGRAM_UUID" = '$$IN_PROGRAM_UUID$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_LATEST" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM_UUID"/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_CODE">
+        <descriptions defaultDescription="DEALER_CODE"/>
+      </viewAttribute>
+      <viewAttribute id="LAST_CREATED_ON">
+        <descriptions defaultDescription="LAST_CREATED_ON"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PROGRAMBOOKING_DEALERBOOKINGLATESTSTATUSTIMEVIEW">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LAST_CREATED_ON" source="LAST_CREATED_ON"/>
+    </input>
+    <filter>"PROGRAM_UUID" = '$$IN_PROGRAM_UUID$$' AND "DEALER_CODE" = '$$IN_DEALER_CODE$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="JOIN_ONLY" cardinality="CN_N" joinType="inner">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_CODE">
+        <descriptions defaultDescription="DEALER CODE"/>
+      </viewAttribute>
+      <viewAttribute id="B_STATUS">
+        <descriptions defaultDescription="BOOKING STATUS"/>
+      </viewAttribute>
+      <viewAttribute id="AUDIT_CREATED_ON">
+        <descriptions defaultDescription="CREATED ON"/>
+      </viewAttribute>
+      <viewAttribute id="AUDIT_CREATED_BY">
+        <descriptions defaultDescription="CREATED BY"/>
+      </viewAttribute>
+      <viewAttribute id="OBJECT_KEY">
+        <descriptions defaultDescription="OBJECT KEY"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PRJ_HISTS">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="B_STATUS" source="B_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CREATED_ON" source="AUDIT_CREATED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CREATED_BY" source="AUDIT_CREATED_BY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="OBJECT_KEY" source="OBJECT_KEY"/>
+    </input>
+    <input node="PRJ_LATEST">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CREATED_ON" source="LAST_CREATED_ON"/>
+    </input>
+    <joinAttribute name="PROGRAM_UUID"/>
+    <joinAttribute name="DEALER_CODE"/>
+    <joinAttribute name="AUDIT_CREATED_ON"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_DEALER_INFO">
+    <viewAttributes>
+      <viewAttribute id="DEALER_CODE">
+        <descriptions defaultDescription="DEALER CODE"/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_CODE_S">
+        <descriptions defaultDescription="DEALER CODE - TCI SHORT "/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PROGRAMADMIN_DEALER_INFO">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE_S" source="DEALER_CODE_S"/>
+    </input>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_LATEST_ST">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_CODE">
+        <descriptions defaultDescription="DEALER CODE"/>
+      </viewAttribute>
+      <viewAttribute id="B_STATUS">
+        <descriptions defaultDescription="BOOKING STATUS"/>
+      </viewAttribute>
+      <viewAttribute id="AUDIT_CREATED_ON">
+        <descriptions defaultDescription="CREATED ON"/>
+      </viewAttribute>
+      <viewAttribute id="AUDIT_CREATED_BY">
+        <descriptions defaultDescription="CREATED BY"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="JOIN_ONLY">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="B_STATUS" source="B_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CREATED_ON" source="AUDIT_CREATED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CREATED_BY" source="AUDIT_CREATED_BY"/>
+    </input>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="Join_Dealer_Name" cardinality="CN_N" joinType="leftOuter">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_CODE">
+        <descriptions defaultDescription="DEALER CODE"/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_CODE_S">
+        <descriptions defaultDescription="DEALER CODE - TCI SHORT "/>
+      </viewAttribute>
+      <viewAttribute id="B_STATUS">
+        <descriptions defaultDescription="BOOKING STATUS"/>
+      </viewAttribute>
+      <viewAttribute id="AUDIT_CREATED_BY">
+        <descriptions defaultDescription="CREATED BY"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PRJ_LATEST_ST">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="B_STATUS" source="B_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CREATED_BY" source="AUDIT_CREATED_BY"/>
+    </input>
+    <input node="PRJ_DEALER_INFO">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE_S" source="DEALER_CODE_S"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+    </input>
+    <joinAttribute name="DEALER_CODE"/>
+  </calculationView>
+</calculationViews>
+<logicalModel id="Join_Dealer_Name">
+  <attributes>
+    <attribute id="PROGRAM_UUID" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM UUID"/>
+      <keyMapping columnObjectName="Join_Dealer_Name" columnName="PROGRAM_UUID"/>
+    </attribute>
+    <attribute id="DEALER_CODE" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEALER CODE"/>
+      <keyMapping columnObjectName="Join_Dealer_Name" columnName="DEALER_CODE"/>
+    </attribute>
+    <attribute id="DEALER_CODE_S" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEALER CODE - TCI SHORT "/>
+      <keyMapping columnObjectName="Join_Dealer_Name" columnName="DEALER_CODE_S"/>
+    </attribute>
+    <attribute id="B_STATUS" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="BOOKING STATUS"/>
+      <keyMapping columnObjectName="Join_Dealer_Name" columnName="B_STATUS"/>
+    </attribute>
+    <attribute id="CREATED_BY" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CREATED BY"/>
+      <keyMapping columnObjectName="Join_Dealer_Name" columnName="AUDIT_CREATED_BY"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes/>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="230" y="112"/>
+    
+      <rectangleSize width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="PRJ_HISTS" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="113" y="661"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="PRJ_LATEST" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="323" y="661"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="JOIN_ONLY" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="232" y="501"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="JOIN_ONLY" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="JOIN_ONLY" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_DEALER_INFO" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="92" y="376"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_LATEST_ST" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="302" y="376"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="Join_Dealer_Name" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="230" y="217"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="PRJ_LATEST_ST" modelObjectNameSpace="Join_Dealer_Name" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="PRJ_DEALER_INFO" modelObjectNameSpace="Join_Dealer_Name" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

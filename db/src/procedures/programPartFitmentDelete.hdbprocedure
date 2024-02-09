@@ -1,0 +1,26 @@
+PROCEDURE "PROCEDURES_PROGRAMPARTFITMENTDELETE" ( 
+    IN im_details "PROGRAMADMIN_PROGRAMPARTFITMENTVIEW",
+	OUT ex_error "PROCEDURES_TT_ERRORS"  ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER AS
+BEGIN
+
+/***************************** 
+ Write your procedure logic 
+ *****************************/
+declare lv_object_key		string;
+
+select OBJECT_KEY
+     into lv_object_key
+     from :im_details; 
+
+if :lv_object_key = '' then
+	ex_error = select 552 as http_status_code, 
+               'The Obejct key is empty' as error_message, 
+                     'The Obejct key field can not be my empty' as detail from "DUMMY";
+else
+	delete from "CORE_OBJECT_MESSAGE"  where OBJECT_KEY = :lv_object_key ; 
+	delete from "PROGRAMADMIN_PROG_PART_FITMENT"  where OBJECT_KEY = :lv_object_key ;  
+end if;
+
+END;

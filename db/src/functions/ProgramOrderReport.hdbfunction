@@ -1,0 +1,27 @@
+FUNCTION "PROGRAMORDERREPORT"(
+    im_programUUID NVARCHAR(36),
+    im_vendor NVARCHAR(20),
+    im_language NVARCHAR(2)
+)
+RETURNS TABLE (
+PROGRAM_UUID NVARCHAR(36),
+VENDOR_ID NVARCHAR(20),
+VENDOR_DESC NVARCHAR(100),
+DEALER_CODE NVARCHAR(20),
+DEALER_NAME NVARCHAR(100)
+)
+LANGUAGE SQLSCRIPT
+SQL SECURITY INVOKER AS
+BEGIN
+/*****************************
+Write your function logic
+****************************/
+--- the default language is english
+DECLARE lv_lan          NVARCHAR(2) default 'EN';
+if :im_language is not NULL AND :im_language = 'FR' then
+lv_lan = 'FR';
+end if;
+RETURN
+select A.PROGRAM_UUID, A.VENDOR_ID, A.VENDOR_DESC, A.DEALER_CODE, A.DEALER_NAME
+from ( select * from "AVAILABLEDEALERBOOKINGPERIODCALCULATION"(:im_programUUID, :im_vendor, :im_language ) ) AS A;
+END;

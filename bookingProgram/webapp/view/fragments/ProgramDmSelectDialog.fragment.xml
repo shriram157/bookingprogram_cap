@@ -1,0 +1,24 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog contentWidth="650px"
+		
+		noDataText="{i18n>Label.Select.Vendor}"
+		title="{i18n>Label.Select.Vendor}"
+		search="handleDmSearch"
+		liveChange = "handleDmSearch"
+		confirm="handleDmSearchDialogClose"
+		cancel="handleDmSearchDialogClose"
+		growingThreshold="20" 
+		items="{
+			path : '/ProgramValidDeliveryMethodSet'
+		}" >
+		<StandardListItem 
+			description="{DEL_METHOD}"
+			title="{DEL_METHOD_NAME}"
+			icon="sap-icon://travel-itinerary"
+			iconDensityAware="false"
+			iconInset="false"
+			type="Active" />
+	</SelectDialog>
+</core:FragmentDefinition>

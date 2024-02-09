@@ -1,0 +1,28 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog contentWidth="650px"
+		
+		noDataText="{i18n>Label.Select.Dealer}"
+		title="{i18n>Label.Select.Dealer}"
+		search="handleDealerSearch"
+		liveChange = "handleDealerSearch"
+		confirm="handleDealerSearchDialogClose"
+		cancel="handleDealerSearchDialogClose"
+		growingThreshold="20" 
+		items="{
+			path: '/A_BusinessPartner',
+			parameters :{select : 'BusinessPartner,OrganizationBPName1,SearchTerm2'},
+			sorter : [{ path : 'BusinessPartner', descending : false }], 
+			filters :  [{ path : 'BusinessPartnerType', operator : 'EQ', value1 : 'Z001' }, { path : 'zstatus', operator : 'NE', value1 : 'X' } ] 
+		}" >
+		<StandardListItem 
+			title="{path : 'SearchTerm2'}"
+			description="{OrganizationBPName1}"
+			icon="sap-icon://supplier"
+			iconDensityAware="false"
+			info="{path : 'BusinessPartner'}"
+			iconInset="false"
+			type="Active" />
+	</SelectDialog>
+</core:FragmentDefinition>

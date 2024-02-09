@@ -1,0 +1,25 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog contentWidth="650px"
+		
+		noDataText="{i18n>Label.Select.Vendor}"
+		title="{i18n>Label.Select.Vendor}"
+		search="handleVendorSearch"
+		liveChange = "handleVendorSearch"
+		confirm="handleVendorSearchDialogClose"
+		cancel="handleVendorSearchDialogClose"
+		growingThreshold="20" 
+		items="{
+			path: '/A_Supplier',
+			parameters :{select : 'Supplier,SupplierName'}
+		}" >
+		<StandardListItem 
+			title="{Supplier}"
+			description="{path:'SupplierName', formatter : '.formatter.vendorDescription'}"
+			icon="sap-icon://supplier"
+			iconDensityAware="false"
+			iconInset="false"
+			type="Active" />
+	</SelectDialog>
+</core:FragmentDefinition>

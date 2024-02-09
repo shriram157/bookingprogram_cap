@@ -1,0 +1,89 @@
+PROCEDURE "PROCEDURES_BOOKINGPROGRAMCREATE" ( 
+    IN im_details "PROGRAMADMIN_BOOKINGPROGRAMVIEW",
+	OUT ex_error "PROCEDURES_TT_ERRORS"	) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER AS
+BEGIN
+
+/***************************** 
+ Write your procedure logic 
+ *****************************/
+declare lv_program_uuid		string;
+declare lv_programid		string;
+declare lv_department_id	string;
+declare lv_brand_id 		string;
+declare lv_open_date 		DATE;
+declare lv_close_date 		DATE;
+declare lv_delivery_fr		DATE;
+declare lv_delivery_to 		DATE;
+declare lv_init_warm		integer;
+declare lv_final_warm		integer;
+declare lv_comparative_uuid	string;
+declare lv_status			string;
+declare lv_en_desc			string;
+declare lv_fr_desc			string;
+declare lv_changed_by		string;
+declare lv_count			integer; 
+
+select PROGRAM_UUID,PROGRAM_ID,DEPART,BRAND,OPEN_DATE,CLOSE_DATE,INITIAL_WARN,FINAL_WARN,DELIVERY_FR,DELIVERY_TO,CPROGRAM_UUID,STATUS,EN_DESC,FR_DESC,CHANGED_BY
+     into lv_program_uuid,lv_programid,lv_department_id,lv_brand_id,lv_open_date,lv_close_date,lv_init_warm,lv_final_warm,lv_delivery_fr,lv_delivery_to,lv_comparative_uuid,lv_status,lv_en_desc,lv_fr_desc,lv_changed_by
+     from :im_details; 
+
+if :lv_programid = '' then
+	ex_error = select 552 as http_status_code, 
+        'The Program Id is empty' as error_message, 
+        'The program id field can not be my empty' as detail from "DUMMY";
+else
+	select count(*) into lv_count  from "PROGRAMADMIN_BOOKING_PROGRAM" where PROGRAM_ID = :lv_programid AND DEPART = :lv_department_id ;
+	if lv_count > 0 then
+		ex_error = select 551 as http_status_code, 
+            'The Record already exist' as error_message, 
+                     'The Record already exist, can not insert' as detail from "DUMMY";
+  
+	else
+
+		insert into "PROGRAMADMIN_BOOKING_PROGRAM" 
+				(	"PROGRAM_UUID",
+					"PROGRAM_ID",
+					"DEPART",
+					"BRAND",
+					"OPEN_DATE",
+					"CLOSE_DATE",
+					"INITIAL_WARN",
+					"FINAL_WARN",
+					"DELIVERY_FR",
+					"DELIVERY_TO",
+					"CPROGRAM_UUID",
+					"STATUS",
+					"AUDIT_CREATED_ON",	
+					"AUDIT_CREATED_BY",	
+					"AUDIT_CHANGED_ON",	
+					"AUDIT_CHANGED_BY"
+				)
+    	 values (	:lv_program_uuid,
+    	 			:lv_programid,
+    				:lv_department_id,
+    				:lv_brand_id,
+    				:lv_open_date,
+    				:lv_close_date,
+    				:lv_init_warm,
+    				:lv_final_warm,
+    				:lv_delivery_fr,
+    				:lv_delivery_to,
+    				:lv_comparative_uuid,
+            		:lv_status,
+            		CURRENT_TIMESTAMP,
+            		:lv_changed_by,
+            		CURRENT_TIMESTAMP,
+            		:lv_changed_by
+    			);
+    	insert into "PROGRAMADMIN_PROG_NAME" 
+    				("PROGRAM_UUID","LANGUAGE_KEY","PROGRAM_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+           values	(:lv_program_uuid,'EN',:lv_en_desc,CURRENT_TIMESTAMP,:lv_changed_by,CURRENT_TIMESTAMP,:lv_changed_by);
+    	insert into "PROGRAMADMIN_PROG_NAME" 
+    				("PROGRAM_UUID","LANGUAGE_KEY","PROGRAM_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+           values	(:lv_program_uuid,'FR',:lv_fr_desc,CURRENT_TIMESTAMP,:lv_changed_by,CURRENT_TIMESTAMP,:lv_changed_by);
+ 
+	end if;
+end if;
+END;

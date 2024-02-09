@@ -1,0 +1,324 @@
+{
+	"_version": "1.8.0",
+	"sap.app": {
+		"id": "bookingProgram",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"applicationVersion": {
+			"version": "2.0.0"
+		},
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"sourceTemplate": {
+			"id": "servicecatalog.connectivityComponentForManifest",
+			"version": "0.0.0"
+		},
+		"dataSources": {
+			"booking_odatav2": {
+				"uri": "/v2/BookingProgram/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/metadata.xml"
+				}
+			},
+			"MD_PRODUCT_OP_SRV": {
+				"uri": "/sap/opu/odata/sap/MD_PRODUCT_OP_SRV/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/MD_PRODUCT_OP_SRV/metadata.xml"
+				}
+			},
+			"API_BUSINESS_PARTNER": {
+				"uri": "/sap/opu/odata/sap/API_BUSINESS_PARTNER/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/API_BUSINESS_PARTNER/metadata.xml"
+				}
+			},
+			"ZC_VENDOR_MATERIAL_CDS": {
+				"uri": "/sap/opu/odata/sap/ZC_VENDOR_MATERIAL_CDS/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/ZC_VENDOR_MATERIAL_CDS/metadata.xml"
+				}
+			},
+			"Z_VEHICLE_CATALOGUE_SRV": {
+				"uri": "/sap/opu/odata/sap/Z_VEHICLE_CATALOGUE_SRV/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/Z_VEHICLE_CATALOGUE_SRV/metadata.xml"
+				}
+			},
+			"ZC_MATERIAL_BOM_CDS": {
+				"uri": "/sap/opu/odata/sap/ZC_MATERIAL_BOM_CDS/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/ZC_MATERIAL_BOM_CDS/metadata.xml"
+				}
+			},			
+			"Z_VENDORMAT_VAL_SRV": {
+				"uri": "/sap/opu/odata/sap/Z_VENDORMAT_VAL_SRV/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/Z_VENDORMAT_VAL_SRV/metadata.xml"
+				}
+			}			
+			
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "",
+			"favIcon": "",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": [
+			"sap_hcb",
+			"sap_belize"
+		]
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "tci.wave2.ui.bookingProgram.view.App",
+			"type": "XML"
+		},
+		"dependencies": {
+			"minUI5Version": "1.38.34",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.ui.layout": {},
+				"sap.ushell": {},
+				"sap.collaboration": {},
+				"sap.ui.comp": {},
+				"sap.uxap": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "tci.wave2.ui.bookingProgram.i18n.i18n"
+				}
+			},
+			"bookingOdataV2": {
+				"type": "sap.ui.model.odata.v2.ODataModel",
+				"settings": {
+					"defaultOperationMode": "Server",
+					"defaultBindingMode": "OneWay",
+					"defaultUpdateMethod": "PUT",
+					"defaultCountMode": "Both",
+					"json": true,
+					"useBatch": false
+				},
+				"dataSource": "booking_odatav2",
+				"preload": true
+			},
+			"MD_PRODUCT_OP_SRV": {
+				"type": "sap.ui.model.odata.v2.ODataModel",
+				"settings": {
+					"defaultOperationMode": "Server",
+					"defaultBindingMode": "OneWay",
+					"defaultCountMode": "Both",
+					"json": true,
+					"useBatch": false
+				},
+				"dataSource": "MD_PRODUCT_OP_SRV",
+				"preload": true
+			},
+			"API_BUSINESS_PARTNER": {
+				"type": "sap.ui.model.odata.v2.ODataModel",
+				"settings": {
+					"defaultOperationMode": "Server",
+					"defaultBindingMode": "OneWay",
+					"defaultCountMode": "Both",
+					"json": true,
+					"useBatch": false
+				},
+				"dataSource": "API_BUSINESS_PARTNER",
+				"preload": true
+			},
+			"ZC_VENDOR_MATERIAL_CDS": {
+				"type": "sap.ui.model.odata.v2.ODataModel",
+				"settings": {
+					"defaultOperationMode": "Server",
+					"defaultBindingMode": "OneWay",
+					"defaultCountMode": "Both",
+					"json": true,
+					"useBatch": false
+				},
+				"dataSource": "ZC_VENDOR_MATERIAL_CDS",
+				"preload": true
+			},
+			"Z_VEHICLE_CATALOGUE_SRV": {
+				"type": "sap.ui.model.odata.v2.ODataModel",
+				"settings": {
+					"defaultOperationMode": "Server",
+					"defaultBindingMode": "OneWay",
+					"defaultCountMode": "Both",
+					"json": true,
+					"useBatch": false
+				},
+				"dataSource": "Z_VEHICLE_CATALOGUE_SRV",
+				"preload": true
+			},
+			"ZC_MATERIAL_BOM_CDS": {
+				"type": "sap.ui.model.odata.v2.ODataModel",
+				"settings": {
+					"defaultOperationMode": "Server",
+					"defaultBindingMode": "OneWay",
+					"defaultCountMode": "Both",
+					"json": true,
+					"useBatch": false
+				},
+				"dataSource": "ZC_MATERIAL_BOM_CDS",
+				"preload": true
+			},
+			"Z_VENDORMAT_VAL_SRV": {
+				"type": "sap.ui.model.odata.v2.ODataModel",
+				"settings": {
+					"defaultOperationMode": "Server",
+					"defaultBindingMode": "OneWay",
+					"defaultCountMode": "Both",
+					"json": true,
+					"useBatch": false
+				},
+				"dataSource": "Z_VENDORMAT_VAL_SRV",
+				"preload": true
+			}
+		},
+		"resources": {
+			"js": [
+				{
+					"uri": "lib/moment-with-locales.js"
+				},
+				{
+					"uri": "lib/moment-timezone.min.js"
+				},
+				{
+					"uri": "lib/xlsx.full.min.js"
+				},
+				{
+					"uri": "lib/string-mask.js"
+				}
+			],
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"async": true,
+				"viewPath": "tci.wave2.ui.bookingProgram.view",
+				"controlAggregation": "pages",
+				"controlId": "idAppControl",
+				"clearControlAggregation": false
+			},
+			"routes": [
+				{
+					"name": "Default",
+					"pattern": "",
+					"target": [
+						"RouteApp"
+					]
+				},
+				{
+					"name": "RouteApp",
+					"pattern": "RouteApp",
+					"target": [
+						"RouteApp"
+					]
+				},
+				{
+					"name": "ProgramDetail",
+					"pattern": "ProgramDetail/{encodedKey}",
+					"target": [
+						"ProgramDetail"
+					]
+				},
+				{
+					"name": "DealerBooking",
+					"pattern": "DealerBooking/{encodedKey}",
+					"target": [
+						"DealerBooking"
+					]
+				},
+				{
+					"name": "DeliverySchedule",
+					"pattern": "DeliverySchedule/{encodedKey}",
+					"target": [
+						"DeliverySchedule"
+					]
+				},
+				{
+					"name": "SearchProgram",
+					"pattern": "SearchProgram",
+					"target": [
+						"SearchProgram"
+					]
+				}
+			],
+			"targets": {
+				"RouteApp": {
+					"viewType": "XML",
+					"transition": "slide",
+					"viewLevel": 1,
+					"clearControlAggregation": false,
+					"viewName": "App"
+				},
+				"SearchProgram": {
+					"viewType": "XML",
+					"transition": "slide",
+					"viewLevel": 1,
+					"clearControlAggregation": false,
+					"viewName": "SearchProgram"
+				},
+				"DealerBooking": {
+					"viewType": "XML",
+					"transition": "slide",
+					"viewLevel": 1,
+					"clearControlAggregation": false,
+					"viewName": "DealerBooking"
+				},
+				"DeliverySchedule": {
+					"viewType": "XML",
+					"transition": "slide",
+					"viewLevel": 1,
+					"clearControlAggregation": false,
+					"viewName": "DeliverySchedule"
+				},
+				"ProgramDetail": {
+					"viewType": "XML",
+					"transition": "slide",
+					"viewLevel": 1,
+					"clearControlAggregation": false,
+					"viewName": "ProgramDetail"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,137 @@
+PROCEDURE "PROCEDURES_BOOKINGPROGRAMDELETE" ( 
+    IN im_details "PROGRAMADMIN_BOOKINGPROGRAMVIEW",
+	OUT ex_error "PROCEDURES_TT_ERRORS"  ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER AS
+BEGIN
+
+/***************************** 
+ Write your procedure logic 
+ *****************************/
+declare lv_program_uuid		string;
+declare lv_category_count		int default 0;
+declare lv_vendor_count			int default 0;
+declare lv_del_method_count		int default 0;
+declare lv_del_location_count	int default 0;
+declare lv_parts_count			int default 0;
+declare lv_parts_fitment_count  int default 0;
+declare lv_pppur_count  		int default 0;
+declare lv_cp_count  			int default 0;
+declare lv_dealerbooking_count  int default 0;
+declare lv_error_index  		int default 1;
+
+declare lv_has_error  			boolean default false;
+
+select PROGRAM_UUID
+     into lv_program_uuid
+     from :im_details; 
+
+
+/***
+ start of Validation
+***/
+if :lv_program_uuid = '' then
+	ex_error = select 552 as http_status_code, 
+               'BP01001' as error_message, 
+                     'The program id field can not be my empty' as detail from "DUMMY";
+    lv_has_error = true;                 
+
+else 
+
+	select count(*) into lv_category_count from "PROGRAMADMIN_PROG_CATEGORY" where  PROGRAM_UUID = :lv_program_uuid;
+	if :lv_category_count > 0 then 
+		ex_error.http_status_code[:lv_error_index] =  556;
+		ex_error.error_message[:lv_error_index] =  'BP01010'; 
+		ex_error.detail[:lv_error_index] =  'The program has associated categories';
+        lv_error_index = :lv_error_index + 1;             
+    	lv_has_error = true;            		
+
+	end if;
+	
+	select count(*) into lv_vendor_count from "PROGRAMADMIN_PROG_VENDOR" where  PROGRAM_UUID = :lv_program_uuid;
+	if :lv_vendor_count > 0 then 
+		ex_error.http_status_code[:lv_error_index] =  556;
+		ex_error.error_message[:lv_error_index] =  'BP01011'; 
+		ex_error.detail[:lv_error_index] =  'The program has associated vendors';
+        lv_error_index = :lv_error_index + 1;             
+    	lv_has_error = true;            	
+	end if;
+	
+	select count(*) into lv_del_method_count from "PROGRAMADMIN_PROG_DEL_METHOD" where  PROGRAM_UUID = :lv_program_uuid;
+	if :lv_category_count > 0 then 
+		ex_error.http_status_code[:lv_error_index] =  556;
+		ex_error.error_message[:lv_error_index] =  'BP01012'; 
+		ex_error.detail[:lv_error_index] =  'The program has associated delivery methods';
+        lv_error_index = :lv_error_index + 1;             
+    	lv_has_error = true;            	
+	end if;
+
+	select count(*) into lv_del_location_count from "PROGRAMADMIN_PROG_DEL_LOCATION" where  PROGRAM_UUID = :lv_program_uuid AND VENDOR_TYPE != 'D3';
+	if :lv_del_location_count > 0 then 
+		ex_error.http_status_code[:lv_error_index] =  556;
+		ex_error.error_message[:lv_error_index] =  'BP01013'; 
+		ex_error.detail[:lv_error_index] =  'The program has associated delivery locations';
+        lv_error_index = :lv_error_index + 1;             
+    	lv_has_error = true;            	
+	end if;
+
+	select count(*) into lv_parts_count from "PROGRAMADMIN_PROG_PARTS" where  PROGRAM_UUID = :lv_program_uuid;
+	if :lv_parts_count > 0 then 
+		ex_error.http_status_code[:lv_error_index] =  556;
+		ex_error.error_message[:lv_error_index] =  'BP01014'; 
+		ex_error.detail[:lv_error_index] =  'The program has associated parts';
+        lv_error_index = :lv_error_index + 1;             
+    	lv_has_error = true;            	
+	end if;
+
+	select count(*) into lv_parts_fitment_count from "PROGRAMADMIN_PROG_PART_FITMENT" where  PROGRAM_UUID = :lv_program_uuid;
+	if :lv_parts_fitment_count > 0 then 
+		ex_error.http_status_code[:lv_error_index] =  556;
+		ex_error.error_message[:lv_error_index] =  'BP01015'; 
+		ex_error.detail[:lv_error_index] =  'The program has associated part fitments';
+        lv_error_index = :lv_error_index + 1;             
+    	lv_has_error = true;            	
+	end if;
+
+	if :lv_pppur_count > 0 then 
+		ex_error.http_status_code[lv_error_index] =  556;
+		ex_error.error_message[lv_error_index] =  'BP01016'; 
+		ex_error.detail[lv_error_index] =  'The program has associated prior purchases';
+        lv_error_index = :lv_error_index + 1;             
+    	lv_has_error = true;            	
+	end if;
+
+	select count(*) into lv_cp_count from "PROGRAMADMIN_BOOKING_PROGRAM" where  CPROGRAM_UUID = :lv_program_uuid;
+	if :lv_cp_count > 0 then 
+		ex_error.http_status_code[lv_error_index] =  556;
+		ex_error.error_message[lv_error_index] =  'BP01017'; 
+		ex_error.detail[lv_error_index] =  'The program has associated other programs with comparative program';
+        lv_error_index = :lv_error_index + 1;             
+    	lv_has_error = true;            	
+	end if;
+
+	select count(*) into lv_dealerbooking_count from "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" where PROGRAM_UUID = :lv_program_uuid;
+	if :lv_dealerbooking_count > 0 then 
+		ex_error = select 556 as http_status_code, 
+               'BP01018' as error_message, 
+                     'The program has associated dealer booking' as detail from "DUMMY";
+    	lv_has_error = true;                 
+	end if;
+
+end if;
+
+/***
+ end of Validation
+***/
+
+if :lv_has_error = false then
+
+	delete from "PROGRAMADMIN_PROG_DEL_LOCATION" where  PROGRAM_UUID = :lv_program_uuid;
+	
+	delete from "PROGRAMADMIN_PROG_NAME"  where PROGRAM_UUID = :lv_program_uuid;  
+
+	delete from "PROGRAMADMIN_BOOKING_PROGRAM"  where PROGRAM_UUID = :lv_program_uuid;  
+
+end if;
+
+END;

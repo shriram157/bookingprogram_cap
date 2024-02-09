@@ -1,0 +1,88 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns="sap.m">
+	<Table showNoData="false" items="{viewModel>/currentProgram/priorPurchases/newline}" visible="{=(!${viewModel>/displayMode})}">
+		<columns>
+			<Column width="25px" hAlign="Begin">
+				<CheckBox select='togglePriorSelect'/>
+			</Column>
+			<Column width="12rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Dealer}"/>
+			</Column>
+			<Column width="12rem">
+				<ObjectIdentifier title="{i18n>Label.Part}"/>
+			</Column>
+			<Column width="7.4rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Prior.Purchases}"/>
+			</Column>
+			<Column width="1rem" minScreenWidth="Tablet" demandPopin="true" vAlign="Middle" hAlign="Center">
+				<Button type="Transparent" icon="sap-icon://delete" press='handlePriorPurDelete' enabled="{=!${viewModel>/displayMode}}"/>
+			</Column>
+			<Column width="1rem" minScreenWidth="Tablet" demandPopin="true" vAlign="Middle" hAlign="Center">
+				<Button type="Transparent" icon="sap-icon://filter" press='handlePriorPurchaseSettings' enabled="{=!${viewModel>/displayMode}}"/>
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<Text></Text>
+					<Input type="Text" value="{ parts : ['viewModel>dealerId', 'viewModel>dealerId_s',  'viewModel>dealerName'], formatter : '.formatter.dealerDescFormatter' }" valueHelpOnly="true" showValueHelp="true" valueHelpRequest="handleDealerKeyDialogPress"/>
+					<!--<Select  selectedKey="{viewModel>partId}" 
+							showSecondaryValues="false" 
+							width='100%'  
+							items="{path : 'viewModel>/currentProgram/priorPurchases/allowedParts', sorter: { path: 'partId' }, templateShareable:true }" 
+					>
+						<core:ListItem key="{viewModel>partId}" text="{ parts : ['viewModel>partId',  'viewModel>partDesc'], formatter : '.formatter.partsDropdownFormatter' }" />
+					</Select>-->
+					<Input type="Text" value="{path : 'viewModel>partId', formatter : '.formatter.removeLeadingZero'}" placeholder="{i18n>Label.Parts}" valueHelpOnly="true" showValueHelp="true" valueHelpRequest="handleProPartsDialogPress"/>					
+					<Input type="Number" value="{viewModel>purchases}" />
+					<Button type='Transparent' icon="sap-icon://add" press='handlePriorPurAdd' enabled="{=!${viewModel>/displayMode}}"/>
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+	<Table showNoData="false" visible="{=(!!${viewModel>/displayMode})}">
+		<columns>
+			<Column width="12rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Dealer}"/>
+			</Column>
+			<Column width="12rem">
+				<ObjectIdentifier title="{i18n>Label.Part}"/>
+			</Column>
+			<Column width="8.3rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Prior.Purchases}"/>
+			</Column>
+			<Column width="1rem" minScreenWidth="Tablet" demandPopin="true" vAlign="Middle" hAlign="Center">
+			</Column>
+		</columns>
+	</Table>
+
+	<ScrollContainer height="{viewModel>/tabs/PriorPurchases/contHigh}" width="100%" horizontal="true" vertical="true" focusable="true">
+		<Table alternateRowColors="true" showNoData="false" mode='SingleSelectMaster' growing="true" growingScrollToLoad="true" growingThreshold="50" id="priorPurchasesTable">
+			<columns>
+				<!--<Column width="40px" hAlign="Begin" visible="{=(!${viewModel>/displayMode})}"/>-->
+				<Column width="12rem" vAlign="Middle"/>
+				<Column width="12rem" vAlign="Middle"/>
+				<Column width="8rem" vAlign="Middle"/>
+				<Column width="1rem" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" hAlign="Center"></Column>
+			</columns>
+			<items>
+				<ColumnListItem id="priorPurchasesRowT" >
+					<cells>
+						<!--<CheckBox selected='{viewModel>selected}' select='togglePriorRowSelect'/>-->
+						<Text text="{ parts : ['DEALER_CODE', 'DEALER_CODE_S', 'DEALER_DESC'], formatter : '.formatter.dealerDescFormatter' }"/>
+						<Text text="{ parts : ['PART_NUM',  'PART_DESC'], formatter : '.formatter.partsDropdownFormatter' }"/>
+						<Text text="{path: 'PRIOR_PURCHASES'}"/>
+						<HBox justifyContent="Center" width="100%">
+							<core:Icon src="sap-icon://message-error" class="size1" color="#ff0000" visible="{=!(${VALID} === 'X')}"
+											activeColor="Negative" alt="Error" press="onErrorX" />
+						</HBox>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+		<Toolbar>
+			<content>
+				<Text text=""/>
+			</content>
+		</Toolbar>
+	</ScrollContainer>
+</core:FragmentDefinition>

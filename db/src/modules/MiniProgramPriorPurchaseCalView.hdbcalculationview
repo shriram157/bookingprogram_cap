@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?><Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="MINIPROGRAMPRIORPURCHASECALVIEW" applyPrivilegeType="NONE" dataCategory="DEFAULT" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="MINIPROGRAMPRIORPURCHASECALVIEW"/>
+<localVariables>
+  <variable id="PROGRAMUID" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="32" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+  <variable id="LANGUAGE" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="2" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+</localVariables>
+<variableMappings/>
+<dataSources>
+  <DataSource id="PROGRAMADMIN_PROG_PRIOR_PURCHASES">
+    <resourceUri>PROGRAMADMIN_PROG_PRIOR_PURCHASES</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_DEALER_INFO">
+    <resourceUri>PROGRAMADMIN_DEALER_INFO</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_VENDOR_NAME">
+    <resourceUri>PROGRAMADMIN_VENDOR_NAME</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_PART_NAME">
+    <resourceUri>PROGRAMADMIN_PART_NAME</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PROG_PP" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY">
+        <descriptions defaultDescription="OBJECT KEY"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_CODE">
+        <descriptions defaultDescription="DEALER CODE"/>
+      </viewAttribute>
+      <viewAttribute id="PART_NUM">
+        <descriptions defaultDescription="PART NUMBER"/>
+      </viewAttribute>
+      <viewAttribute id="PRIOR_PURCHASES">
+        <descriptions defaultDescription="PRIOR PURCHASE"/>
+      </viewAttribute>
+      <viewAttribute id="VALID">
+        <descriptions defaultDescription="IS VALID"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PROGRAMADMIN_PROG_PRIOR_PURCHASES">
+      <mapping xsi:type="Calculation:AttributeMapping" target="OBJECT_KEY" source="OBJECT_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIOR_PURCHASES" source="PRIOR_PURCHASES"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VALID" source="VALID"/>
+    </input>
+    <filter>"PROGRAM_UUID" ='$$PROGRAMUID$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_DEALER_INFO">
+    <viewAttributes>
+      <viewAttribute id="DEALER_CODE">
+        <descriptions defaultDescription="DEALER CODE"/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_CODE_S">
+        <descriptions defaultDescription="DEALER CODE - TCI SHORT "/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PROGRAMADMIN_DEALER_INFO">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE_S" source="DEALER_CODE_S"/>
+    </input>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_DEALER_NAME" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="VENDOR_ID">
+        <descriptions defaultDescription="CATEGORY ID"/>
+      </viewAttribute>
+      <viewAttribute id="LANGUAGE_KEY">
+        <descriptions defaultDescription="LANGUAGE KEY"/>
+      </viewAttribute>
+      <viewAttribute id="VENDOR_DESC">
+        <descriptions defaultDescription="CATEGORY DESCRIPTION/NAME"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PROGRAMADMIN_VENDOR_NAME">
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LANGUAGE_KEY" source="LANGUAGE_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_DESC" source="VENDOR_DESC"/>
+    </input>
+    <filter>"LANGUAGE_KEY" = '$$LANGUAGE$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PARTS_NAME" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PART_NUM">
+        <descriptions defaultDescription="PART NUMBER"/>
+      </viewAttribute>
+      <viewAttribute id="LANGUAGE_KEY">
+        <descriptions defaultDescription="LANGUAGE KEY"/>
+      </viewAttribute>
+      <viewAttribute id="PART_DESC">
+        <descriptions defaultDescription="PART DESCRIPTION/NAME"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PROGRAMADMIN_PART_NAME">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LANGUAGE_KEY" source="LANGUAGE_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_DESC" source="PART_DESC"/>
+    </input>
+    <filter>"LANGUAGE_KEY" = '$$LANGUAGE$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="JOIN_PROG_PP_NAME_1" cardinality="CN_N" joinType="leftOuter" multiJoinNode="JOIN_PROG_PP_NAME" multiJoinCentralTable="PRJ_PROG_PP" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY">
+        <descriptions defaultDescription="OBJECT KEY"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_CODE">
+        <descriptions defaultDescription="DEALER CODE"/>
+      </viewAttribute>
+      <viewAttribute id="PART_NUM">
+        <descriptions defaultDescription="PART NUMBER"/>
+      </viewAttribute>
+      <viewAttribute id="PRIOR_PURCHASES" aggregationType="sum">
+        <descriptions defaultDescription="PRIOR PURCHASE"/>
+      </viewAttribute>
+      <viewAttribute id="VALID">
+        <descriptions defaultDescription="IS VALID"/>
+      </viewAttribute>
+      <viewAttribute id="PART_DESC">
+        <descriptions defaultDescription="PART DESCRIPTION/NAME"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="PRJ_PROG_PP">
+      <mapping xsi:type="Calculation:AttributeMapping" target="OBJECT_KEY" source="OBJECT_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIOR_PURCHASES" source="PRIOR_PURCHASES"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VALID" source="VALID"/>
+    </input>
+    <input node="PRJ_PARTS_NAME">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_DESC" source="PART_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+    </input>
+    <joinAttribute name="PART_NUM"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="JOIN_PROG_PP_NAME_2" cardinality="CN_N" joinType="leftOuter" multiJoinNode="JOIN_PROG_PP_NAME" multiJoinCentralTable="PRJ_PROG_PP" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY">
+        <descriptions defaultDescription="OBJECT KEY"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_CODE">
+        <descriptions defaultDescription="DEALER CODE"/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_DESC">
+        <descriptions defaultDescription="CATEGORY DESCRIPTION/NAME"/>
+      </viewAttribute>
+      <viewAttribute id="PART_NUM">
+        <descriptions defaultDescription="PART NUMBER"/>
+      </viewAttribute>
+      <viewAttribute id="PRIOR_PURCHASES" aggregationType="sum">
+        <descriptions defaultDescription="PRIOR PURCHASE"/>
+      </viewAttribute>
+      <viewAttribute id="VALID">
+        <descriptions defaultDescription="IS VALID"/>
+      </viewAttribute>
+      <viewAttribute id="PART_DESC">
+        <descriptions defaultDescription="PART DESCRIPTION/NAME"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="JOIN_PROG_PP_NAME_1">
+      <mapping xsi:type="Calculation:AttributeMapping" target="OBJECT_KEY" source="OBJECT_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIOR_PURCHASES" source="PRIOR_PURCHASES"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VALID" source="VALID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_DESC" source="PART_DESC"/>
+    </input>
+    <input node="PRJ_DEALER_NAME">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_DESC" source="VENDOR_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="VENDOR_ID"/>
+    </input>
+    <joinAttribute name="DEALER_CODE"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="JOIN_PROG_PP_NAME_3" cardinality="CN_N" joinType="leftOuter" multiJoinNode="JOIN_PROG_PP_NAME" multiJoinCentralTable="PRJ_PROG_PP" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY">
+        <descriptions defaultDescription="OBJECT KEY"/>
+      </viewAttribute>
+      <viewAttribute id="PROGRAM_UUID">
+        <descriptions defaultDescription="PROGRAM UUID"/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_CODE">
+        <descriptions defaultDescription="DEALER CODE"/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_CODE_S">
+        <descriptions defaultDescription="DEALER CODE - TCI SHORT "/>
+      </viewAttribute>
+      <viewAttribute id="DEALER_DESC">
+        <descriptions defaultDescription="CATEGORY DESCRIPTION/NAME"/>
+      </viewAttribute>
+      <viewAttribute id="PART_NUM">
+        <descriptions defaultDescription="PART NUMBER"/>
+      </viewAttribute>
+      <viewAttribute id="PRIOR_PURCHASES" aggregationType="sum">
+        <descriptions defaultDescription="PRIOR PURCHASE"/>
+      </viewAttribute>
+      <viewAttribute id="VALID">
+        <descriptions defaultDescription="IS VALID"/>
+      </viewAttribute>
+      <viewAttribute id="PART_DESC">
+        <descriptions defaultDescription="PART DESCRIPTION/NAME"/>
+      </viewAttribute>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="JOIN_PROG_PP_NAME_2">
+      <mapping xsi:type="Calculation:AttributeMapping" target="OBJECT_KEY" source="OBJECT_KEY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_DESC" source="DEALER_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIOR_PURCHASES" source="PRIOR_PURCHASES"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VALID" source="VALID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_DESC" source="PART_DESC"/>
+    </input>
+    <input node="PRJ_DEALER_INFO">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE_S" source="DEALER_CODE_S"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+    </input>
+    <joinAttribute name="DEALER_CODE"/>
+  </calculationView>
+</calculationViews>
+<logicalModel id="JOIN_PROG_PP_NAME_3" filterExpressionLanguage="SQL">
+  <attributes>
+    <attribute id="OBJECT_KEY" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="OBJECT KEY"/>
+      <keyMapping columnObjectName="JOIN_PROG_PP_NAME_3" columnName="OBJECT_KEY"/>
+    </attribute>
+    <attribute id="PROGRAM_UUID" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM UUID"/>
+      <keyMapping columnObjectName="JOIN_PROG_PP_NAME_3" columnName="PROGRAM_UUID"/>
+    </attribute>
+    <attribute id="VALID" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="IS VALID"/>
+      <keyMapping columnObjectName="JOIN_PROG_PP_NAME_3" columnName="VALID"/>
+    </attribute>
+    <attribute id="DEALER_CODE" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEALER CODE"/>
+      <keyMapping columnObjectName="JOIN_PROG_PP_NAME_3" columnName="DEALER_CODE"/>
+    </attribute>
+    <attribute id="DEALER_CODE_S" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEALER CODE - TCI SHORT "/>
+      <keyMapping columnObjectName="JOIN_PROG_PP_NAME_3" columnName="DEALER_CODE_S"/>
+    </attribute>
+    <attribute id="DEALER_DESC" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CATEGORY DESCRIPTION/NAME"/>
+      <keyMapping columnObjectName="JOIN_PROG_PP_NAME_3" columnName="DEALER_DESC"/>
+    </attribute>
+    <attribute id="PART_NUM" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PART NUMBER"/>
+      <keyMapping columnObjectName="JOIN_PROG_PP_NAME_3" columnName="PART_NUM"/>
+    </attribute>
+    <attribute id="PART_DESC" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PART DESCRIPTION/NAME"/>
+      <keyMapping columnObjectName="JOIN_PROG_PP_NAME_3" columnName="PART_DESC"/>
+    </attribute>
+    <attribute id="PRIOR_PURCHASES" order="10" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PRIOR PURCHASE"/>
+      <keyMapping columnObjectName="JOIN_PROG_PP_NAME_3" columnName="PRIOR_PURCHASES"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes>
+    <calculatedAttribute id="LANGUAGE_KEY" order="3" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <keyCalculation datatype="VARCHAR" expressionLanguage="SQL" length="2">
+        <formula>'$$Language$$'</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+  
+    <calculatedAttribute id="SELECTED" order="11" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+  
+      <keyCalculation datatype="VARCHAR" expressionLanguage="SQL" length="1">
+  
+        <formula>' '</formula>
+  
+      </keyCalculation>
+  
+      </calculatedAttribute>
+  </calculatedAttributes>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+
+  <filter>"PROGRAM_UUID" = '$$PROGRAMUID$$'</filter>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="474" y="112"/>
+    
+      <rectangleSize width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="PRJ_PROG_PP" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="302" y="426"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_DEALER_INFO" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="722" y="426"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_DEALER_NAME" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="512" y="426"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_PARTS_NAME" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="92" y="426"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="JOIN_PROG_PP_NAME" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="474" y="237"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="JOIN_PROG_PP_NAME" modelObjectType="JoinNodeInput" multiJoinViewNodeName="JOIN_PROG_PP_NAME">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="JOIN_PROG_PP_NAME" modelObjectType="JoinNodeInput" multiJoinViewNodeName="JOIN_PROG_PP_NAME">
+      <upperLeftCorner x="620" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="JOIN_PROG_PP_NAME" modelObjectType="JoinNodeInput" multiJoinViewNodeName="JOIN_PROG_PP_NAME">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="JOIN_PROG_PP_NAME" modelObjectType="JoinNodeInput" multiJoinViewNodeName="JOIN_PROG_PP_NAME">
+      <upperLeftCorner x="920" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

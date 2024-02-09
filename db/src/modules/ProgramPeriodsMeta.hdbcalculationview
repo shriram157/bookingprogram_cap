@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" xmlns:Variable="http://www.sap.com/ndb/BiModelVariable.ecore" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="PROGRAMPERIODSMETA" applyPrivilegeType="NONE" dataCategory="DEFAULT" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="PROGRAMPERIODSMETA"/>
+<localVariables>
+  <variable id="IN_PROGRAM_UUID" parameter="true">
+    <descriptions defaultDescription=""/>
+    <variableProperties datatype="VARCHAR" length="36" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="Single"/>
+    </variableProperties>
+  </variable>
+</localVariables>
+<variableMappings/>
+<dataSources/>
+<calculationViews>
+  <calculationView xsi:type="Calculation:TableFunctionView" id="TABLEFUNCTION_FSET" tableFunctionName="PERIODSCALCULATION">
+    <viewAttributes/>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <variableMapping xsi:type="Variable:VariableMapping">
+      <targetVariable name="IM_PROGRAMUUID"/>
+      <localVariable>IN_PROGRAM_UUID</localVariable>
+    </variableMapping>
+  </calculationView>
+</calculationViews>
+<logicalModel id="TABLEFUNCTION_FSET">
+  <attributes>
+    <attribute id="PROGRAM_UUID" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM_UUID"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_FSET" columnName="PROGRAM_UUID"/>
+    </attribute>
+    <attribute id="F0_PERIOD" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F0_PERIOD"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_FSET" columnName="F0_PERIOD"/>
+    </attribute>
+    <attribute id="F0_ENABLED" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F0_ENABLED"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_FSET" columnName="F0_ENABLED"/>
+    </attribute>
+    <attribute id="F1_PERIOD" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F1_PERIOD"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_FSET" columnName="F1_PERIOD"/>
+    </attribute>
+    <attribute id="F1_ENABLED" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F1_ENABLED"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_FSET" columnName="F1_ENABLED"/>
+    </attribute>
+    <attribute id="F2_PERIOD" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F2_PERIOD"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_FSET" columnName="F2_PERIOD"/>
+    </attribute>
+    <attribute id="F2_ENABLED" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F2_ENABLED"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_FSET" columnName="F2_ENABLED"/>
+    </attribute>
+    <attribute id="F3_PERIOD" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F3_PERIOD"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_FSET" columnName="F3_PERIOD"/>
+    </attribute>
+    <attribute id="F3_ENABLED" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F3_ENABLED"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_FSET" columnName="F3_ENABLED"/>
+    </attribute>
+    <attribute id="F4_PERIOD" order="10" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F4_PERIOD"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_FSET" columnName="F4_PERIOD"/>
+    </attribute>
+    <attribute id="F4_ENABLED" order="11" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F4_ENABLED"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_FSET" columnName="F4_ENABLED"/>
+    </attribute>
+    <attribute id="F5_PERIOD" order="12" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F5_PERIOD"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_FSET" columnName="F5_PERIOD"/>
+    </attribute>
+    <attribute id="F5_ENABLED" order="13" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F5_ENABLED"/>
+      <keyMapping columnObjectName="TABLEFUNCTION_FSET" columnName="F5_ENABLED"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes/>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="92" y="112"/>
+    
+      <rectangleSize width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="TABLEFUNCTION_FSET" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="92" y="217"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

@@ -1,0 +1,34 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<ViewSettingsDialog confirm="onDelMethodsConfirm" title="" id="delmethodDialogId">
+		<sortItems>
+			<ViewSettingsItem text="{i18n>Label.Category}" key="CATEGORY_DESC" selected="true"/>
+			<ViewSettingsItem text="{i18n>Label.Vendor}" key="VENDOR_DESC"/>
+			<ViewSettingsItem text="{i18n>Label.Delivery.Method}" key="DEL_METHOD_NAME"/>
+		</sortItems>
+		<filterItems>
+			<ViewSettingsFilterItem text="{i18n>Label.Category}" key="CATEGORY_DESC" multiSelect="true" items="{CategoryDescJSON>/}">
+				<items>
+					<ViewSettingsItem text="{CategoryDescJSON>CATEGORY_DESC}" key="CATEGORY_DESC"/>
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="{i18n>Label.Vendor}" key="VENDOR_DESC" multiSelect="true" items="{VendorDescJSON>/}">
+				<items>
+					<ViewSettingsItem text="{VendorDescJSON>VENDOR_DESC}" key="VENDOR_DESC"/>
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="{i18n>Label.Delivery.Method}" key="DEL_METHOD_NAME" multiSelect="true" items="{DelMethodJSON>/}">
+				<items>
+					<ViewSettingsItem text="{DelMethodJSON>DEL_METHOD_NAME}" key="DEL_METHOD_NAME"/>
+				</items>
+			</ViewSettingsFilterItem>
+		
+		</filterItems>
+		<!--<filterItems>-->
+		<!--	<ViewSettingsFilterItem text="{i18n>Label.Category}" multiSelect="true" key="{viewModel>key}" items="{viewModel>/currentProgram/parts/categoryList}">-->
+		<!--		<items>-->
+		<!--			<ViewSettingsItem text="{viewModel>desc}" key="{viewModel>key}"/>-->
+		<!--		</items>-->
+		<!--	</ViewSettingsFilterItem>-->
+		<!--</filterItems>-->
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

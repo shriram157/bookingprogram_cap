@@ -1,0 +1,376 @@
+<mvc:View controllerName="tci.wave2.ui.bookingProgram.controller.DealerBooking" xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:form="sap.ui.layout.form" xmlns:layout="sap.ui.layout" xmlns:tnt="sap.tnt"
+	xmlns:fb="sap.ui.comp.filterbar" xmlns:f="sap.f" xmlns="sap.m" xmlns:vm="sap.ui.comp.variants" displayBlock="true">
+	<html:style>
+		.pageHeight{height:100%;} .customMargin{margin-right: 10px;}
+	</html:style>
+	<Page showNavButton="false" floatingFooter="false" enableScrolling='false' class="pageHeight">
+		<customHeader>
+			<core:Fragment fragmentName="tci.wave2.ui.bookingProgram.view.fragments.TopHeader" type="XML"/>
+		</customHeader>
+		<subHeader>
+			<core:Fragment fragmentName="tci.wave2.ui.bookingProgram.view.fragments.ToolHeader" type="XML"/>
+		</subHeader>
+		<content>
+			<layout:VerticalLayout width="100%">
+				<layout:content>
+					<Panel>
+						<FlexBox alignItems="Start" justifyContent="Start">
+							<items>
+								<HBox justifyContent="Start" alignContent="Start" alignItems="Start">
+									<VBox alignContent="Start" alignItems="Start" class="customMargin">
+										<HBox alignContent="Center" alignItems="Center" height="40px">
+											<Label text="{i18n>Label.Dealer}" required='true' vAlign="Middle" design="Bold"/>
+										</HBox>
+										<Input type="Text"
+											value="{ parts : ['viewModel>/selectCondotions/dealerId','viewModel>/selectCondotions/dealerCode', 'viewModel>/selectCondotions/dealerName'], formatter : '.formatter.dealerDescFormatter' }"
+											enabled="{=(!${viewModel>/currentBooking/loaded} &amp;&amp; ${viewModel>/selectCondotions/dealerEnabled}) }" valueHelpOnly="true"
+											showValueHelp="true" valueHelpRequest="handleDealerKeyDialogPress"/>
+									</VBox>
+									<VBox alignContent="Start" alignItems="Start" class="customMargin">
+										<HBox alignItems="Center" alignContent="Stretch" justifyContent="SpaceBetween" height="40px" width="20rem">
+											<Label text="{i18n>Label.Booking.Program}" required='true' vAlign="Middle" design="Bold"/>
+											<CheckBox id="includedCompleted" selected="{viewModel>/selectCondotions/completedOk}"
+												enabled="{=${viewModel>/currentBooking/loaded} === false}"></CheckBox>
+											<Label text="{i18n>Label.Booking.Program.include}" vAlign="Middle" design="Standard"/>
+										</HBox>
+										<Input value="{viewModel>/selectCondotions/programId}" type="Text" width="25rem"
+											enabled="{=!${viewModel>/currentBooking/loaded} &amp;&amp; !!${viewModel>/selectCondotions/dealerId} }" valueHelpOnly="true"
+											showValueHelp="true" valueHelpRequest="handleProgramSearchPress"/>
+									</VBox>
+								</HBox>
+								<VBox class="customMargin">
+									<Label text=""/>
+									<Label text="{i18n>SearchBy}" required="true"/>
+									<ComboBox placeholder="{i18n>Search}" id="searchOptionList" selectionChange="changeOptionPress" value="" selectedKey=""
+										items="{ path: 'SelectJSONModel>/SearchOptionsList'}" enabled="false">
+										<core:ListItem key="{SelectJSONModel>SearchText}" text="{SelectJSONModel>SearchText}"/>
+									</ComboBox>
+								</VBox>
+								<VBox id="forTiresizeSearchOnly" visible="{MasterModel>/enableTiresize}" class="customMargin">
+									<Label text=""/>
+									<Label text="{i18n>Label.TireSize}" required="true"/>
+									<ComboBox id="TiresizeSearchCombo" selectionChange="onTiresizeChange" change="onComboInputChange" value="" selectedKey=""
+										items="{ path: 'GlobalJSONModel>/tireData', sorter: { path: 'TIRESIZE' } }">
+										<core:ListItem key="{GlobalJSONModel>TIRESIZE}" text="{GlobalJSONModel>TIRESIZE}"/>
+									</ComboBox>
+								</VBox>
+								<VBox id="forVendorSearchOnly" visible="{MasterModel>/enableVendor}" class="customMargin">
+									<Label text=""/>
+									<Label text="{i18n>Label.Vendor}" required="true"/>
+									<ComboBox id="VendorSearchCombo" selectionChange="onVendorChange" change="onComboInputChange" value="" selectedKey=""
+										items="{ path: 'GlobalJSONModel>/vendorData', sorter: { path: 'VENDOR_ID' } }" enabled="false">
+										<core:ListItem key="{GlobalJSONModel>VENDOR_ID}" text="{GlobalJSONModel>VENDOR_ID} - {GlobalJSONModel>VENDOR_DESC}"/>
+									</ComboBox>
+								</VBox>
+								<VBox id="forSeriesSearchOnly" visible="{MasterModel>/enableSeries}" class="customMargin">
+									<Label text=""/>
+									<Label text="{i18n>Label.Vechicle.Series}" id="SeriesLabel" required="true"/>
+									<ComboBox id="SeriesCombo" selectionChange="onSeriesChange" change="onComboInputChange" value="" selectedKey=""
+										items="{ path: 'GlobalJSONModel>/seriesData', sorter: { path: 'SERIES_CODE', descending: false } }">
+										<core:ListItem key="{GlobalJSONModel>SERIES_CODE}" text="{GlobalJSONModel>SERIES_CODE} - {GlobalJSONModel>SERIES_DESC}"/>
+									</ComboBox>
+									<Label text="{i18n>Label.ModelYear}" id="ModelLabel" required="true"/>
+									<ComboBox id="YearCombo" selectionChange="onYearChange" change="onComboInputChange" value="" selectedKey=""
+										items="{ path: 'GlobalJSONModel>/yearData', sorter: { path: 'YEAR', descending: false } }">
+										<core:ListItem key="{GlobalJSONModel>YEAR}" text="{GlobalJSONModel>YEAR}"/>
+									</ComboBox>
+								</VBox>
+								<VBox class="customMargin">
+									<Label text=""/>
+									<Label text=""/>
+									<Button type="Default" visible="true" icon="sap-icon://drill-down" press="onLoadBooking" text="{i18n>Button.Dealer.Booking.Load}"/>
+									<Label text=""/>
+									<Button type="Default" visible="{=${viewModel>/currentBooking/loaded} }" icon="sap-icon://sys-cancel" press="onClearBooking"
+										text="{i18n>Button.Dealer.Booking.Clear}"/>
+								</VBox>
+								<HBox alignContent="End" class="customMargin" alignItems="End" justifyContent="End" visible="{=(${viewModel>/currentDetailTab} === 'BP') }">
+									<VBox alignContent="Start" alignItems="Start">
+										<HBox alignContent="Center" alignItems="Center" height="40px">
+											<Label text="{i18n>Label.Current.Booking.Total}" vAlign="Middle"/>
+										</HBox>
+										<Input textAlign="Right" value="{viewModel>/currentBooking/partsBookingsTotal}" enabled="false"/>
+										<ObjectStatus id="bookingStatus" text="" state="Success" visible="{viewModel>/currentBooking/loaded}"/>
+									</VBox>
+								</HBox>
+								<!--<HBox alignContent="End" alignItems="End" justifyContent="End" visible="{=(${viewModel>/currentDetailTab} === 'SD') }">-->
+								<HBox alignContent="End" alignItems="End" justifyContent="End"
+									visible="{=(${viewModel>/currentDetailTab} === 'SD') &amp;&amp; ${viewModel>/currentBooking/loaded} &amp;&amp; !!${viewModel>/currentBooking/actionable} &amp;&amp; !!${viewModel>/currentBooking/summary/confirmed} }">
+									<VBox alignContent="Start" alignItems="Start">
+										<HBox alignContent="Center" alignItems="Center" height="40px"></HBox>
+										<!--<Button type="Accept" text="{i18n>Button.ReOpen.Booking}" press='onReOpenBooking'></Button>-->
+									</VBox>
+								</HBox>
+							</items>
+						</FlexBox>
+					</Panel>
+				</layout:content>
+			</layout:VerticalLayout>
+			<layout:VerticalLayout width="100%" visible="{viewModel>/currentBooking/loaded}">
+				<layout:content>
+					<Toolbar height="79px" design="Solid">
+						<IconTabHeader id="tabHeaderDB" selectedKey="{viewModel>/currentDetailTab}" select="onSelectTab" backgroundDesign="Transparent">
+							<layoutData>
+								<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true"/>
+							</layoutData>
+							<items>
+								<IconTabFilter icon="sap-icon://list" iconColor="Critical" tooltip="{i18n>Label.Booking.Parts}" key="BP"></IconTabFilter>
+								<IconTabSeparator icon="sap-icon://vertical-grip"/>
+								<IconTabFilter icon="sap-icon://appointment" iconColor="Critical" tooltip="{i18n>Label.Schedule.Delivery}" key="SD"></IconTabFilter>
+							</items>
+						</IconTabHeader>
+						<ToolbarSpacer>
+							<layoutData>
+								<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="16px"/>
+							</layoutData>
+						</ToolbarSpacer>
+						<Button id="xsortButton" type='Transparent' icon="sap-icon://sort" press="onSetting" visible="false">
+							<layoutData>
+								<OverflowToolbarLayoutData priority="NeverOverflow"/>
+							</layoutData>
+						</Button>
+						<HBox direction="RowReverse" alignItems="Start" visible="{=(${viewModel>/currentDetailTab} === 'BP') }">
+							<Button icon="sap-icon://open-command-field" press="onNextRecords" id="idNextRecordsBtn"/>
+							<Button icon="sap-icon://close-command-field" press="onPreviousRecords" id="idPrevRecordsBtn"/>
+						</HBox>
+						<Button id="filterButton" type='Transparent' icon="sap-icon://add-filter" press="onDSilter"
+							visible="{=(${viewModel>/currentDetailTab} === 'SD') }">
+							<layoutData>
+								<OverflowToolbarLayoutData priority="NeverOverflow"/>
+							</layoutData>
+						</Button>
+						<Button id="bpfilterButton" type='Transparent' icon="sap-icon://add-filter" press="onBPfilter"
+							visible="{=(${viewModel>/currentDetailTab} === 'BP')}">
+							<layoutData>
+								<OverflowToolbarLayoutData priority="NeverOverflow"/>
+							</layoutData>
+						</Button>
+					</Toolbar>
+					<layout:VerticalLayout width="100%" visible="{=(${viewModel>/currentDetailTab} === 'BP') }">
+						<layout:content>
+							<ScrollContainer height="35rem" width="100%" horizontal="true" vertical="true" focusable="true">
+								<content>
+									<Table id="idProductsTableHeader" showNoData="false" mode='SingleSelectMaster' updateFinished="onUpdatePBFinished"
+										items="{ path: 'viewModel>/currentBooking/partsBookings', sorter : [{ path : 'partNumber', descending : false }, { path : 'vendorName', descending : false }] }"
+										sticky="ColumnHeaders">
+										<columns>
+											<Column width="8rem" vAlign="Middle">
+												<Label text="{i18n>Label.Part.Number}" design="Bold" wrapping="true"/>
+											</Column>
+											<Column visible="false" width="12rem" minScreenWidth="Desktop" demandPopin="false" hAlign="Begin" vAlign="Middle">
+												<Label text="" design="Bold"/>
+											</Column>
+											<Column visible="false" width="12rem" minScreenWidth="Desktop" demandPopin="false" hAlign="Begin" vAlign="Middle">
+												<Label text="" design="Bold"/>
+											</Column>
+											<Column visible="false" width="12rem" minScreenWidth="Desktop" demandPopin="false" hAlign="Begin" vAlign="Middle">
+												<Label text="" design="Bold"/>
+											</Column>
+											<Column visible="false" width="12rem" minScreenWidth="Desktop" demandPopin="false" hAlign="Begin" vAlign="Middle">
+												<Label text="" design="Bold"/>
+											</Column>
+											<Column width="12rem" minScreenWidth="Desktop" demandPopin="false" hAlign="Begin" vAlign="Middle">
+												<Label text="{i18n>Label.Vendor.Desc}" design="Bold" wrapping="true"/>
+											</Column>
+											<Column width="10rem" minScreenWidth="Small" demandPopin="true" hAlign="Begin" vAlign="Middle">
+												<Label text="{i18n>Label.Details}" design="Bold"/>
+											</Column>
+											<Column width="5rem" minScreenWidth="Small" demandPopin="true" hAlign="Begin" vAlign="Middle">
+												<Label text="{i18n>Label.TireSize}" design="Bold" wrapping="true"/>
+											</Column>
+											<Column width="5rem" minScreenWidth="Small" demandPopin="true" hAlign="Begin" vAlign="Middle">
+												<Label text="{i18n>Label.LoadRating}" design="Bold" wrapping="true"/>
+											</Column>
+											<Column width="5rem" minScreenWidth="Small" demandPopin="true" hAlign="Begin" vAlign="Middle">
+												<Label text="{i18n>Label.SpeedRating}" design="Bold" wrapping="true"/>
+											</Column>
+											<Column width="5rem" minScreenWidth="Desktop" demandPopin="false" hAlign="Center" vAlign="Middle">
+												<Label text="{i18n>Label.Dealer.Net}" design="Bold" wrapping="true"/>
+											</Column>
+											<Column width="6rem" minScreenWidth="Desktop" demandPopin="true" hAlign="Center" vAlign="Middle">
+												<Label text="{i18n>Label.Prior.Purchase}" design="Bold" wrapping="true"/>
+											</Column>
+											<Column width="6rem" minScreenWidth="Desktop" demandPopin="true" hAlign="Center" vAlign="Middle">
+												<Label text="{i18n>Label.Prior.Booking}" design="Bold" wrapping="true"/>
+											</Column>
+											<Column width="4rem" minScreenWidth="Desktop" demandPopin="false" hAlign="Center" vAlign="Middle"
+												visible="{=${viewModel>/dynamicHeader/0/enable}}">
+												<Label design="Bold" text="{=${viewModel>/dynamicHeader/0/title}}"/>
+											</Column>
+											<Column width="4rem" minScreenWidth="Desktop" demandPopin="false" hAlign="Center" vAlign="Middle"
+												visible="{=${viewModel>/dynamicHeader/1/enable}}">
+												<Label design="Bold" text="{=${viewModel>/dynamicHeader/1/title}}"/>
+											</Column>
+											<Column width="4rem" minScreenWidth="Desktop" demandPopin="false" hAlign="Center" vAlign="Middle"
+												visible="{=${viewModel>/dynamicHeader/2/enable}}">
+												<Label design="Bold" text="{=${viewModel>/dynamicHeader/2/title}}"/>
+											</Column>
+											<Column width="4rem" minScreenWidth="Desktop" demandPopin="false" hAlign="Center" vAlign="Middle"
+												visible="{=${viewModel>/dynamicHeader/3/enable}}">
+												<Label design="Bold" text="{=${viewModel>/dynamicHeader/3/title}}"/>
+											</Column>
+											<Column width="4rem" minScreenWidth="Desktop" demandPopin="false" hAlign="Center" vAlign="Middle"
+												visible="{=${viewModel>/dynamicHeader/4/enable}}">
+												<Label design="Bold" text="{=${viewModel>/dynamicHeader/4/title}}"/>
+											</Column>
+											<Column width="4rem" minScreenWidth="Desktop" demandPopin="false" hAlign="Center" vAlign="Middle"
+												visible="{=${viewModel>/dynamicHeader/5/enable}}">
+												<Label design="Bold" text="{=${viewModel>/dynamicHeader/5/title}}"/>
+											</Column>
+											<Column width="6rem" minScreenWidth="Desktop" demandPopin="false" hAlign="End" vAlign="Middle">
+												<Label design="Bold" text="{i18n>Label.Booking.Total}"/>
+											</Column>
+											<Column width="36px" hAlign="Center" vAlign="Middle" visible="false">
+												<HBox justifyContent='End' alignItems='End' visible="false">
+													<core:Icon id="addButton" src="sap-icon://add" color='#00bfff' press="onAdd"/>
+												</HBox>
+											</Column>
+										</columns>
+										<items>
+											<ColumnListItem>
+												<cells>
+													<ObjectIdentifier title="{path : 'viewModel>partNumber', formatter : '.formatter.removeLeadingZero'}" titleActive="true"
+														titlePress="partClicked"/>
+													<Text text="{viewModel>series}" visible="false"/>
+													<Text text="{viewModel>years}" visible="false"/>
+													<Text text="{viewModel>brands}" visible="false"/>
+													<Text text="{viewModel>categoryId}" visible="false"/>
+													<Text text="{viewModel>vendorName}"/>
+													<Text text="{viewModel>details}"/>
+													<Text text="{viewModel>tiresize}"/>
+													<Text text="{viewModel>loadrating}"/>
+													<Text text="{viewModel>speedrating}"/>
+													<Text text="{path:'viewModel>dealernet', formatter:'.formatter.dealernetTrim'}"/>
+													<!--<Button text="{i18n>Label.Dealer.Net}" press='click_ViewDealerNet' visible="true"/>-->
+													<!--<Text text="{viewModel>dealerNet}"/>-->
+													<Text text="{viewModel>priorPurcahse}"/>
+													<Text text="{viewModel>priorBook}"/>
+													<Input type="Number" change="onChangeF0" value="{path : 'viewModel>F0', type: 'sap.ui.model.type.Integer' }"
+														enabled="{=!!${viewModel>/currentBooking/actionable} &amp;&amp; !!${viewModel>/currentBooking/editable}}"/>
+													<Input type="Number" change="onChangeF1" value="{path : 'viewModel>F1', type: 'sap.ui.model.type.Integer' }"
+														enabled="{=!!${viewModel>/currentBooking/actionable} &amp;&amp; !!${viewModel>/currentBooking/editable}}"/>
+													<Input type="Number" change="onChangeF2" value="{path : 'viewModel>F2', type: 'sap.ui.model.type.Integer' }"
+														enabled="{=!!${viewModel>/currentBooking/actionable} &amp;&amp; !!${viewModel>/currentBooking/editable}}"/>
+													<Input type="Number" change="onChangeF3" value="{path : 'viewModel>F3', type: 'sap.ui.model.type.Integer' }"
+														enabled="{=!!${viewModel>/currentBooking/actionable} &amp;&amp; !!${viewModel>/currentBooking/editable}}"/>
+													<Input type="Number" change="onChangeF4" value="{path : 'viewModel>F4', type: 'sap.ui.model.type.Integer' }"
+														enabled="{=!!${viewModel>/currentBooking/actionable} &amp;&amp; !!${viewModel>/currentBooking/editable}}"/>
+													<Input type="Number" change="onChangeF5" value="{path : 'viewModel>F5', type: 'sap.ui.model.type.Integer' }"
+														enabled="{=!!${viewModel>/currentBooking/actionable} &amp;&amp; !!${viewModel>/currentBooking/editable}}"/>
+													<Text text="{viewModel>total}"/>
+													<HBox justifyContent='End' alignItems='End' visible="false">
+														<core:Icon src="sap-icon://feeder-arrow" color='#00bfff' press="onDetail"/>
+													</HBox>
+												</cells>
+											</ColumnListItem>
+										</items>
+									</Table>
+									<Toolbar>
+										<content>
+											<Text text=""/>
+										</content>
+									</Toolbar>
+								</content>
+							</ScrollContainer>
+						</layout:content>
+					</layout:VerticalLayout>
+					<layout:VerticalLayout width="100%" visible="{=(${viewModel>/currentDetailTab} === 'SD') }">
+						<layout:content>
+							<ScrollContainer height="35rem" width="100%" horizontal="true" vertical="true" focusable="true">
+								<content>
+									<List
+										items="{ path: 'viewModel>/currentBooking/categorySchedules', sorter : [{ path : 'categoryDesc', descending : false }, { path : 'vendorDesc', descending : false }], templateShareable:true}"
+										growing="false" growingScrollToLoad="false" id="dsList">
+										<headerToolbar>
+											<Toolbar height="3rem">
+												<Text width="24px"/>
+												<Label text="{i18n>Label.Category}" design="Bold" width="12rem"/>
+												<Label text="{i18n>Label.Vendor}" design="Bold" width="15rem"/>
+												<Label text="{i18n>Label.Delivery.Method}" design="Bold" width="15rem"/>
+												<Label text="{i18n>Label.Delivery.Location}" design="Bold" width="15rem"/>
+												<Label text="{i18n>Label.Special.Instructions}" design="Bold" width="100%"/>
+											</Toolbar>
+										</headerToolbar>
+										<CustomListItem>
+											<Panel expandable="true" expanded="{path: 'viewModel>expanded'}" visible="{path: 'viewModel>categoryVisible'}">
+												<headerToolbar>
+													<Toolbar height="4rem" style="Clear">
+														<Text text="{ path: 'viewModel>categoryDesc', sorter : { path : 'categoryDesc', descending : false }}" wrapping="true" width="12rem"/>
+														<Text text="{ path: 'viewModel>vendorDesc', sorter : { path : 'vendorDesc', descending : false }}" wrapping="true" width="15rem"/>
+														<Select width="15rem" selectedKey="{path : 'viewModel>deliveryMethod'}" items="{path : 'viewModel>delMethodList', templateShareable:true}"
+															enabled="{=!!${viewModel>/currentBooking/actionable} &amp;&amp; !!${viewModel>/currentBooking/editable}}" change="onDelMethodChange">
+															<core:ListItem key="{viewModel>key}" text="{ parts : ['viewModel>key','viewModel>value'], formatter : '.formatter.dmListFt'}"></core:ListItem>
+														</Select>
+														<Input required="true" width="15rem" value="{path : 'viewModel>deliveryLocationDetail', formatter : '.formatter.addresses2'}"
+															enabled="{=${viewModel>deliveryLocationEnable} &amp;&amp; !!${viewModel>/currentBooking/actionable} &amp;&amp; !!${viewModel>/currentBooking/editable}}"
+															valueHelpOnly="true" showValueHelp="true" valueHelpRequest="handleAddressDialogPress"/>
+														<TextArea maxLength="254" value="{ path: 'viewModel>specialInfo'}" width="100%" change="onSpInfoChange"
+															enabled="{=!!${viewModel>/currentBooking/actionable} &amp;&amp; !!${viewModel>/currentBooking/editable}}"/>
+													</Toolbar>
+												</headerToolbar>
+												<content>
+													<HBox >
+														<Text width="30rem"/>
+														<Table showNoData="false" mode='SingleSelectMaster' width="31rem"
+															items="{ path: 'viewModel>delDetailList', sorter : [{ path : 'YYYYMM', descending : false }], templateShareable:false }">
+															<columns>
+																<Column width="30%" hAlign="Center" vAlign="Middle">
+																	<Label text="{i18n>Label.Delivery.Period}"/>
+																</Column>
+																<Column width="30%" minScreenWidth="Tablet" demandPopin="true" hAlign="Center" vAlign="Middle">
+																	<Label text="{i18n>Label.Order.Qualtity}"/>
+																</Column>
+																<Column width="40%" minScreenWidth="Tablet" demandPopin="true" hAlign="Center" vAlign="Middle">
+																	<Label text="{i18n>Label.Delivery.Week}"/>
+																</Column>
+															</columns>
+															<items>
+																<ColumnListItem>
+																	<cells>
+																		<Text text="{path : 'viewModel>MMYYYY', formatter: '.formatter.longDateTitle' }"/>
+																		<Text text="{viewModel>ORDER_QTY}"/>
+																		<Select width="100%" selectedKey="{viewModel>deliveryWeek}" items="{path : 'viewModel>dayList', templateShareable:true}"
+																			enabled="{=!!${viewModel>/currentBooking/actionable} &amp;&amp; !!${viewModel>/currentBooking/editable}}" change="onDelDayChange">
+																			<core:ListItem key="{viewModel>key}" text="{viewModel>value}"></core:ListItem>
+																		</Select>
+																	</cells>
+																</ColumnListItem>
+															</items>
+														</Table>
+													</HBox>
+												</content>
+											</Panel>
+										</CustomListItem>
+									</List>
+									<Toolbar>
+										<content>
+											<Text text=""/>
+										</content>
+									</Toolbar>
+								</content>
+							</ScrollContainer>
+						</layout:content>
+					</layout:VerticalLayout>
+				</layout:content>
+			</layout:VerticalLayout>
+		</content>
+		<footer>
+			<OverflowToolbar>
+				<Button type="Back" text="{i18n>Button.Back}" press='onBack' visible="false"/>
+				<ToolbarSpacer/>
+				<DraftIndicator id='draftInd'/>
+				<ToolbarSpacer/>
+				<!--<Button icon="sap-icon://message-popup" text="{=${message>/}.length}" visible="{=${message>/}.length > 0}" type="Emphasized"
+					press="handleMessagePopoverPress"/>-->
+				<!--<Button type="Emphasized" text="{i18n>Button.Report.SalesPlan}" press='onSalesPlan'
+					visible="{=(${viewModel>/currentDetailTab} === 'BP') &amp;&amp; ${viewModel>/currentBooking/loaded} }"/>-->
+				<Button type="Emphasized" text="{i18n>Button.Export.Booking}" press='onExportOrder'
+					visible="{=(${viewModel>/currentDetailTab} === 'BP') &amp;&amp; ${viewModel>/currentBooking/loaded} }"/>
+				<Button type="Accept" text="{i18n>Button.Confirm.Booking}" press='onConfirmBooking'
+					visible="{=(${viewModel>/currentDetailTab} === 'SD') &amp;&amp; ${viewModel>/currentBooking/loaded} &amp;&amp; !!${viewModel>/currentBooking/actionable} &amp;&amp; !${viewModel>/currentBooking/summary/confirmed}}"></Button>
+				<Button type="Accept" text="{i18n>Button.ReOpen.Booking}" press='onReOpenBooking'
+					visible="{=(${viewModel>/currentDetailTab} === 'SD') &amp;&amp; ${viewModel>/currentBooking/loaded} &amp;&amp; !!${viewModel>/currentBooking/actionable} &amp;&amp; !!${viewModel>/currentBooking/summary/confirmed}}"></Button>
+			</OverflowToolbar>
+		</footer>
+	</Page>
+</mvc:View>

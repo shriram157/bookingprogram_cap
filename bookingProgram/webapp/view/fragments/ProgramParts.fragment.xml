@@ -1,0 +1,158 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns="sap.m">
+	<Table showNoData="false" items="{viewModel>/currentProgram/parts/newline}" visible="{=(!${viewModel>/displayMode})}">
+		<columns>
+			<Column width="25px" hAlign="Begin">
+				<CheckBox select='togglePartsSelect'/>
+			</Column>
+			<Column width="8rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Part.Number}"/>
+			</Column>
+			<Column width="8rem" vAlign="Middle" hAlign="Left">
+				<ObjectIdentifier title="{i18n>Label.Vendor}-{i18n>Label.Description}"/>
+			</Column>
+			<Column width="8rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Parts}-{i18n>Label.Description}"/>
+			</Column>
+			<!--<Column width="10rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Details}"/>
+			</Column>-->
+			<Column width="5rem" vAlign="Middle" hAlign="Left">
+				<ObjectIdentifier title="{i18n>Label.Category}"/>
+			</Column>
+			<Column width="5rem" vAlign="Middle" hAlign="Left">
+				<ObjectIdentifier title="{i18n>Label.TireSize}"/>
+			</Column>
+			<Column width="5rem" vAlign="Middle" hAlign="Left">
+				<ObjectIdentifier title="{i18n>Label.LoadRating}"/>
+			</Column>
+			<Column width="5rem" vAlign="Middle" hAlign="Left">
+				<ObjectIdentifier title="{i18n>Label.SpeedRating}"/>
+			</Column>
+			<Column width="5rem" vAlign="Middle" hAlign="Left">
+				<ObjectIdentifier title="{i18n>Label.Dealer.Net}"/>
+			</Column>
+			<Column width="1rem" minScreenWidth="Tablet" demandPopin="true" vAlign="Middle" hAlign="Center">
+				<Button type="Transparent" icon="sap-icon://delete" press='handleDeletePart' enabled="{=!${viewModel>/displayMode}}"/>
+			</Column>
+			<Column width="1rem" minScreenWidth="Tablet" demandPopin="true" vAlign="Middle" hAlign="Center">
+				<Button type='Transparent' icon="sap-icon://add-filter" press="onPressPartsFilter" enabled="{=!${viewModel>/displayMode}}">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow"/>
+					</layoutData>
+				</Button>
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<Text></Text>
+					<Input type="Text" value="{path : 'viewModel>partId', formatter : '.formatter.removeLeadingZero'}" placeholder="{i18n>Label.Parts}"
+						valueHelpOnly="true" showValueHelp="true" valueHelpRequest="handlePartsDialogPress"/>
+					<Text text="{viewModel>vendorId}"/>
+					<!--<Select  selectedKey="{viewModel>vendorId}" 
+							showSecondaryValues="false" 
+							width='100%'  enabled="false"
+							items="{path : 'viewModel>/currentProgram/parts/vendorList', sorter: { path: 'key' }, templateShareable:true }" 
+					>
+						<core:ListItem key="{viewModel>key}" text="{ parts : ['viewModel>key',  'viewModel>enDesc', 'viewModel>frDesc'], formatter : '.formatter.dropdownFormatter' }" />
+					</Select>-->
+					<Text text="{viewModel>partDesc}"/>
+					<!--<Text text="{viewModel>details}"/>-->
+					<!--<Select selectedKey="{viewModel>categoryId}" -->
+					<!--		id="partsCatSelection" showSecondaryValues="false" -->
+					<!--		width='100%'  enabled="false"-->
+					<!--		items="{path : 'viewModel>/currentProgram/parts/categoryList', sorter: { path: 'key' }, templateShareable:true }" -->
+					<!-->-->
+					<!--	<core:ListItem key="{viewModel>key}" text="{ parts : ['viewModel>key',  'viewModel>enDesc', 'viewModel>frDesc'], formatter : '.formatter.dropdownFormatter' }" />-->
+					<!--</Select>-->
+					<Text text="{viewModel>categoryId}"/>
+					<Text text=""/>
+					<Text text=""/>
+					<Text text=""/>
+					<Text text=""/>
+					<Button type='Transparent' icon="sap-icon://add" press='handleAddParts' enabled="{=!${viewModel>/displayMode}}"/>
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+	<Table showNoData="false" visible="{=(!!${viewModel>/displayMode})}">
+		<columns>
+			<Column width="8rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Part.Number}"/>
+			</Column>
+			<Column width="8rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Vendor}-{i18n>Label.Description}"/>
+			</Column>
+			<Column width="8rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Parts}-{i18n>Label.Description}"/>
+			</Column>
+			<!--<Column width="10rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Details}"/>
+			</Column>-->
+			<Column width="5rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Category}"/>
+			</Column>
+			<Column width="5rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.TireSize}"/>
+			</Column>
+			<Column width="5rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.LoadRating}"/>
+			</Column>
+			<Column width="5rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.SpeedRating}"/>
+			</Column>
+			<Column width="5rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Dealer.Net}"/>
+			</Column>
+			<Column width="1rem" minScreenWidth="Tablet" demandPopin="true" vAlign="Middle" hAlign="Center">
+				<HBox direction="RowReverse" alignItems="Start">
+					<Button icon="sap-icon://open-command-field" press="onNextParts" id="partsNextBtn"/>
+					<Button icon="sap-icon://close-command-field" press="onPreviousParts" id="partsPrevBtn"/>
+				</HBox>
+			</Column>
+		</columns>
+	</Table>
+	<ScrollContainer height="{viewModel>/tabs/Parts/contHigh}" width="100%" horizontal="true" vertical="true" focusable="true">
+		<Table alternateRowColors="true" showNoData="false" mode='SingleSelectMaster' id="partsTable">
+			<columns>
+				<!--Column width="40px" hAlign="Begin" visible="{=(!${viewModel>/displayMode})}"/>-->
+				<Column width="8rem" vAlign="Middle"/>
+				<Column width="8rem" vAlign="Middle"/>
+				<Column width="8rem" vAlign="Middle"/>
+				<!--<Column width="10rem" vAlign="Middle"/>-->
+				<Column width="5rem" vAlign="Middle"/>
+				<Column width="5rem" vAlign="Middle"/>
+				<Column width="5rem" vAlign="Middle"/>
+				<Column width="5rem" vAlign="Middle"/>
+				<Column width="5rem" vAlign="Middle"/>
+				<Column width="1rem" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" hAlign="Center"></Column>
+			</columns>
+			<items>
+				<ColumnListItem id="partsRowT">
+					<cells>
+						<!--<CheckBox selected="{=${SELECTED} === 'X'}" select='togglePartRowSelect'/>-->
+						<Text text="{path : 'PART_NUM', formatter : '.formatter.removeLeadingZero'}"/>
+						<Text text="{VENDOR_ID} - {VENDOR_DESC}"/>
+						<!--<Text text="{PART_DESC} {DETAIL}"/>-->
+						<Text text="{PART_DESC}"/>
+						<!--<Text text="{viewModel>details}" />-->
+						<Text text="{CATEGORY_ID} - {CATEGORY_DESC}"/>
+						<Text text="{TIRESIZE}"/>
+						<Text text="{LOADRATING}"/>
+						<Text text="{SPEEDRATING}"/>
+						<Text text="{path:'DEALERNET', formatter:'.formatter.dealernetTrim'}"/>
+						<HBox justifyContent="Center" width="100%">
+							<core:Icon src="sap-icon://message-error" class="size1" color="#ff0000" visible="{=!(${VALID} === 'X')}" activeColor="Negative" alt="Error"
+								press="onErrorX"/>
+						</HBox>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+		<Toolbar>
+			<content>
+				<Text text=""/>
+			</content>
+		</Toolbar>
+	</ScrollContainer>
+</core:FragmentDefinition>

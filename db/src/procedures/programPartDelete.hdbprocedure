@@ -1,0 +1,71 @@
+PROCEDURE "PROCEDURES_PROGRAMPARTDELETE" ( 
+    IN im_details "PROGRAMADMIN_PROGRAMPARTVIEW",
+	OUT ex_error "PROCEDURES_TT_ERRORS"  ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER AS
+BEGIN
+
+/***************************** 
+ Write your procedure logic 
+ *****************************/
+declare lv_program_uuid		string;
+declare lv_part_num			string;
+declare lv_object_key		string;
+declare lv_department_id	string;
+declare lv_brand_id 		string;
+declare lv_category_id 		string;
+declare lv_valid			string;
+
+declare lv_has_error 		boolean default false;
+declare lv_part_fits_count 	int default 0;
+declare lv_pp_pur_count     int default 0;
+declare lv_dealerbokoing_count     int default 0;
+
+select OBJECT_KEY
+     into lv_object_key
+     from :im_details; 
+
+if :lv_object_key = '' then
+	ex_error = select 552 as http_status_code, 
+               'BP01041' as error_message, 
+                     'The Obejct key field from parts can not be empty' as detail from "DUMMY";
+else
+
+	select PART_NUM, PROGRAM_UUID, "VALID" into lv_part_num, lv_program_uuid, lv_valid from "PROGRAMADMIN_PROG_PARTS" where OBJECT_KEY = :lv_object_key;
+	
+	if :lv_valid = 'X' then 
+	  select count(*) into lv_part_fits_count from "PROGRAMADMIN_PROG_PART_FITMENT" where PART_NUM = :lv_part_num AND  PROGRAM_UUID = :lv_program_uuid;
+	  if :lv_part_fits_count > 0 then 
+		ex_error = select 556 as http_status_code, 
+               'BP01042' as error_message, 
+                     'The part has associated part fitments' as detail from "DUMMY";
+    	lv_has_error = true;                 
+	  end if;
+
+	  select count(*) into lv_pp_pur_count from "PROGRAMADMIN_PROG_PRIOR_PURCHASES" where PART_NUM = :lv_part_num AND  PROGRAM_UUID = :lv_program_uuid;
+	  if :lv_pp_pur_count > 0 then 
+		ex_error = select 556 as http_status_code, 
+               'BP01043' as error_message, 
+                     'The part has associated prior purchases' as detail from "DUMMY";
+    	lv_has_error = true;                 
+	  end if;
+
+	  select count(*) into lv_dealerbokoing_count from "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" where PART_NUM = :lv_part_num  AND PROGRAM_UUID = :lv_program_uuid;
+	  if :lv_dealerbokoing_count > 0 then 
+		ex_error = select 556 as http_status_code, 
+               'BP01044' as error_message, 
+                     'The part has associated dealer booking' as detail from "DUMMY";
+    	lv_has_error = true;                 
+	  end if;
+	
+	end if;
+
+end if;
+
+if :lv_has_error = false then
+	delete from "CORE_OBJECT_MESSAGE"  where OBJECT_KEY = :lv_object_key ; 
+	delete from "PROGRAMADMIN_PROG_PARTS"  where OBJECT_KEY = :lv_object_key ;  
+end if;
+
+
+END;

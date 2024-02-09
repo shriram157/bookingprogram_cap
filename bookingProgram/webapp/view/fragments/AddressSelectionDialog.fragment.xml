@@ -1,0 +1,43 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<TableSelectDialog noDataText="{i18n>Label.Address.NoData}" search="handleAddressSearch" liveChange="handleAddressSearch" confirm="handleAddressClose" cancel="handleAddressClose"
+		contentWidth="800px" growing="true" growingThreshold="50" multiSelect="false" 
+		items="{ path : '/', sorter : [{ path : 'DEL_PROVINCE', descending : false }, { path : 'DEL_CITY', descending : false }] }">
+		<ColumnListItem>
+			<!--filters: [{path: 'PROGRAM_UUID',operator: 'EQ',value1: '{=${viewModel>/currentBooking/summary/programId}}'}],-->
+			<cells>
+				<Text text="{path : 'DEL_PROVINCE', formatter : '.formatter.provinceName'}"/>
+				<Text text="{DEL_CITY}"/>
+				<Text text="{DEL_LOCATION_NAME}"/>
+				<Text text="{path: 'DEL_PHONE_NUMBER', formatter: '.formatter.maskPhone'}"/>
+				<Text text="{DEL_ADDRESS1} {DEL_ADDRESS2} {path: 'DEL_POSTAL_CODE', formatter: '.formatter.maskZip'}"/>
+			</cells>
+		</ColumnListItem>
+		<columns>
+			<Column width="5rem" mergeDuplicates="true">
+				<header>
+					<Text text="{i18n>Label.Address.Province}"/>
+				</header>
+			</Column>
+			<Column width="6rem"  minScreenWidth="Tablet" demandPopin="true">
+				<header>
+					<Text text="{i18n>Label.Address.City}"/>
+				</header>
+			</Column>
+			<Column width="5rem"  minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
+				<header>
+					<Text text="{i18n>Label.Delivery.Location}"/>
+				</header>
+			</Column>
+			<Column width="7rem"  minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+				<header>
+					<Text text="{i18n>Label.Phone.Number}"/>
+				</header>
+			</Column>
+			<Column hAlign="End">
+				<header>
+					<Text text="{i18n>Label.Address}"/>
+				</header>
+			</Column>
+		</columns>
+	</TableSelectDialog>
+</core:FragmentDefinition>

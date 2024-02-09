@@ -1,0 +1,79 @@
+PROCEDURE "PROCEDURES_DEALERBOOKINGPERIODCREATE" ( 
+    IN im_details "PROGRAMBOOKING_DEALERBOOKINGPERIODVIEW",
+	OUT ex_error "PROCEDURES_TT_ERRORS"  ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER AS
+BEGIN
+
+/***************************** 
+ Write your procedure logic 
+ *****************************/
+declare lv_program_uuid		string;
+declare lv_dealer_code 		string;
+declare lv_dealer_s			string;
+declare lv_dealer_name 		string;
+declare lv_parts_num		string;
+declare lv_vendor_id		string;
+declare lv_category_id		string;
+declare lv_period			string;
+declare lv_period_dt		DATE;
+declare lv_order_qualtity	Decimal(13, 0);
+declare lv_changed_by		string;
+declare lv_count			integer; 
+declare lv_count_dealer		integer; 
+
+select PROGRAM_UUID,DEALER_CODE,DEALER_CODE_S,DEALER_NAME,PART_NUM,VENDOR_ID,CATEGORY_ID,MMYYYY,PERIOD_DT,ORDER_QTY,CHANGED_BY
+     into lv_program_uuid,lv_dealer_code,lv_dealer_s,lv_dealer_name,lv_parts_num,lv_vendor_id,lv_category_id,lv_period,lv_period_dt,lv_order_qualtity,lv_changed_by
+     from :im_details; 
+
+if :lv_program_uuid = '' then
+  ex_error = select 552 as http_status_code, 
+               'The Program UUID is empty' as error_message, 
+                     'The program uuid field can not be my empty' as detail from "DUMMY";
+else
+  select count(*) into lv_count  from "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" where PROGRAM_UUID = :lv_program_uuid AND DEALER_CODE = :lv_dealer_code
+  AND PART_NUM = :lv_parts_num AND VENDOR_ID = :lv_vendor_id AND MMYYYY = :lv_period;
+  if lv_count > 0 then
+	    update "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" 
+    		set "CATEGORY_ID" 	= :lv_category_id,
+    			"ORDER_QTY" 	= :lv_order_qualtity,
+				"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP,
+				"AUDIT_CHANGED_BY" = :lv_changed_by
+    	 where PROGRAM_UUID = :lv_program_uuid AND DEALER_CODE = :lv_dealer_code AND MMYYYY = :lv_period AND PART_NUM = :lv_parts_num AND VENDOR_ID = :lv_vendor_id;
+
+  else
+    insert into "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" ("PROGRAM_UUID", "DEALER_CODE", "PART_NUM", "VENDOR_ID","CATEGORY_ID", "MMYYYY", "PERIOD_DT", "ORDER_QTY", "AUDIT_CREATED_ON", "AUDIT_CREATED_BY", "AUDIT_CHANGED_ON", "AUDIT_CHANGED_BY"  )
+	       values(lv_program_uuid,lv_dealer_code,lv_parts_num,lv_vendor_id,lv_category_id,lv_period,lv_period_dt,lv_order_qualtity,    
+				CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+				
+	select count(*) into lv_count_dealer  from "PROGRAMADMIN_DEALER_INFO" where DEALER_CODE = :lv_dealer_code;
+	  
+	  if lv_count_dealer <= 0 then
+
+		insert into "PROGRAMADMIN_DEALER_INFO" 
+				(	"DEALER_CODE",
+					"DEALER_CODE_S",
+					"DEALER_NAME",
+					"AUDIT_CREATED_ON",	
+					"AUDIT_CREATED_BY",	
+					"AUDIT_CHANGED_ON",	
+					"AUDIT_CHANGED_BY"
+				)
+    	 values (	:lv_dealer_code,
+    				:lv_dealer_s,
+    				:lv_dealer_name,
+            		CURRENT_TIMESTAMP,
+            		:lv_changed_by,
+            		CURRENT_TIMESTAMP,
+            		:lv_changed_by
+    			);
+	else
+		update "PROGRAMADMIN_DEALER_INFO" set DEALER_NAME= :lv_dealer_name,
+	    		"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP,
+				"AUDIT_CHANGED_BY" = :lv_changed_by
+		where "DEALER_CODE" = :lv_dealer_code;
+
+	end if;
+  end if;
+end if;
+END;

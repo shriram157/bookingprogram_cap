@@ -1,0 +1,44 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<ViewSettingsDialog confirm="onProgramPartsConfirm" title=""  id="PartsFilterDialogId">
+		<sortItems>
+			<ViewSettingsItem text="{i18n>Label.Category}" key="CATEGORY_DESC"/>
+			<ViewSettingsItem text="{i18n>Label.Vendor}" key="VENDOR_DESC"/>
+			<ViewSettingsItem text="{i18n>Label.Parts}" key="PART_DESC" selected="true"/>
+		</sortItems>
+		<filterItems>
+			<ViewSettingsFilterItem text="{i18n>Label.Category}" key="CATEGORY_ID-CATEGORY_DESC" multiSelect="true" items="{PartsCategoryJSON>/}">
+				<items>
+					<ViewSettingsItem text="{PartsCategoryJSON>CATEGORY_ID}-{PartsCategoryJSON>CATEGORY_DESC}" key="CATEGORY_ID-CATEGORY_DESC"/>
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="{i18n>Label.Vendor}" key="VENDOR_ID-VENDOR_DESC" multiSelect="true" items="{PartsVendorJSON>/}">
+				<items>
+					<ViewSettingsItem text="{PartsVendorJSON>VENDOR_ID}-{PartsVendorJSON>VENDOR_DESC}" key="VENDOR_ID-VENDOR_DESC"/>
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="{i18n>Label.Parts}" key="PART_NUM-PART_DESC" multiSelect="true" items="{PartsDetailsJSON>/}">
+				<items>
+					<ViewSettingsItem text="{PartsDetailsJSON>PART_NUM}" key="PART_NUM-PART_DESC"/>
+				</items>
+			</ViewSettingsFilterItem>
+		
+		</filterItems>
+		<!--<filterItems>-->
+			<!--<ViewSettingsFilterItem text="{i18n>Label.Category}" multiSelect="true" key="{viewModel>key}" items="{viewModel>/currentProgram/parts/categoryList}">-->
+			<!--	<items>-->
+			<!--		<ViewSettingsItem text="{viewModel>desc}" key="{viewModel>key}"/>-->
+			<!--	</items>-->
+			<!--</ViewSettingsFilterItem>-->
+			<!--<ViewSettingsFilterItem text="{i18n>Label.Vendor}"  multiSelect="true" key="{viewModel>key}" items="{viewModel>/currentProgram/parts/vendorList}">-->
+			<!--	<items>-->
+			<!--		<ViewSettingsItem text="{viewModel>desc}" key="{viewModel>key}"/>-->
+			<!--	</items>-->
+			<!--</ViewSettingsFilterItem>-->
+			<!--<ViewSettingsFilterItem text="{i18n>Label.Parts}"  multiSelect="true" key="{partId}" items="{viewModel>/currentProgram/parts/partsList}">-->
+			<!--	<items>-->
+			<!--		<ViewSettingsItem text="{viewModel>partDesc}" key="{viewModel>partId}"/>-->
+			<!--	</items>-->
+			<!--</ViewSettingsFilterItem>-->
+		<!--</filterItems>-->
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

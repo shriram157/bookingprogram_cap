@@ -1,0 +1,29 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog contentWidth="650px"
+		
+		noDataText="{i18n>Label.Select.Model}"
+		title="{i18n>Label.Select.Model}"
+		search="handleVModelSearch"
+		liveChange = "handleVModelSearch"
+		confirm="handleVModelSearchDialogClose"
+		cancel="handleVModelSearchDialogClose"
+		growingThreshold="20" 
+		items="{
+			path: '/zc_model',
+			parameters :{select : 'Model,Brand,ModelDescriptionEN,ModelDescriptionFR,Active'},
+			sorter : [{ path : 'Brand', descending : false },{ path : 'Model', descending : false }],
+			filters :  [{ path : 'Active', operator : 'EQ', value1 : '1' } ] 
+			
+		}" >
+		<StandardListItem 
+			title="{path : 'Model'}"
+			description="{ModelDescriptionEN}"
+			icon="images/car349-512.png"
+			iconDensityAware="false"
+			info="{path : 'Brand'}"
+			iconInset="false"
+			type="Active" />
+	</SelectDialog>
+</core:FragmentDefinition>

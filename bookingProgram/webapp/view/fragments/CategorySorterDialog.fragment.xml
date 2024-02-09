@@ -1,0 +1,7 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<ViewSettingsDialog confirm="onCategorySortConfirm" title="">
+		<sortItems>
+			<ViewSettingsItem text="{i18n>Label.Category}" key="CATEGORY_ID" selected="true"/>
+		</sortItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

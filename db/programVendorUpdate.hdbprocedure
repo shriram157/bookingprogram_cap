@@ -1,0 +1,140 @@
+PROCEDURE "PROCEDURES_PROGRAMVENDORUPDATE" ( 
+	IN it_new "PROGRAMADMIN_PROGRAMVENDORVIEW",
+    IN it_old "PROGRAMADMIN_PROGRAMVENDORVIEW",
+	-- OUT ex_error "PROCEDURES_TT_ERRORS"  ) 
+	
+ --   IN im_details "PROGRAMADMIN_PROGRAMVENDORVIEW",
+	OUT ex_error "PROCEDURES_TT_ERRORS"  ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER AS
+BEGIN
+USING SQLSCRIPT_STRING AS LIB;
+/***************************** 
+ Write your procedure logic 
+ *****************************/
+declare lv_object_key		string;
+declare lv_program_uuid		string;
+declare lv_vendor_id 		string;
+declare lv_valid	 		string;
+declare lv_batch_mode 		string;
+declare lv_is_DISTRIBUTOR	string;
+declare lv_en_desc			string;
+declare lv_fr_desc			string;
+declare lv_changed_by		string;
+declare lv_count			integer default 0; 
+declare lv_count_en			integer default 0; 
+declare lv_count_fr			integer default 0; 
+declare lv_count_er			integer default 0; 
+declare lv_old_en_desc		string;
+declare lv_old_fr_desc		string;
+declare lv_duplicated		boolean default false; 
+declare lv_updateDesc		boolean default false; 
+declare lv_error_codes		string;
+declare lv_errorCodeArray	NVARCHAR(8) ARRAY;
+declare lv_errorCodesLen	integer default 0; 
+declare lv_tempStr			string; 
+DECLARE i           		INTEGER      = 1;
+
+select "OBJECT_KEY","PROGRAM_UUID","VENDOR_ID","DISTRIBUTOR","VALID","BATCH_MODE","ERROR_CODES","EN_DESC","FR_DESC","CHANGED_BY"
+     into lv_object_key,lv_program_uuid,lv_vendor_id,lv_is_DISTRIBUTOR,lv_valid,lv_batch_mode,lv_error_codes,lv_en_desc,lv_fr_desc,lv_changed_by
+     from :it_new; 
+
+if :lv_program_uuid = '' then
+  ex_error = select 552 as http_status_code, 
+               'The Program Id is empty' as error_message, 
+                     'The program id field can not be my empty' as detail from "DUMMY";
+else
+
+  /***************************** 
+	check the keys
+  *****************************/
+  select count(*) into lv_count from "PROGRAMADMIN_PROG_VENDOR" where PROGRAM_UUID = :lv_program_uuid AND VENDOR_ID = :lv_vendor_id;
+  
+  if lv_count > 0 then
+	-- lv_duplicated := true;
+ -- end if; 
+
+--   if :lv_batch_mode = 'X' then
+	
+-- 	  insert into "PROGRAMADMIN_PROG_VENDOR" ("OBJECT_KEY","PROGRAM_UUID","VENDOR_ID","DISTRIBUTOR","VALID","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+--         values(lv_object_key,lv_program_uuid,lv_vendor_id,lv_is_DISTRIBUTOR,lv_valid,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+
+-- 	  if :lv_valid <> 'X' THEN 
+-- 	    if :lv_error_codes is not NULL then 
+-- 		  lv_errorCodeArray := LIB:SPLIT_TO_ARRAY(:lv_error_codes,',');
+
+-- 		  FOR i IN 1..CARDINALITY(:lv_errorCodeArray) DO
+-- 			lv_tempStr := :lv_errorCodeArray[:i];
+-- 		 --   if :lv_tempStr = 'BP01036' then
+-- 			-- 	lv_duplicated := true;
+-- 			-- end if; 
+-- 			select count(*) into lv_count_er  from "CORE_OBJECT_MESSAGE" where OBJECT_KEY = lv_object_key AND ERROR_CODE = :lv_tempStr;
+-- 			if :lv_count_er < 1 then
+-- 				insert into "CORE_OBJECT_MESSAGE" ("OBJECT_KEY","ERROR_CODE","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+-- 	    	    values(lv_object_key,lv_tempStr,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+-- 			end if;
+-- 		  END FOR;		
+-- 		end if;  
+-- 	  else 
+-- 	    UPSERT "PROGRAMADMIN_VENDOR_NAME" ("VENDOR_ID","LANGUAGE_KEY","VENDOR_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+--           values(lv_vendor_id,'EN',lv_en_desc,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+
+-- 	    UPSERT "PROGRAMADMIN_VENDOR_NAME" ("VENDOR_ID","LANGUAGE_KEY","VENDOR_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+--           values(lv_vendor_id,'FR',lv_fr_desc,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	  
+-- 	  end if;
+	  
+	  
+   --	  select count(*) into lv_count_en  from "PROGRAMADMIN_VENDOR_NAME" where LANGUAGE_KEY = 'EN' AND VENDOR_ID = :lv_vendor_id;
+	  --if lv_count_en < 1 then
+	  --   insert into "PROGRAMADMIN_VENDOR_NAME" ("VENDOR_ID","LANGUAGE_KEY","VENDOR_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+   --      values(lv_vendor_id,'EN',lv_en_desc,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	  --end if;
+
+	  --select count(*) into lv_count_fr  from "PROGRAMADMIN_VENDOR_NAME" where LANGUAGE_KEY = 'FR' AND VENDOR_ID = :lv_vendor_id;
+	  --if lv_count_fr < 1 then
+	  --  insert into "PROGRAMADMIN_VENDOR_NAME" ("VENDOR_ID","LANGUAGE_KEY","VENDOR_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+   --      values(lv_vendor_id,'FR',lv_fr_desc,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	  --end if;
+
+  --else
+	 -- if lv_duplicated = true then
+		-- ex_error = select 551 as http_status_code, 
+  --             'The Record already exist' as error_message, 
+  --                   'The Record already exist, can not insert' as detail from "DUMMY";
+	 -- else
+		-- lv_valid := 'X';
+		-- insert into "PROGRAMADMIN_PROG_VENDOR" ("OBJECT_KEY","PROGRAM_UUID","VENDOR_ID","DISTRIBUTOR","VALID","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+	 --      values(lv_object_key,lv_program_uuid,lv_vendor_id,lv_is_DISTRIBUTOR,lv_valid,CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+	 --   commit;   
+		select count(*) into lv_count_en  from "PROGRAMADMIN_VENDOR_NAME" where LANGUAGE_KEY = 'EN' AND VENDOR_ID = :lv_vendor_id;
+		if lv_count_en > 0 then
+	    	update "PROGRAMADMIN_VENDOR_NAME" set VENDOR_DESC = :lv_en_desc, 
+	    		DISTRIBUTOR = :lv_is_DISTRIBUTOR,
+	    		"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP,
+				"AUDIT_CHANGED_BY" = :lv_changed_by
+			where "VENDOR_ID" = :lv_vendor_id AND LANGUAGE_KEY = 'EN';
+		else
+	    	insert into "PROGRAMADMIN_VENDOR_NAME" 
+	    	-- ("VENDOR_ID","LANGUAGE_KEY","VENDOR_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+        		values(lv_vendor_id,'EN',lv_en_desc,lv_is_DISTRIBUTOR, CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+        	commit;	
+		end if;
+
+		select count(*) into lv_count_fr  from "PROGRAMADMIN_VENDOR_NAME" where LANGUAGE_KEY = 'FR' AND VENDOR_ID = :lv_vendor_id;
+		if lv_count_fr > 0 then
+	    	update "PROGRAMADMIN_VENDOR_NAME" set VENDOR_DESC = :lv_fr_desc, 
+	    		DISTRIBUTOR = :lv_is_DISTRIBUTOR,
+	    		"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP,
+				"AUDIT_CHANGED_BY" = :lv_changed_by
+			where "VENDOR_ID" = :lv_vendor_id AND LANGUAGE_KEY = 'FR';
+		else
+	    	insert into "PROGRAMADMIN_VENDOR_NAME"
+	    	-- ("VENDOR_ID","LANGUAGE_KEY","VENDOR_DESC","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+        		values(lv_vendor_id,'FR',lv_fr_desc,lv_is_DISTRIBUTOR, CURRENT_TIMESTAMP,lv_changed_by,CURRENT_TIMESTAMP,lv_changed_by);
+		-- end if;
+	  end if;     
+  end if;
+end if;
+COMMIT;
+END;

@@ -1,0 +1,77 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns="sap.m">
+	<Table showNoData="false" items="{viewModel>/currentProgram/categories/newline}" visible="{=(!${viewModel>/displayMode} ) }">
+		<columns>
+			<Column width="14px" hAlign="End">
+				<CheckBox select='toggleCategorySelect' visible="{=${viewModel>/currentProgram/categories/count} > 0}"/>
+			</Column>
+			<Column width="39rem" vAlign="Middle">
+				<ObjectIdentifier title="{i18n>Label.Category}"/>
+			</Column>
+			<Column width="2rem">
+				
+			</Column>
+			<Column width="1rem" minScreenWidth="Tablet" demandPopin="true" vAlign="Middle" hAlign="Center">		
+				<HBox justifyContent="Center" width="100%">
+				<Button type="Transparent" icon="sap-icon://delete" press='handleCategoryDelete' enabled="{=!${viewModel>/displayMode}}" visible="{=${viewModel>/currentProgram/categories/count} > 0}"/>
+				<Button type="Transparent" icon="sap-icon://filter" press='handleCategorySorter' enabled="{=!${viewModel>/displayMode}}" visible="{=${viewModel>/currentProgram/categories/count} > 0}"/>
+				</HBox>
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<Text></Text>
+					<Select id="categorySelector1" selectedKey="{viewModel>key}" showSecondaryValues="false" width='100%' items="{path : 'viewModel>/currentProgram/categories/avaItems', sorter: { path: 'desc' }, templateShareable:true }" change="onCategoryChange">
+						<core:ListItem key="{viewModel>key}" text="{ parts: [{ path : 'viewModel>key'},{path : 'viewModel>desc'}], formatter : '.formatter.categoryList' }" additionalText="{viewModel>key}"/>
+					</Select>
+					<!--<Text></Text>-->
+					<Button type='Transparent' icon="sap-icon://add" press='handleCategoryAdd' enabled="{=!${viewModel>/displayMode}}"/>
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+	<Table id="categoryReadTable" showNoData="false" visible="{=(!!${viewModel>/displayMode} ) }" >
+		<columns>
+			<Column >
+				<ObjectIdentifier title="{i18n>Label.Category}" titleActive="false"/>
+			</Column>
+			<Column  >
+				<Text></Text>
+			</Column>
+			<Column></Column>
+		</columns>
+	</Table>
+	<ScrollContainer height="{viewModel>/tabs/Category/contHigh}" width="100%" horizontal="true" vertical="true" focusable="true">
+		<Table alternateRowColors="true" showNoData="false" mode='SingleSelectMaster' id="categoryTable" growing="true" growingScrollToLoad="true" growingThreshold="50" >
+		
+			<columns >
+				<!--<Column width="40px" hAlign="Begin" visible="{=(!${viewModel>/displayMode} ) }"/>-->
+				<Column width="12rem" vAlign="Middle"/>
+				<Column width="24rem" vAlign="Middle"/>
+				<Column width="30rem" vAlign="Middle"/>
+				<Column width="1rem" vAlign="Middle" minScreenWidth="Tablet" demandPopin="true" hAlign="Center"></Column>
+			</columns>
+			<items>
+				<ColumnListItem id="categoryRowT">
+					<cells>
+						<!--<CheckBox selected='{viewModel>selected}' select='toggleCategoryRowSelect'/>-->
+						<Text text="{path: 'CATEGORY_ID'}"/>
+						<Text text="{path: 'CATEGORY_DESC',sorter: { path: 'CATEGORY_DESC', descending: false}}" /> 
+						<!--"{=(${DONOTTRANSPORT} === 'X')}"-->
+						<CheckBox text="Do not transport" select="toggleCategoryTransferSelect" selected="{=(${DONOTTRANSPORT} === 'X')}" visible="{=(!${viewModel>/displayMode})}"/>
+						<HBox justifyContent="Center" width="100%">
+							<core:Icon src="sap-icon://message-error" class="size1" color="#ff0000" visible="{=!(${VALID} === 'X')}"
+											activeColor="Negative" alt="Error" press="onErrorX" />
+						</HBox>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+
+		<Toolbar>
+			<content>
+				<Text text=""/>
+			</content>
+		</Toolbar>
+	</ScrollContainer>
+</core:FragmentDefinition>

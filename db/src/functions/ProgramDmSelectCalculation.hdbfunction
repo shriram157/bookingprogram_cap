@@ -1,0 +1,33 @@
+FUNCTION "PROGRAMDMSELECTCALCULATION"(
+			im_programUUID NVARCHAR(36),
+			im_categoryId NVARCHAR(18),
+			im_vendorId NVARCHAR(20),
+			im_language NVARCHAR(2)
+		)
+       RETURNS TABLE (
+       	PROGRAM_UUID NVARCHAR(36),
+       	DEL_METHOD NVARCHAR(20),
+       	DEL_METHOD_NAME NVARCHAR(100)
+       ) 
+       LANGUAGE SQLSCRIPT 
+       SQL SECURITY INVOKER AS 
+BEGIN 
+    /*****************************
+        Write your function logic
+    ****************************/
+    --- the default language is english 
+    DECLARE lv_lan 			NVARCHAR(2) default 'EN';
+
+    if :im_language is not NULL AND :im_language = 'FR' then 
+    	lv_lan = 'FR';
+    end if;
+	
+	RETURN 
+		select :im_programUUID AS "PROGRAM_UUID", '' AS "DEL_METHOD", '' AS "DEL_METHOD_NAME" from "DUMMY"
+		UNION
+		select  A.PROGRAM_UUID, A.DEL_METHOD, B.DEL_METHOD_NAME from 
+		(select PROGRAM_UUID, DEL_METHOD from "PROGRAMADMIN_PROG_DEL_METHOD" where "VALID" = 'X' AND PROGRAM_UUID = :im_programUUID AND CATEGORY_ID = :im_categoryId AND VENDOR_ID = :im_vendorId group by PROGRAM_UUID, DEL_METHOD )
+		as A
+		left join "PROGRAMADMIN_DELIVERYMETHODNAMEVIEW" as B  on A.DEL_METHOD = B.DEL_METHOD  where B.LANGUAGE_KEY = :lv_lan ;
+		
+END;

@@ -1,0 +1,81 @@
+PROCEDURE "PROCEDURES_PROGRAMVENDORDELETE" ( 
+    IN im_details "PROGRAMADMIN_PROGRAMVENDORVIEW",
+	OUT ex_error "PROCEDURES_TT_ERRORS"  ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER AS
+BEGIN
+
+/***************************** 
+ Write your procedure logic 
+ *****************************/
+declare lv_program_uuid		string;
+declare lv_vendor_id		string;
+declare lv_object_key		string;
+declare lv_department_id	string;
+declare lv_brand_id 		string;
+declare lv_category_id 		string;
+declare lv_parts_count 		int default 0;
+declare lv_del_method_count int default 0;
+declare lv_del_location_count int default 0;
+declare lv_dealerbokoing_count int default 0;                     
+declare lv_valid			string;
+
+declare lv_has_error  			boolean default false;
+
+select OBJECT_KEY
+     into lv_object_key
+     from :im_details; 
+
+if :lv_object_key = '' then
+	ex_error = select 552 as http_status_code, 
+               'BP01031' as error_message, 
+                     'The Obejct key field of Vendor Table can not be empty' as detail from "DUMMY";
+    lv_has_error = true;                 
+
+else
+	select VENDOR_ID, PROGRAM_UUID, "VALID" into lv_vendor_id, lv_program_uuid, lv_valid from "PROGRAMADMIN_PROG_VENDOR" where OBJECT_KEY = :lv_object_key;
+	
+	if :lv_valid = 'X' then 
+	  select count(*) into lv_parts_count from "PROGRAMADMIN_PROG_PARTS" where VENDOR_ID = :lv_vendor_id  AND PROGRAM_UUID = :lv_program_uuid;
+	  if :lv_parts_count > 0 then 
+		ex_error = select 556 as http_status_code, 
+               'BP01032' as error_message, 
+                     'The vendor has associated parts' as detail from "DUMMY";
+    	lv_has_error = true;                 
+	  end if;
+
+	  select count(*) into lv_del_method_count from "PROGRAMADMIN_PROG_DEL_METHOD" where VENDOR_ID = :lv_vendor_id  AND PROGRAM_UUID = :lv_program_uuid;
+	  if :lv_del_method_count > 0 then 
+		ex_error = select 556 as http_status_code, 
+               'BP01033' as error_message, 
+                     'The vendor has associated delivery methods' as detail from "DUMMY";
+    	lv_has_error = true;                 
+	  end if;
+
+	  select count(*) into lv_del_location_count from "PROGRAMADMIN_PROG_DEL_LOCATION" where VENDOR_ID = :lv_vendor_id  AND PROGRAM_UUID = :lv_program_uuid;
+	  if :lv_del_location_count > 0 then 
+		ex_error = select 556 as http_status_code, 
+               'BP01034' as error_message, 
+                     'The vendor has associated delivery locations' as detail from "DUMMY";
+    	lv_has_error = true;                 
+	  end if;
+
+
+	  select count(*) into lv_dealerbokoing_count from "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" where VENDOR_ID = :lv_vendor_id  AND PROGRAM_UUID = :lv_program_uuid;
+	  if :lv_dealerbokoing_count > 0 then 
+		ex_error = select 556 as http_status_code, 
+               'BP01034' as error_message, 
+                     'The vendor has associated dealer booking' as detail from "DUMMY";
+    	lv_has_error = true;                 
+	  end if;
+	
+	end if;
+
+end if;
+
+if :lv_has_error = false then
+	delete from "CORE_OBJECT_MESSAGE"  where OBJECT_KEY = :lv_object_key ; 
+	delete from "PROGRAMADMIN_PROG_VENDOR"  where OBJECT_KEY = :lv_object_key ;  
+end if;
+
+END;

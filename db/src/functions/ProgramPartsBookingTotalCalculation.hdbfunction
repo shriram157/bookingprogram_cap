@@ -1,0 +1,108 @@
+FUNCTION "PROGRAMPARTSBOOKINGTOTALCALCULATION"(
+			imx_programUUID NVARCHAR(36),
+			imx_dealerCode NVARCHAR(20)
+		)
+       RETURNS TABLE (
+       	PROGRAM_UUID NVARCHAR(36),
+       	DEALER_CODE NVARCHAR(20),
+       	VENDOR_ID NVARCHAR(20),
+       	PART_NUM NVARCHAR(40),
+       	ORDER_TOTAL DECIMAL(14,0)
+       ) 
+       LANGUAGE SQLSCRIPT 
+       SQL SECURITY INVOKER AS 
+BEGIN 
+    /*****************************
+        Write your function logic
+    ****************************/
+    DECLARE lv_f0 			NVARCHAR(6) = null;
+    DECLARE lv_f0_enabled	NVARCHAR(1) = '';    
+    DECLARE lv_f1			NVARCHAR(6) = null;
+    DECLARE lv_f1_enabled	NVARCHAR(1) = '';     
+    DECLARE lv_f2			NVARCHAR(6) = null;
+    DECLARE lv_f2_enabled	NVARCHAR(1) = '';   
+    DECLARE lv_f3			NVARCHAR(6) = null;
+    DECLARE lv_f3_enabled	NVARCHAR(1) = '';   
+    DECLARE lv_f4			NVARCHAR(6) = null;
+    DECLARE lv_f4_enabled	NVARCHAR(1) = '';   
+    DECLARE lv_f5			NVARCHAR(6) = null;
+    DECLARE lv_f5_enabled	NVARCHAR(1) = '';  
+    
+    DECLARE lv_count		INT default 0;
+
+
+	DEClARE lv_cp_programUUID  NVARCHAR(36);
+    
+    DECLARE lv_periods	    NVARCHAR(6) ARRAY;
+    DECLARE i INT DEFAULT 1;
+
+	DECLARE lt_period		TABLE (PERIOD NVARCHAR(6));
+
+	select count(*) into lv_count from "PROGRAMADMIN_BOOKING_PROGRAM" where PROGRAM_UUID = :imx_programUUID;
+	
+	if lv_count > 0 then 
+		select CPROGRAM_UUID into lv_cp_programUUID from "PROGRAMADMIN_BOOKING_PROGRAM" where  PROGRAM_UUID = :imx_programUUID;
+	end if;	
+	
+	lv_count := 0;
+	IF :lv_cp_programUUID IS not NULL THEN
+		select count(*) into lv_count from "PROGRAMADMIN_BOOKING_PROGRAM" where PROGRAM_UUID = :lv_cp_programUUID;
+	END IF;	
+
+	IF :lv_cp_programUUID IS not NULL AND :lv_count > 0 THEN
+
+      SELECT F0_PERIOD, F0_ENABLED, F1_PERIOD,F1_ENABLED,F2_PERIOD,F2_ENABLED,F3_PERIOD,F3_ENABLED,F4_PERIOD,F4_ENABLED,F5_PERIOD,F5_ENABLED
+      into lv_f0,lv_f0_enabled,lv_f1,lv_f1_enabled,lv_f2,lv_f2_enabled,lv_f3,lv_f3_enabled,lv_f4,lv_f4_enabled,lv_f5,lv_f5_enabled FROM "PERIODSCALCULATION"(:lv_cp_programUUID);
+
+      IF (:lv_f0_enabled is not null AND :lv_f0_enabled = 'X' AND :lv_f0 is not null) 
+      THEN
+    	lv_periods[:i] := :lv_f0;
+    	i := :i + 1;
+      END IF;
+
+	    IF (:lv_f1_enabled is not null AND :lv_f1_enabled = 'X' AND :lv_f1 is not null) 
+    	THEN
+    		lv_periods[:i] := :lv_f1;
+    		i := :i + 1;
+    	END IF;
+
+    	IF (:lv_f2_enabled is not null AND :lv_f2_enabled = 'X' AND :lv_f2 is not null) 
+    	THEN
+    		lv_periods[:i] := :lv_f2;
+    		i := :i + 1;
+    	END IF;
+
+    	IF (:lv_f3_enabled is not null AND :lv_f3_enabled = 'X' AND :lv_f3 is not null) 
+    	THEN
+    		lv_periods[:i] := :lv_f3;
+    		i := :i + 1;
+    	END IF;
+
+    	IF (:lv_f4_enabled is not null AND :lv_f4_enabled = 'X' AND :lv_f4 is not null) 
+    	THEN
+    		lv_periods[:i] := :lv_f4;
+    		i := :i + 1;
+    	END IF;
+
+    	IF (:lv_f5_enabled is not null AND :lv_f5_enabled = 'X' AND :lv_f5 is not null) 
+    	THEN
+    		lv_periods[:i] := :lv_f5;
+    		i := :i + 1;
+    	END IF;
+		lt_period = UNNEST(:lv_periods) AS(PERIOD);
+		
+		select count(*) into lv_count from "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" 
+			where "PROGRAM_UUID" = :lv_cp_programUUID AND "DEALER_CODE" = :imx_dealerCode AND "MMYYYY" IN  (select PERIOD from :lt_period);
+	
+
+	END IF;
+	
+
+	RETURN 
+
+		select "PROGRAM_UUID" AS "PROGRAM_UUID", "DEALER_CODE" AS "DEALER_CODE", "VENDOR_ID" AS "VENDOR_ID", "PART_NUM" AS "PART_NUM",  SUM(ORDER_QTY) AS "ORDER_TOTAL" from "PROGRAMBOOKING_DEALER_BOOKING_PERIOD" 
+		where "PROGRAM_UUID" = :lv_cp_programUUID AND "DEALER_CODE" = :imx_dealerCode AND "MMYYYY" IN  (select PERIOD from :lt_period) 
+		group by "PROGRAM_UUID", "DEALER_CODE", "VENDOR_ID", "PART_NUM";
+		
+
+END;

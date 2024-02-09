@@ -1,0 +1,69 @@
+{
+  "welcomeFile": "/webapp/index.html",
+  "routes": [
+    {
+      "path": "/resources",
+      "target": {
+        "type": "service",
+        "name": "sapui5",
+        "entryPath": "/resources"
+      },
+      "description": "SAPUI5 Resources"
+    },
+    {
+      "path": "/test-resources",
+      "target": {
+        "type": "service",
+        "name": "sapui5",
+        "entryPath": "/test-resources"
+      },
+      "description": "SAPUI5 Test Resources"
+    },
+    {
+      "path": "/odata/services/v2.xsodata/",
+      "target": {
+        "type": "destination",
+        "name": "booking_odatav2",
+        "entryPath": "/odata/services/v2.xsodata/"
+      },
+      "description": "booking program odata v2"
+    },
+    {
+      "path": "/xsjs/",
+      "target": {
+        "type": "destination",
+        "name": "booking_odatav2",
+        "entryPath": "/"
+      },
+      "description": "booking program odata v2 with xsjs"
+    },
+    {
+      "path": "/proxy/apic/",
+      "target": {
+        "type": "destination",
+        "name": "booking_proxy",
+        "entryPath": "/proxy/apic/"
+      },
+      "description": "booking program APIC proxy"
+    },
+    {
+      "path": "/node/",
+      "target": {
+        "type": "destination",
+        "name": "booking_proxy",
+        "entryPath": "/node/"
+      },
+      "description": "booking program APIC proxy"
+    },
+    {
+      "path": "/sap/opu/odata",
+      "target": {
+        "type": "destination",
+        "name": "S4HANA_GW",
+        "entryPath": "/sap/opu/odata"
+      },
+      "description": "DG2 200"
+    }
+  ],
+  "sendWelcomeFileRedirect": true
+}

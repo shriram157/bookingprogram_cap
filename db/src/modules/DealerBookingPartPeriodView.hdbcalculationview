@@ -1,0 +1,1149 @@
+<?xml version="1.0" encoding="UTF-8"?><Calculation:scenario xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" xmlns:Variable="http://www.sap.com/ndb/BiModelVariable.ecore" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="DEALERBOOKINGPARTPERIODVIEW" applyPrivilegeType="NONE" dataCategory="DEFAULT" schemaVersion="3.0" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="THE VIEW FOR LOADING DEALER BOOKING LOAD C VIEW"/>
+<localVariables>
+  <variable id="INDEALERCODE" parameter="true">
+    <descriptions defaultDescription="">
+      <comment text="Dealer Code"/>
+    </descriptions>
+    <variableProperties datatype="NVARCHAR" length="20" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="SingleValue"/>
+    </variableProperties>
+  </variable>
+  <variable id="LANG" parameter="true">
+    <descriptions defaultDescription="LANGUAGE KEY">
+      <comment text="Language Key"/>
+    </descriptions>
+    <variableProperties datatype="NVARCHAR" length="2" mandatory="true" defaultValue="EN">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="SingleValue"/>
+    </variableProperties>
+  </variable>
+  <variable id="PROGRAMUUID" parameter="true">
+    <descriptions defaultDescription="UUID OF THE PROGRAM "/>
+    <variableProperties datatype="NVARCHAR" length="36" mandatory="true">
+      <valueDomain type="empty"/>
+      <selection multiLine="false" type="SingleValue"/>
+    </variableProperties>
+  </variable></localVariables>
+<variableMappings/>
+<dataSources>
+  <DataSource id="PROGRAMADMIN_PROG_PARTS">
+    <resourceUri>PROGRAMADMIN_PROG_PARTS</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_VENDOR_NAME">
+    <resourceUri>PROGRAMADMIN_VENDOR_NAME</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_PART_NAME">
+    <resourceUri>PROGRAMADMIN_PART_NAME</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMBOOKING_DEALER_BOOKING">
+    <resourceUri>PROGRAMBOOKING_DEALER_BOOKING</resourceUri>
+  </DataSource>
+  <DataSource id="DEALER_NAME$$$$PROGRAMADMIN_VENDOR_NAME$$">
+    <resourceUri>PROGRAMADMIN_VENDOR_NAME</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_PROG_PRIOR_PURCHASES">
+    <resourceUri>PROGRAMADMIN_PROG_PRIOR_PURCHASES</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_TCISERIES">
+    <resourceUri>PROGRAMADMIN_TCISERIES</resourceUri>
+  </DataSource>
+  <DataSource id="PROGRAMADMIN_PROG_PART_FITMENT">
+    <resourceUri>PROGRAMADMIN_PROG_PART_FITMENT</resourceUri>
+  </DataSource>
+</dataSources>
+<calculationViews>
+  <calculationView xsi:type="Calculation:ProjectionView" id="POSSIBLE_PROGRAM" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY"/>
+    
+    
+      <viewAttribute id="PROGRAM_UUID"/>
+    
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="VALID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_PROG_PARTS"/>
+    <filter>"PROGRAM_UUID" ='$$PROGRAMUUID$$' AND "VALID" = 'X'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="VENDOR_NAME" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="LANGUAGE_KEY"/>
+      <viewAttribute id="VENDOR_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_VENDOR_NAME"/>
+    <filter>"LANGUAGE_KEY" = '$$LANG$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PARTS_NAME" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="LANGUAGE_KEY"/>
+      <viewAttribute id="PART_DESC"/>
+    
+      <viewAttribute id="TIRESIZE"/>
+    
+      <viewAttribute id="SPEEDRATING"/>
+      <viewAttribute id="LOADRATING"/>
+      <viewAttribute id="DEALERNET"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_PART_NAME"/>
+    <filter>"LANGUAGE_KEY" = '$$LANG$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="DEALERBOOKINGV">
+    <viewAttributes>
+    
+      <viewAttribute id="PROGRAM_UUID"/>
+    
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="B_STATUS"/>
+      <viewAttribute id="AUDIT_CHANGED_ON"/>
+      <viewAttribute id="AUDIT_CHANGED_BY"/>
+      <viewAttribute id="DEALER_NET"/>
+      <viewAttribute id="PRIOR_PURCHASES"/>
+      <viewAttribute id="PRIOR_BOOKING"/>
+    
+      <viewAttribute id="CATEGORY_ID"/></viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMBOOKING_DEALER_BOOKING">
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_ON" source="AUDIT_CHANGED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_BY" source="AUDIT_CHANGED_BY"/></input>
+    <filter>"DEALER_CODE" = '$$INDEALERCODE$$' AND "PROGRAM_UUID" = '$$PROGRAMUUID$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="DEALER_NAME" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="LANGUAGE_KEY"/>
+      <viewAttribute id="VENDOR_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="DEALER_NAME$$$$PROGRAMADMIN_VENDOR_NAME$$"/>
+    <filter>"LANGUAGE_KEY" = '$$LANG$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="DEALERBOOKINGDESC" cardinality="CN_1" joinType="leftOuter" referentialDirection="left">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="DEALER_DESC"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="B_STATUS"/>
+      <viewAttribute id="AUDIT_CHANGED_ON"/>
+      <viewAttribute id="AUDIT_CHANGED_BY"/>
+      <viewAttribute id="DEALER_NET" aggregationType="sum"/>
+      <viewAttribute id="PRIOR_PURCHASES" aggregationType="sum"/>
+      <viewAttribute id="PRIOR_BOOKING" aggregationType="sum"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="DEALERBOOKINGV">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="B_STATUS" source="B_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_ON" source="AUDIT_CHANGED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_BY" source="AUDIT_CHANGED_BY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_NET" source="DEALER_NET"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIOR_PURCHASES" source="PRIOR_PURCHASES"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIOR_BOOKING" source="PRIOR_BOOKING"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+    </input>
+    <input node="DEALER_NAME">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_DESC" source="VENDOR_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+    </input>
+    <joinAttribute name="VENDOR_ID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="DEALERBOOKINGVSET" cardinality="C1_N" joinType="leftOuter">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="DEALER_DESC"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="PART_DESC"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="VENDOR_DESC"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="DEALERCODE"/>
+      <viewAttribute id="B_STATUS"/>
+      <viewAttribute id="AUDIT_CHANGED_ON"/>
+      <viewAttribute id="AUDIT_CHANGED_BY"/>
+      <viewAttribute id="DEALER_NET" aggregationType="sum"/>
+      <viewAttribute id="PRIOR_PURCHASES" aggregationType="sum"/>
+      <viewAttribute id="PRIOR_BOOKING" aggregationType="sum"/>
+    
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="PRIOR_PURCHASES_PR" aggregationType="sum"/>
+      <viewAttribute id="CATEGORY_ID_META"/>
+    
+      <viewAttribute id="TIRESIZE"/>
+      <viewAttribute id="SPEEDRATING"/>
+      <viewAttribute id="LOADRATING"/>
+      <viewAttribute id="DEALERNET"/>
+    
+      <viewAttribute id="SERIES_CODE"/>
+      <viewAttribute id="YEAR"/>
+      <viewAttribute id="SERIES_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PRJ_PP_2">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_DESC" source="PART_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_DESC" source="VENDOR_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DETAIL" source="DETAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALERCODE" source="DEALERCODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIOR_PURCHASES_PR" source="PRIOR_PURCHASES_PR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID_META" source="CATEGORY_ID_META"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIRESIZE" source="TIRESIZE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SPEEDRATING" source="SPEEDRATING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOADRATING" source="LOADRATING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALERNET" source="DEALERNET"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_CODE" source="SERIES_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="YEAR" source="YEAR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_DESC" source="SERIES_DESC"/>
+    </input>
+    <input node="PRJ_DB1">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_DESC" source="DEALER_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="B_STATUS" source="B_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_ON" source="AUDIT_CHANGED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_BY" source="AUDIT_CHANGED_BY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_NET" source="DEALER_NET"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIOR_PURCHASES" source="PRIOR_PURCHASES"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIOR_BOOKING" source="PRIOR_BOOKING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALERCODE" source="DEALER_CODE"/>
+    </input>
+    <joinAttribute name="PART_NUM"/>
+    <joinAttribute name="VENDOR_ID"/>
+    <joinAttribute name="PROGRAM_UUID"/>
+    <joinAttribute name="DEALERCODE"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PP_2">
+    <viewAttributes>
+    
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="PART_DESC"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="VENDOR_DESC"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="PRIOR_PURCHASES_PR"/>
+      <viewAttribute id="CATEGORY_ID_META"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="TIRESIZE"/>
+      <viewAttribute id="SPEEDRATING"/>
+      <viewAttribute id="LOADRATING"/>
+      <viewAttribute id="DEALERNET"/>
+    
+      <viewAttribute id="SERIES_CODE"/>
+      <viewAttribute id="YEAR"/>
+      <viewAttribute id="SERIES_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes>
+      <calculatedViewAttribute id="DEALERCODE" datatype="NVARCHAR" length="20" expressionLanguage="SQL">
+        <formula>'$$INDEALERCODE$$'</formula>
+      </calculatedViewAttribute>
+    </calculatedViewAttributes>
+    <input node="PROGRAMPARTS_5">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIOR_PURCHASES_PR" source="PRIOR_PURCHASES"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID_META" source="CATEGORY_ID"/></input>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_DB1">
+    <viewAttributes>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="DEALER_DESC"/>
+      <viewAttribute id="B_STATUS"/>
+      <viewAttribute id="AUDIT_CHANGED_ON"/>
+      <viewAttribute id="AUDIT_CHANGED_BY"/>
+      <viewAttribute id="DEALER_NET"/>
+      <viewAttribute id="PRIOR_PURCHASES"/>
+      <viewAttribute id="PRIOR_BOOKING"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="PROGRAM_UUID"/></viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="DEALERBOOKINGDESC"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRIORPUR">
+    <viewAttributes>
+      <viewAttribute id="OBJECT_KEY"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="PRIOR_PURCHASES"/>
+      <viewAttribute id="VALID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_PROG_PRIOR_PURCHASES"/>
+    <filter>"PROGRAM_UUID" = '$$PROGRAMUUID$$' AND "DEALER_CODE" = '$$INDEALERCODE$$' AND "VALID" = 'X'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_BRF_F">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE_EXIST"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="DEALER_DESC"/>
+      <viewAttribute id="CATEGORY_ID_META"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="PART_DESC"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="VENDOR_DESC"/>
+      <viewAttribute id="DEALER_NET"/>
+      <viewAttribute id="PRIOR_PURCHASES"/>
+      <viewAttribute id="PRIOR_PURCHASES_PR"/>
+      <viewAttribute id="PRIOR_BOOKING"/>
+      <viewAttribute id="B_STATUS"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="AUDIT_CHANGED_ON"/>
+      <viewAttribute id="AUDIT_CHANGED_BY"/>
+    
+      <viewAttribute id="TIRESIZE"/>
+      <viewAttribute id="SPEEDRATING"/>
+      <viewAttribute id="LOADRATING"/>
+      <viewAttribute id="DEALERNET"/>
+    
+      <viewAttribute id="SERIES_CODE"/>
+      <viewAttribute id="YEAR"/>
+      <viewAttribute id="SERIES_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="DEALERBOOKINGVSET">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE_EXIST" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALERCODE"/></input>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="Join_F" cardinality="CN_N" joinType="leftOuter">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE_EXIST"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="DEALER_DESC"/>
+      <viewAttribute id="CATEGORY_ID_META"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="PART_DESC"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="VENDOR_DESC"/>
+      <viewAttribute id="DEALER_NET" aggregationType="sum"/>
+      <viewAttribute id="PRIOR_PURCHASES" aggregationType="sum"/>
+      <viewAttribute id="PRIOR_PURCHASES_PR" aggregationType="sum"/>
+      <viewAttribute id="PRIOR_BOOKING" aggregationType="sum"/>
+      <viewAttribute id="B_STATUS"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="AUDIT_CHANGED_ON"/>
+      <viewAttribute id="AUDIT_CHANGED_BY"/>
+    
+      <viewAttribute id="F0_VALUE" aggregationType="sum"/>
+      <viewAttribute id="F1_VALUE" aggregationType="sum"/>
+      <viewAttribute id="F2_VALUE" aggregationType="sum"/>
+      <viewAttribute id="F3_VALUE" aggregationType="sum"/>
+      <viewAttribute id="F4_VALUE" aggregationType="sum"/>
+      <viewAttribute id="F5_VALUE" aggregationType="sum"/>
+    
+      <viewAttribute id="TIRESIZE"/>
+      <viewAttribute id="SPEEDRATING"/>
+      <viewAttribute id="LOADRATING"/>
+      <viewAttribute id="DEALERNET"/>
+    
+      <viewAttribute id="SERIES_CODE"/>
+      <viewAttribute id="YEAR"/>
+      <viewAttribute id="SERIES_DESC"/>
+    
+      <viewAttribute id="F2_PERIOD"/>
+      <viewAttribute id="F4_PERIOD"/>
+      <viewAttribute id="F3_PERIOD"/>
+      <viewAttribute id="F5_PERIOD"/>
+      <viewAttribute id="F0_PERIOD"/>
+      <viewAttribute id="F1_PERIOD"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PRJ_BRF_F">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE_EXIST" source="DEALER_CODE_EXIST"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_DESC" source="DEALER_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID_META" source="CATEGORY_ID_META"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_DESC" source="PART_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_DESC" source="VENDOR_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_NET" source="DEALER_NET"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIOR_PURCHASES" source="PRIOR_PURCHASES"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIOR_PURCHASES_PR" source="PRIOR_PURCHASES_PR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIOR_BOOKING" source="PRIOR_BOOKING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="B_STATUS" source="B_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DETAIL" source="DETAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_ON" source="AUDIT_CHANGED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_BY" source="AUDIT_CHANGED_BY"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIRESIZE" source="TIRESIZE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SPEEDRATING" source="SPEEDRATING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOADRATING" source="LOADRATING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALERNET" source="DEALERNET"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_CODE" source="SERIES_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="YEAR" source="YEAR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_DESC" source="SERIES_DESC"/>
+    </input>
+    <input node="TABLEFUNCTION_PVS">
+      <mapping xsi:type="Calculation:AttributeMapping" target="F0_VALUE" source="F0_VALUE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F1_VALUE" source="F1_VALUE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F2_VALUE" source="F2_VALUE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F3_VALUE" source="F3_VALUE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F4_VALUE" source="F4_VALUE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F5_VALUE" source="F5_VALUE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F2_PERIOD" source="F2_PERIOD"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F4_PERIOD" source="F4_PERIOD"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F3_PERIOD" source="F3_PERIOD"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F5_PERIOD" source="F5_PERIOD"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F0_PERIOD" source="F0_PERIOD"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F1_PERIOD" source="F1_PERIOD"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+    </input>
+    <joinAttribute name="PROGRAM_UUID"/>
+    <joinAttribute name="DEALER_CODE"/>
+    <joinAttribute name="PART_NUM"/>
+    <joinAttribute name="VENDOR_ID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:TableFunctionView" id="TABLEFUNCTION_PVS" tableFunctionName="PERIODSVALUECALCULATION">
+    <viewAttributes/>
+    <calculatedViewAttributes/>
+    <variableMapping xsi:type="Variable:VariableMapping">
+      <targetVariable name="IM_PROGRAMUUID"/>
+      <localVariable>PROGRAMUUID</localVariable>
+    </variableMapping>
+    <variableMapping xsi:type="Variable:VariableMapping">
+      <targetVariable name="IM_DEALERCODE"/>
+      <localVariable>INDEALERCODE</localVariable>
+    </variableMapping>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_WITH_F">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE_EXIST"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="DEALER_DESC"/>
+      <viewAttribute id="CATEGORY_ID_META"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="PART_DESC"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="VENDOR_DESC"/>
+      <viewAttribute id="DEALER_NET"/>
+      <viewAttribute id="PRIOR_PURCHASES"/>
+      <viewAttribute id="PRIOR_PURCHASES_PR"/>
+      <viewAttribute id="PRIOR_BOOKING"/>
+      <viewAttribute id="B_STATUS"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="AUDIT_CHANGED_ON"/>
+      <viewAttribute id="AUDIT_CHANGED_BY"/>
+      <viewAttribute id="F0_VALUE"/>
+      <viewAttribute id="F1_VALUE"/>
+      <viewAttribute id="F2_VALUE"/>
+      <viewAttribute id="F3_VALUE"/>
+      <viewAttribute id="F4_VALUE"/>
+      <viewAttribute id="F5_VALUE"/>
+    
+      <viewAttribute id="TIRESIZE"/>
+      <viewAttribute id="SPEEDRATING"/>
+      <viewAttribute id="LOADRATING"/>
+      <viewAttribute id="DEALERNET"/>
+    
+      <viewAttribute id="SERIES_CODE"/>
+      <viewAttribute id="YEAR"/>
+      <viewAttribute id="SERIES_DESC"/>
+    
+      <viewAttribute id="F2_PERIOD"/>
+      <viewAttribute id="F4_PERIOD"/>
+      <viewAttribute id="F3_PERIOD"/>
+      <viewAttribute id="F5_PERIOD"/>
+      <viewAttribute id="F0_PERIOD"/>
+      <viewAttribute id="F1_PERIOD"/>
+    </viewAttributes>
+    <calculatedViewAttributes>
+      <calculatedViewAttribute id="I6_TOTAL" datatype="DECIMAL" length="14" scale="0" expressionLanguage="SQL">
+        <formula>IFNULL("F0_VALUE", 0) + IFNULL("F1_VALUE", 0) + IFNULL("F2_VALUE", 0) + IFNULL("F3_VALUE", 0) + IFNULL("F4_VALUE", 0) + IFNULL("F5_VALUE", 0)</formula>
+      </calculatedViewAttribute>
+    </calculatedViewAttributes>
+    <input node="Join_F"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:TableFunctionView" id="TABLEFUNCTION_PB" tableFunctionName="PROGRAMPARTSBOOKINGTOTALCALCULATION">
+    <viewAttributes/>
+    <calculatedViewAttributes/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="Join_PB_Val" cardinality="CN_N" joinType="leftOuter" referentialDirection="left">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE_EXIST"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="DEALER_DESC"/>
+      <viewAttribute id="CATEGORY_ID_META"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="PART_DESC"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="VENDOR_DESC"/>
+      <viewAttribute id="DEALER_NET" aggregationType="sum"/>
+      <viewAttribute id="PRIOR_PURCHASES" aggregationType="sum"/>
+      <viewAttribute id="PRIOR_PURCHASES_PR"/>
+      <viewAttribute id="PRIOR_BOOKING" aggregationType="sum"/>
+      <viewAttribute id="PRIOR_BOOKING_PR" aggregationType="sum"/>
+      <viewAttribute id="B_STATUS"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="AUDIT_CHANGED_ON"/>
+      <viewAttribute id="AUDIT_CHANGED_BY"/>
+      <viewAttribute id="F0_VALUE" aggregationType="sum"/>
+      <viewAttribute id="F1_VALUE" aggregationType="sum"/>
+      <viewAttribute id="F2_VALUE" aggregationType="sum"/>
+      <viewAttribute id="F3_VALUE" aggregationType="sum"/>
+      <viewAttribute id="F4_VALUE" aggregationType="sum"/>
+      <viewAttribute id="F5_VALUE" aggregationType="sum"/>
+      <viewAttribute id="I6_TOTAL" aggregationType="sum"/>
+    
+      <viewAttribute id="TIRESIZE"/>
+      <viewAttribute id="SPEEDRATING"/>
+      <viewAttribute id="LOADRATING"/>
+      <viewAttribute id="DEALERNET"/>
+    
+      <viewAttribute id="SERIES_CODE"/>
+      <viewAttribute id="YEAR"/>
+      <viewAttribute id="SERIES_DESC"/>
+    
+      <viewAttribute id="F2_PERIOD"/>
+      <viewAttribute id="F4_PERIOD"/>
+      <viewAttribute id="F3_PERIOD"/>
+      <viewAttribute id="F5_PERIOD"/>
+      <viewAttribute id="F0_PERIOD"/>
+      <viewAttribute id="F1_PERIOD"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PRJ_WITH_F">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE_EXIST" source="DEALER_CODE_EXIST"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_CODE" source="DEALER_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_DESC" source="DEALER_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID_META" source="CATEGORY_ID_META"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_DESC" source="PART_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_DESC" source="VENDOR_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALER_NET" source="DEALER_NET"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIOR_PURCHASES" source="PRIOR_PURCHASES"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIOR_PURCHASES_PR" source="PRIOR_PURCHASES_PR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIOR_BOOKING" source="PRIOR_BOOKING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="B_STATUS" source="B_STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DETAIL" source="DETAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_ON" source="AUDIT_CHANGED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="AUDIT_CHANGED_BY" source="AUDIT_CHANGED_BY"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F0_VALUE" source="F0_VALUE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F1_VALUE" source="F1_VALUE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F2_VALUE" source="F2_VALUE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F3_VALUE" source="F3_VALUE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F4_VALUE" source="F4_VALUE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F5_VALUE" source="F5_VALUE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="I6_TOTAL" source="I6_TOTAL"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIRESIZE" source="TIRESIZE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SPEEDRATING" source="SPEEDRATING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOADRATING" source="LOADRATING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALERNET" source="DEALERNET"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_CODE" source="SERIES_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="YEAR" source="YEAR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_DESC" source="SERIES_DESC"/>
+    
+      <mapping xsi:type="Calculation:AttributeMapping" target="F2_PERIOD" source="F2_PERIOD"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F4_PERIOD" source="F4_PERIOD"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F3_PERIOD" source="F3_PERIOD"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F5_PERIOD" source="F5_PERIOD"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F0_PERIOD" source="F0_PERIOD"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="F1_PERIOD" source="F1_PERIOD"/>
+    </input>
+    <input node="TABLEFUNCTION_PB">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIOR_BOOKING_PR" source="ORDER_TOTAL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+    </input>
+    <joinAttribute name="PART_NUM"/>
+    <joinAttribute name="VENDOR_ID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="PRJ_PBPR">
+    <viewAttributes>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="DEALER_CODE_EXIST"/>
+      <viewAttribute id="DEALER_CODE"/>
+      <viewAttribute id="DEALER_DESC"/>
+      <viewAttribute id="CATEGORY_ID_META"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="PART_DESC"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="VENDOR_DESC"/>
+      <viewAttribute id="DEALER_NET"/>
+      <viewAttribute id="PRIOR_PURCHASES"/>
+      <viewAttribute id="PRIOR_PURCHASES_PR"/>
+      <viewAttribute id="PRIOR_BOOKING"/>
+      <viewAttribute id="PRIOR_BOOKING_PR"/>
+      <viewAttribute id="B_STATUS"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="AUDIT_CHANGED_ON"/>
+      <viewAttribute id="AUDIT_CHANGED_BY"/>
+      <viewAttribute id="F0_VALUE"/>
+      <viewAttribute id="F1_VALUE"/>
+      <viewAttribute id="F2_VALUE"/>
+      <viewAttribute id="F3_VALUE"/>
+      <viewAttribute id="F4_VALUE"/>
+      <viewAttribute id="F5_VALUE"/>
+      <viewAttribute id="I6_TOTAL"/>
+    
+      <viewAttribute id="TIRESIZE"/>
+      <viewAttribute id="SPEEDRATING"/>
+      <viewAttribute id="LOADRATING"/>
+      <viewAttribute id="DEALERNET"/>
+    
+      <viewAttribute id="SERIES_CODE"/>
+      <viewAttribute id="YEAR"/>
+      <viewAttribute id="SERIES_DESC"/>
+    
+      <viewAttribute id="F2_PERIOD"/>
+      <viewAttribute id="F4_PERIOD"/>
+      <viewAttribute id="F3_PERIOD"/>
+      <viewAttribute id="F5_PERIOD"/>
+      <viewAttribute id="F0_PERIOD"/>
+      <viewAttribute id="F1_PERIOD"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="Join_PB_Val"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:ProjectionView" id="SERIES_DESC" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="SERIES_CODE"/>
+      <viewAttribute id="LANGUAGE_KEY"/>
+      <viewAttribute id="SERIES_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_TCISERIES"/>
+    <filter>"LANGUAGE_KEY"='$$LANG$$'</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="PROGRAMPARTS_1" cardinality="C1_1" joinType="leftOuter" multiJoinNode="ProgramParts" multiJoinCentralTable="Possible_Program" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="SERIES_CODE"/>
+      <viewAttribute id="YEAR"/>
+      <viewAttribute id="SERIES_DESC"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="PART_NUM"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMADMIN_PROG_PART_FITMENT">
+      <mapping xsi:type="Calculation:AttributeMapping" target="YEAR" source="YEAR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_CODE" source="SERIES_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+    </input>
+    <input node="SERIES_DESC">
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_DESC" source="SERIES_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_CODE" source="SERIES_CODE"/>
+    </input>
+    <joinAttribute name="SERIES_CODE"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="PROGRAMPARTS_2" cardinality="C1_1" joinType="leftOuter" multiJoinNode="ProgramParts" multiJoinCentralTable="Possible_Program" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="PART_DESC"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="TIRESIZE"/>
+      <viewAttribute id="SPEEDRATING"/>
+      <viewAttribute id="LOADRATING"/>
+      <viewAttribute id="DEALERNET"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="POSSIBLE_PROGRAM">
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DETAIL" source="DETAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+    </input>
+    <input node="PARTS_NAME">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_DESC" source="PART_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIRESIZE" source="TIRESIZE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SPEEDRATING" source="SPEEDRATING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOADRATING" source="LOADRATING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALERNET" source="DEALERNET"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+    </input>
+    <joinAttribute name="PART_NUM"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="PROGRAMPARTS_3" cardinality="CN_1" joinType="leftOuter" referentialDirection="left" multiJoinNode="ProgramParts" multiJoinCentralTable="Possible_Program" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="PART_DESC"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="VENDOR_DESC"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="TIRESIZE"/>
+      <viewAttribute id="SPEEDRATING"/>
+      <viewAttribute id="LOADRATING"/>
+      <viewAttribute id="DEALERNET"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMPARTS_2">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_DESC" source="PART_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DETAIL" source="DETAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIRESIZE" source="TIRESIZE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SPEEDRATING" source="SPEEDRATING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOADRATING" source="LOADRATING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALERNET" source="DEALERNET"/>
+    </input>
+    <input node="VENDOR_NAME">
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_DESC" source="VENDOR_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+    </input>
+    <joinAttribute name="VENDOR_ID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="PROGRAMPARTS_4" cardinality="C1_1" joinType="leftOuter" multiJoinNode="ProgramParts" multiJoinCentralTable="Possible_Program" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="PART_DESC"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="VENDOR_DESC"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="TIRESIZE"/>
+      <viewAttribute id="SPEEDRATING"/>
+      <viewAttribute id="LOADRATING"/>
+      <viewAttribute id="DEALERNET"/>
+      <viewAttribute id="SERIES_CODE"/>
+      <viewAttribute id="YEAR"/>
+      <viewAttribute id="SERIES_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMPARTS_3">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_DESC" source="PART_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_DESC" source="VENDOR_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DETAIL" source="DETAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIRESIZE" source="TIRESIZE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SPEEDRATING" source="SPEEDRATING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOADRATING" source="LOADRATING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALERNET" source="DEALERNET"/>
+    </input>
+    <input node="PROGRAMPARTS_1">
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_CODE" source="SERIES_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="YEAR" source="YEAR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_DESC" source="SERIES_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+    </input>
+    <joinAttribute name="PROGRAM_UUID"/>
+    <joinAttribute name="PART_NUM"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="PROGRAMPARTS_5" cardinality="C1_1" joinType="leftOuter" multiJoinNode="ProgramParts" multiJoinCentralTable="Possible_Program" multiJoinOrder="Outside In">
+    <viewAttributes>
+      <viewAttribute id="PRIOR_PURCHASES" aggregationType="sum"/>
+      <viewAttribute id="CATEGORY_ID"/>
+      <viewAttribute id="PART_NUM"/>
+      <viewAttribute id="PART_DESC"/>
+      <viewAttribute id="VENDOR_ID"/>
+      <viewAttribute id="VENDOR_DESC"/>
+      <viewAttribute id="DETAIL"/>
+      <viewAttribute id="PROGRAM_UUID"/>
+      <viewAttribute id="TIRESIZE"/>
+      <viewAttribute id="SPEEDRATING"/>
+      <viewAttribute id="LOADRATING"/>
+      <viewAttribute id="DEALERNET"/>
+      <viewAttribute id="SERIES_CODE"/>
+      <viewAttribute id="YEAR"/>
+      <viewAttribute id="SERIES_DESC"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="PROGRAMPARTS_4">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CATEGORY_ID" source="CATEGORY_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_DESC" source="PART_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_ID" source="VENDOR_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_DESC" source="VENDOR_DESC"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DETAIL" source="DETAIL"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="TIRESIZE" source="TIRESIZE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SPEEDRATING" source="SPEEDRATING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="LOADRATING" source="LOADRATING"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DEALERNET" source="DEALERNET"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_CODE" source="SERIES_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="YEAR" source="YEAR"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SERIES_DESC" source="SERIES_DESC"/>
+    </input>
+    <input node="PRIORPUR">
+      <mapping xsi:type="Calculation:AttributeMapping" target="PRIOR_PURCHASES" source="PRIOR_PURCHASES"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROGRAM_UUID" source="PROGRAM_UUID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PART_NUM" source="PART_NUM"/>
+    </input>
+    <joinAttribute name="PROGRAM_UUID"/>
+    <joinAttribute name="PART_NUM"/>
+  </calculationView>
+</calculationViews>
+<logicalModel id="PRJ_PBPR">
+  <attributes>
+    <attribute id="PROGRAM_UUID" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROGRAM UUID"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="PROGRAM_UUID"/>
+    </attribute>
+    <attribute id="DEALER_CODE_EXIST" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEALER CODE"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="DEALER_CODE_EXIST"/>
+    </attribute>
+    <attribute id="DEALER_CODE" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEALERCODE"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="DEALER_CODE"/>
+    </attribute>
+    <attribute id="DEALER_DESC" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CATEGORY DESCRIPTION"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="DEALER_DESC"/>
+    </attribute>
+    <attribute id="CATEGORY_ID_META" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CATEGORY"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="CATEGORY_ID_META"/>
+    </attribute>
+    <attribute id="CATEGORY_ID" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CATEGORY"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="CATEGORY_ID"/>
+    </attribute>
+    <attribute id="PART_NUM" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PART NUMBER"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="PART_NUM"/>
+    </attribute>
+    <attribute id="PART_DESC" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PART DESCRIPTION"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="PART_DESC"/>
+    </attribute>
+    <attribute id="VENDOR_ID" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VENDOR NUMBER"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="VENDOR_ID"/>
+    </attribute>
+    <attribute id="VENDOR_DESC" order="10" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CATEGORY DESCRIPTION"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="VENDOR_DESC"/>
+    </attribute>
+    <attribute id="DEALER_NET" order="11" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PRIOR BOOKING"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="DEALER_NET"/>
+    </attribute>
+    <attribute id="PRIOR_PURCHASES" order="12" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PRIOR PURCHASE"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="PRIOR_PURCHASES"/>
+    </attribute>
+    <attribute id="PRIOR_PURCHASES_PR" order="13" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PRIOR PURCHASE"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="PRIOR_PURCHASES_PR"/>
+    </attribute>
+    <attribute id="PRIOR_BOOKING" order="14" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PRIOR BOOKING"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="PRIOR_BOOKING"/>
+    </attribute>
+    <attribute id="PRIOR_BOOKING_PR" order="15" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="ORDER_TOTAL"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="PRIOR_BOOKING_PR"/>
+    </attribute>
+    <attribute id="B_STATUS" order="16" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="BOOKING STATUS"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="B_STATUS"/>
+    </attribute>
+    <attribute id="DETAIL" order="17" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DETAIL - SHORT NOTES"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="DETAIL"/>
+    </attribute>
+    <attribute id="AUDIT_CHANGED_ON" order="18" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CHANGED ON"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="AUDIT_CHANGED_ON"/>
+    </attribute>
+    <attribute id="AUDIT_CHANGED_BY" order="19" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CHANGED BY"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="AUDIT_CHANGED_BY"/>
+    </attribute>
+    <attribute id="F0_VALUE" order="20" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F0_VALUE"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="F0_VALUE"/>
+    </attribute>
+    <attribute id="F1_VALUE" order="21" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F1_VALUE"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="F1_VALUE"/>
+    </attribute>
+    <attribute id="F2_VALUE" order="22" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F2_VALUE"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="F2_VALUE"/>
+    </attribute>
+    <attribute id="F3_VALUE" order="23" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F3_VALUE"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="F3_VALUE"/>
+    </attribute>
+    <attribute id="F4_VALUE" order="24" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F4_VALUE"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="F4_VALUE"/>
+    </attribute>
+    <attribute id="F5_VALUE" order="25" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F5_VALUE"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="F5_VALUE"/>
+    </attribute>
+    <attribute id="I6_TOTAL" order="26" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="I6_TOTAL"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="I6_TOTAL"/>
+    </attribute>
+  
+    <attribute id="TIRESIZE" order="27" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="TIRESIZE"/>
+  
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="TIRESIZE"/>
+  
+    </attribute>
+    <attribute id="SPEEDRATING" order="28" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SPEED RATING"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="SPEEDRATING"/>
+    </attribute>
+    <attribute id="LOADRATING" order="29" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="LOAD RATING"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="LOADRATING"/>
+    </attribute>
+    <attribute id="DEALERNET" order="30" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DEALER NET"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="DEALERNET"/>
+    </attribute>
+  
+    <attribute id="SERIES_CODE" order="31" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VEHICLE - TOYOTA SERIES CODE"/>
+  
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="SERIES_CODE"/>
+  
+    </attribute>
+    <attribute id="YEAR" order="32" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VEHICLE - TOYOTA MODEL YEAR"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="YEAR"/>
+    </attribute>
+    <attribute id="SERIES_DESC" order="33" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SERIES_DESC"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="SERIES_DESC"/>
+    </attribute>
+  
+    <attribute id="F2_PERIOD" order="34" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F2_PERIOD"/>
+  
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="F2_PERIOD"/>
+  
+    </attribute>
+    <attribute id="F4_PERIOD" order="35" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F4_PERIOD"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="F4_PERIOD"/>
+    </attribute>
+    <attribute id="F3_PERIOD" order="36" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F3_PERIOD"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="F3_PERIOD"/>
+    </attribute>
+    <attribute id="F5_PERIOD" order="37" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F5_PERIOD"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="F5_PERIOD"/>
+    </attribute>
+    <attribute id="F0_PERIOD" order="38" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F0_PERIOD"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="F0_PERIOD"/>
+    </attribute>
+    <attribute id="F1_PERIOD" order="39" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="F1_PERIOD"/>
+      <keyMapping columnObjectName="PRJ_PBPR" columnName="F1_PERIOD"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes/>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="867" y="112"/>
+    
+      <rectangleSize width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="POSSIBLE_PROGRAM" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="1142" y="1266"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="VENDOR_NAME" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="511" y="1266"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PARTS_NAME" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="942" y="1266"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="DEALERBOOKINGV" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="92" y="1266"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="DEALER_NAME" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="301" y="1266"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="DEALERBOOKINGDESC" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="275" y="1083"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="DEALERBOOKINGDESC" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="DEALERBOOKINGDESC" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape expanded="true" modelObjectName="DEALERBOOKINGVSET" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="617" y="811"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="DEALERBOOKINGVSET" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="18" y="29"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="DEALERBOOKINGVSET" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="468" y="-99"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_PP_2" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="753" y="971"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="PRJ_DB1" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="275" y="971"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRIORPUR" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="721" y="1266"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_BRF_F" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="617" y="706"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="Join_F" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="729" y="546"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="PRJ_BRF_F" modelObjectNameSpace="Join_F" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="13" y="22"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="TABLEFUNCTION_PVS" modelObjectNameSpace="Join_F" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="371" y="22"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape expanded="true" modelObjectName="TABLEFUNCTION_PVS" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="827" y="706"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="PRJ_WITH_F" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="729" y="441"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="TABLEFUNCTION_PB" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="940" y="441"/>
+      <rectangleSize height="30" width="159"/>
+    </shape>
+    <shape expanded="false" modelObjectName="Join_PB_Val" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="860" y="331"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="PRJ_WITH_F" modelObjectNameSpace="Join_PB_Val" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="TABLEFUNCTION_PB" modelObjectNameSpace="Join_PB_Val" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="407" y="77"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape expanded="true" modelObjectName="PRJ_PBPR" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="860" y="236"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="SERIES_DESC" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="1338" y="1266"/>
+      <rectangleSize width="160"/>
+    </shape>
+  
+  
+  
+  
+  
+  
+  
+    <shape expanded="true" modelObjectName="PROGRAMPARTS" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="675" y="1076"/>
+      <rectangleSize height="30" width="316"/>
+    </shape>
+  
+    <shape modelObjectName="PROGRAMPARTS" modelObjectType="JoinNodeInput" multiJoinViewNodeName="ProgramParts">
+      <upperLeftCorner x="-148" y="-706"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="PROGRAMPARTS" modelObjectType="JoinNodeInput" multiJoinViewNodeName="ProgramParts">
+      <upperLeftCorner x="490" y="-713"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="PROGRAMPARTS" modelObjectType="JoinNodeInput" multiJoinViewNodeName="ProgramParts">
+      <upperLeftCorner x="452" y="-361"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="PROGRAMPARTS" modelObjectType="JoinNodeInput" multiJoinViewNodeName="ProgramParts">
+      <upperLeftCorner x="783" y="-720"/>
+      <rectangleSize width="286"/>
+    </shape>
+    <shape modelObjectName="PROGRAMPARTS" modelObjectType="JoinNodeInput" multiJoinViewNodeName="ProgramParts">
+      <upperLeftCorner x="703" y="-936"/>
+      <rectangleSize width="175"/>
+    </shape>
+    <shape modelObjectName="PROGRAMPARTS" modelObjectType="JoinNodeInput" multiJoinViewNodeName="ProgramParts">
+      <upperLeftCorner x="-82" y="-386"/>
+      <rectangleSize width="250"/>
+    </shape></shapes>
+</layout>
+</Calculation:scenario>

@@ -1,0 +1,17 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
+	<Dialog title="{i18n>Label.Dealer.Net}" class="smallWidth">
+		<content>
+			<f:SimpleForm id="SimpleFormDealerNet" editable="true" layout="ResponsiveGridLayout" singleContainerFullSize="false">
+				<f:content>
+					<Label text="{i18n>Label.Part.Number}"/>
+					<Text text="{viewDealerViewModel>/PartNumber}" class="centerAligned"/>
+					<Label text="{i18n>Label.Dealer.Net}"/>
+					<Text text="{viewDealerViewModel>/DealerNet}" class="centerAligned"/>
+				</f:content>
+			</f:SimpleForm>
+		</content>
+		<buttons>
+			<Button text="{i18n>Button.Ok}" press='onDealerNetOk'/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

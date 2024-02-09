@@ -1,0 +1,33 @@
+PROCEDURE "PROCEDURES_PROGRAMPRIORPURCHASEMINIDELETE" ( 
+    IN im_details "PROGRAMADMIN_PROGRAMPRIORPURCHASEMINIVIEW",
+	OUT ex_error "PROCEDURES_TT_ERRORS"  ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER AS
+BEGIN
+
+/***************************** 
+ Write your procedure logic 
+ *****************************/
+declare lv_program_uuid		string;
+declare lv_object_key		string;
+declare lv_department_id	string;
+declare lv_brand_id 		string;
+declare lv_category_id 		string;
+declare lv_valid			string;
+
+select OBJECT_KEY
+     into lv_object_key
+     from :im_details; 
+
+if :lv_object_key = '' then
+	ex_error = select 552 as http_status_code, 
+               'The Obejct key is empty' as error_message, 
+                     'The Obejct key field can not be my empty' as detail from "DUMMY";
+else
+	
+	delete from "CORE_OBJECT_MESSAGE"  where OBJECT_KEY = :lv_object_key ; 
+	delete from "PROGRAMADMIN_PROG_PRIOR_PURCHASES"  where OBJECT_KEY = :lv_object_key ;  
+
+end if;
+
+END;

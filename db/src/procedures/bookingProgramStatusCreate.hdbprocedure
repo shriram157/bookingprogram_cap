@@ -1,0 +1,84 @@
+PROCEDURE "PROCEDURES_BOOKINGPROGRAMSTATUSCREATE" ( 
+    IN im_details "DEALERBOOKINGSTATUS",
+	OUT ex_error "PROCEDURES_TT_ERRORS"	) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER AS
+BEGIN
+
+/***************************** 
+ Write your procedure logic 
+ *****************************/
+declare lv_program_uuid		string;
+declare lv_dealer_bp		string;
+declare lv_dealer_s			string;
+declare lv_status			string;
+declare lv_changed_by		string;
+declare lv_count			integer; 
+select PROGRAM_UUID,DEALER_CODE,DEALER_CODE_S,B_STATUS,CREATED_BY
+     into lv_program_uuid,lv_dealer_bp,lv_dealer_s,lv_status,lv_changed_by
+     from :im_details; 
+
+if :lv_program_uuid = '' then
+	ex_error = select 552 as http_status_code, 
+        'The Program uuId is empty' as error_message, 
+        'The program uuid field can not be my empty' as detail from "DUMMY";
+else
+	select count(*) into lv_count  from "PROGRAMBOOKING_DEALER_BOOKING_STATUS_HIST" where PROGRAM_UUID = :lv_program_uuid and DEALER_CODE = :lv_dealer_bp;
+	  
+	  if lv_count <= 0 then
+
+		insert into "PROGRAMBOOKING_DEALER_BOOKING_STATUS_HIST" 
+				(	"OBJECT_KEY",
+					"PROGRAM_UUID",
+					"DEALER_CODE",
+					"B_STATUS",
+					"AUDIT_CREATED_ON",	
+					"AUDIT_CREATED_BY",	
+					"AUDIT_CHANGED_ON",	
+					"AUDIT_CHANGED_BY"
+				)
+    	 values (	newuid(),
+    	 			:lv_program_uuid,
+    				:lv_dealer_bp,
+    				:lv_status,
+            		CURRENT_TIMESTAMP,
+            		:lv_changed_by,
+            		CURRENT_TIMESTAMP,
+            		:lv_changed_by
+    			);
+    	else
+		
+			update "PROGRAMBOOKING_DEALER_BOOKING_STATUS_HIST" 
+			set "B_STATUS" = :lv_status,
+	    		"AUDIT_CREATED_ON" = CURRENT_TIMESTAMP,
+				"AUDIT_CREATED_BY" = :lv_changed_by,
+	    		"AUDIT_CHANGED_ON" = CURRENT_TIMESTAMP,
+				"AUDIT_CHANGED_BY" = :lv_changed_by
+			where "PROGRAM_UUID" = :lv_program_uuid AND "DEALER_CODE" = :lv_dealer_bp;
+		
+		end if;
+		
+	  select count(*) into lv_count  from "PROGRAMADMIN_DEALER_INFO" where DEALER_CODE = :lv_dealer_bp;
+	  
+	  if lv_count <= 0 then
+
+		insert into "PROGRAMADMIN_DEALER_INFO" 
+				(	"DEALER_CODE",
+					"DEALER_CODE_S",
+					"AUDIT_CREATED_ON",	
+					"AUDIT_CREATED_BY",	
+					"AUDIT_CHANGED_ON",	
+					"AUDIT_CHANGED_BY"
+				)
+    	 values (	:lv_dealer_bp,
+    				:lv_dealer_s,
+            		CURRENT_TIMESTAMP,
+            		:lv_changed_by,
+            		CURRENT_TIMESTAMP,
+            		:lv_changed_by
+    			);
+
+	  end if;
+    			
+end if;
+END;

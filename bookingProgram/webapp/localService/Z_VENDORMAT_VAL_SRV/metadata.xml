@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="Z_VENDORMAT_VAL_SRV" xml:lang="en" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="zc_vendor" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Vendor"/>
+				</Key>
+				<Property Name="Vendor" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Vendor" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<NavigationProperty Name="VendorToMaterial" Relationship="Z_VENDORMAT_VAL_SRV.VendorToMaterial" FromRole="FromRole_VendorToMaterial" ToRole="ToRole_VendorToMaterial"/>
+			</EntityType>
+			<EntityType Name="zc_venmatcat" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Dealer"/>
+					<PropertyRef Name="Vendor"/>
+					<PropertyRef Name="Year"/>
+					<PropertyRef Name="Material"/>
+					<PropertyRef Name="Model"/>
+				</Key>
+				<Property Name="Dealer" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="dealer" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Vendor" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Vendor" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Year" Type="Edm.String" Nullable="false" MaxLength="4" sap:unicode="false" sap:label="YEAR" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Material" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:label="Material" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Model" Type="Edm.String" Nullable="false" MaxLength="7" sap:unicode="false" sap:label="MODEL" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Category" Type="Edm.String" Nullable="false" MaxLength="18" sap:unicode="false" sap:label="Category" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="MODEL_DESC_EN" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:label="MODEL_DESC_EN" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Searchterm2" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="searchterm2" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="MODEL_DESC_FR" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:label="MODEL_DESC_FR" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Name" Type="Edm.String" Nullable="false" MaxLength="100" sap:unicode="false" sap:label="name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Mat_descEN" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:label="Mat_descEN" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Message" Type="Edm.String" Nullable="false" MaxLength="100" sap:unicode="false" sap:label="MESSAGE" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Mat_descFR" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:label="Mat_descFR" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Vendor_DescEN" Type="Edm.String" Nullable="false" MaxLength="35" sap:unicode="false" sap:label="Vendor_DescEN" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+				<Property Name="Vendor_DescFR" Type="Edm.String" Nullable="false" MaxLength="35" sap:unicode="false" sap:label="Vendor_DescFR" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+			</EntityType>
+			<Association Name="VendorToMaterial" sap:content-version="1">
+				<End Type="Z_VENDORMAT_VAL_SRV.zc_vendor" Multiplicity="1" Role="FromRole_VendorToMaterial"/>
+				<End Type="Z_VENDORMAT_VAL_SRV.zc_venmatcat" Multiplicity="*" Role="ToRole_VendorToMaterial"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_VendorToMaterial">
+						<PropertyRef Name="Vendor"/>
+					</Principal>
+					<Dependent Role="ToRole_VendorToMaterial">
+						<PropertyRef Name="Vendor"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<EntityContainer Name="Z_VENDORMAT_VAL_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+				<EntitySet Name="zc_vendorSet" EntityType="Z_VENDORMAT_VAL_SRV.zc_vendor" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+				<EntitySet Name="zc_venmatcatSet" EntityType="Z_VENDORMAT_VAL_SRV.zc_venmatcat" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+				<AssociationSet Name="VendorToMaterialSet" Association="Z_VENDORMAT_VAL_SRV.VendorToMaterial" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+					<End EntitySet="zc_vendorSet" Role="FromRole_VendorToMaterial"/>
+					<End EntitySet="zc_venmatcatSet" Role="ToRole_VendorToMaterial"/>
+				</AssociationSet>
+			</EntityContainer>
+			<atom:link rel="self" href="http://TCID1GWAPP1.tci.internal.toyota.ca:8000/sap/opu/odata/sap/Z_VENDORMAT_VAL_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+			<atom:link rel="latest-version" href="http://TCID1GWAPP1.tci.internal.toyota.ca:8000/sap/opu/odata/sap/Z_VENDORMAT_VAL_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

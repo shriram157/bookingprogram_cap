@@ -1,0 +1,21 @@
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<edmx:DataServices>
+		<Schema Namespace="ProgramObject" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<EntityType Name="ProgramPartFitmentType">
+				<Key>
+					<PropertyRef Name="ObjectKey"/>
+				</Key>
+				<Property Name="ObjectKey" Type="Edm.String" Nullable="false" MaxLength="36"/>
+				<Property Name="ProgramUid" Type="Edm.String" Nullable="false" MaxLength="36"/>
+				<Property Name="PartNum" Type="Edm.String" Nullable="false" MaxLength="40"/>
+				<Property Name="ModelCode" Type="Edm.String" Nullable="false" MaxLength="7"/>
+				<Property Name="Year" Type="Edm.String" Nullable="false" MaxLength="4"/>
+				<Property Name="Brand" Type="Edm.String" Nullable="false" MaxLength="2"/>
+				<Property Name="ChangedBy" Type="Edm.String" MaxLength="36"/>
+			</EntityType>
+			<EntityContainer Name="container">
+				<EntitySet Name="ProgramPartFitmentSet" EntityType="ProgramObject.ProgramPartFitmentType"/>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

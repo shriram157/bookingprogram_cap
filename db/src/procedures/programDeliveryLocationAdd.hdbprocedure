@@ -1,0 +1,117 @@
+PROCEDURE "PROCEDURES_PROGRAMDELIVERYLOCATIONADD" ( 
+    IN im_program_uuid NVARCHAR(36),
+    IN im_vendor       NVARCHAR(20),
+    IN im_locationId   NVARCHAR(10),
+    IN im_phoneNumber  NVARCHAR(10),
+    IN im_address1     NVARCHAR(50),
+    IN im_address2     NVARCHAR(50),
+    IN im_city         NVARCHAR(50),
+    IN im_province     NVARCHAR(2),
+    IN im_postalCode   NVARCHAR(6),
+    IN im_en_desc      NVARCHAR(100),
+    IN im_fr_desc      NVARCHAR(100),
+    IN im_errors       NVARCHAR(100),
+    IN im_user         NVARCHAR(36),
+    IN im_invalid 	   BOOLEAN,
+	OUT ex_code       INT   ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER AS
+BEGIN
+USING SQLSCRIPT_STRING AS LIB;
+/***************************** 
+ Write your procedure logic 
+ *****************************/
+declare lv_count_pg			integer default 0; 
+declare lv_count_ven		integer default 0; 
+declare lv_count			integer default 0; 
+declare lv_object_key 		string; 
+declare lv_duplicated		boolean default false;
+declare lv_valid	 		string;
+declare lv_vendor_type	 	string default '';
+declare lv_errorCodeArray	NVARCHAR(8) ARRAY;
+declare lv_errorCodesLen	integer default 0; 
+declare lv_tempStr			string; 
+DECLARE i           		INTEGER      = 1;
+DECLARE rc_code        		INTEGER      = 0;
+
+--- check the prorgam is existing, otherwise do nothing 
+if  :im_program_uuid is not null then
+  select count(*) into lv_count_pg from "PROGRAMADMIN_BOOKING_PROGRAM" where PROGRAM_UUID = :im_program_uuid;
+end if;
+
+--- only do if the program is exist 
+if lv_count_pg > 0 then 
+  --- first, get the uuid
+  select to_nvarchar(SYSUUID) into lv_object_key from "DUMMY";
+
+  --- get the error codes
+  if :im_invalid = true then 
+	lv_valid := '';
+	if :im_errors is not NULL then 
+      lv_errorCodeArray := LIB:SPLIT_TO_ARRAY(:im_errors,',');
+
+      FOR i IN 1..CARDINALITY(:lv_errorCodeArray) DO
+
+        lv_tempStr := :lv_errorCodeArray[:i];
+	    if :lv_tempStr = 'BP01063' then 
+			lv_duplicated := true;
+        end if;
+      
+        --- as the uuid should be unique all the way, but all way using the upsert for possible duplication
+	    upsert "CORE_OBJECT_MESSAGE" ("OBJECT_KEY","ERROR_CODE","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+	      values(lv_object_key,lv_tempStr,CURRENT_TIMESTAMP,im_user,CURRENT_TIMESTAMP,im_user) where OBJECT_KEY = :lv_object_key AND ERROR_CODE = :lv_tempStr;
+	    
+      END FOR;		
+
+	end if;
+  else
+    lv_valid := 'X';
+  end if; 
+
+ -- lv_valid := 'X';
+ -- if :im_errors is not NULL   then 
+ --   lv_errorCodeArray := LIB:SPLIT_TO_ARRAY(:im_errors,',');
+	-- if CARDINALITY(:lv_errorCodeArray) > 0  then
+ --     FOR i IN 1..CARDINALITY(:lv_errorCodeArray) DO
+ --       lv_tempStr := :lv_errorCodeArray[:i];
+	--     if :lv_tempStr = 'BP01063' then 
+	-- 		lv_duplicated := true;
+ --       end if;
+      
+ --       --- as the uuid should be unique all the way, but all way using the upsert for possible duplication
+	--     upsert "CORE_OBJECT_MESSAGE" ("OBJECT_KEY","ERROR_CODE","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+	--       values(lv_object_key,lv_tempStr,CURRENT_TIMESTAMP,im_user,CURRENT_TIMESTAMP,im_user) where OBJECT_KEY = :lv_object_key AND ERROR_CODE = :lv_tempStr;
+
+ --     END FOR;		
+ --     lv_valid := '';
+	-- end if;
+ -- end if;	
+  
+--  check the vendor 
+  select count(*) into lv_count_ven from "PROGRAMADMIN_PROG_VENDOR" where PROGRAM_UUID = :im_program_uuid AND VENDOR_ID = :im_vendor AND "VALID" = 'X';
+  if :lv_count_ven < 1  then
+    insert into "CORE_OBJECT_MESSAGE" ("OBJECT_KEY","ERROR_CODE","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+      values(lv_object_key,'BP01035',CURRENT_TIMESTAMP,im_user,CURRENT_TIMESTAMP,im_user);
+	  --- the check is failed  
+    lv_valid := '';
+  end if;
+
+
+  insert into "PROGRAMADMIN_PROG_DEL_LOCATION" ("OBJECT_KEY","PROGRAM_UUID","VENDOR_ID","DEL_LOCATION_ID","DEL_PHONE_NUMBER","VENDOR_TYPE","VALID","ADDRESS_DEL_ADDRESS1", "ADDRESS_DEL_ADDRESS2","ADDRESS_DEL_CITY","ADDRESS_DEL_PROVINCE","ADDRESS_DEL_POSTAL_CODE","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+    values(:lv_object_key,:im_program_uuid,:im_vendor,:im_locationId,:im_phoneNumber,:lv_vendor_type,:lv_valid,:im_address1,:im_address2,:im_city,:im_province,:im_postalCode,CURRENT_TIMESTAMP,:im_user,CURRENT_TIMESTAMP,:im_user);
+
+  --if :lv_valid = 'X' AND :lv_duplicated = false then 
+
+	upsert "PROGRAMADMIN_DEL_LOC_NAME" ("OBJECT_KEY","LANGUAGE_KEY","DEL_LOCATION_NAME","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+      values(:lv_object_key,'EN',:im_en_desc,CURRENT_TIMESTAMP,:im_user,CURRENT_TIMESTAMP,:im_user) where OBJECT_KEY = :lv_object_key  AND LANGUAGE_KEY = 'EN';
+      
+  	upsert "PROGRAMADMIN_DEL_LOC_NAME" ("OBJECT_KEY","LANGUAGE_KEY","DEL_LOCATION_NAME","AUDIT_CREATED_ON","AUDIT_CREATED_BY","AUDIT_CHANGED_ON","AUDIT_CHANGED_BY")
+      values(:lv_object_key,'FR',:im_fr_desc,CURRENT_TIMESTAMP,:im_user,CURRENT_TIMESTAMP,:im_user) where OBJECT_KEY = :lv_object_key  AND LANGUAGE_KEY = 'FR';
+	
+  --end if;
+
+end if; 
+
+ex_code := 0;
+
+END;

@@ -1,0 +1,29 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<ViewSettingsDialog confirm="onDelLocSortConfirm" title="" id="DeliveryLocationFilterDialogId">
+		<sortItems>
+			<ViewSettingsItem text="{i18n>Label.Delivery.Location}" key="locationId" selected="true"/>
+			<ViewSettingsItem text="{i18n>Label.Address.Province}" key="province"/>
+			<ViewSettingsItem text="{i18n>Label.Phone.Number}" key="phoneNumber"/>
+		</sortItems>
+		<filterItems>
+			<ViewSettingsFilterItem text="{i18n>Label.Delivery.Location}" key="key" multiSelect="true" items="{DeliveryLocationFilterJSON>/}">
+				<items>
+					<ViewSettingsItem text="{DeliveryLocationFilterJSON>key}" key="key"/>
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="{i18n>Label.Delivery.Location.Id}" key="name" multiSelect="true" items="{DeliveryLocationIDFilterJSON>/}">
+				<items>
+					<ViewSettingsItem text="{DeliveryLocationIDFilterJSON>name}" key="name"/>
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem text="{i18n>Label.Phone.Number}" key="phone" multiSelect="true" items="{DeliverPhoneFilterJSON>/}">
+				<items>
+					<ViewSettingsItem text="{DeliverPhoneFilterJSON>phone}" key="phone"/>
+				</items>
+			</ViewSettingsFilterItem>
+		
+		</filterItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>
+
+<!--viewModel>/currentProgram/deliveryLocations-->

@@ -1,0 +1,88 @@
+{
+  "xsappname": "bookingProgram",
+  "tenant-mode": "dedicated",
+  "description": "Security profile of booking program application",
+  "scopes": [
+  	{
+        "name": "$XSAPPNAME.ReadOnly",
+        "description": "Manage Product Markups"
+    }, {
+        "name": "$XSAPPNAME.BookingAdmin",
+        "description": "Booking Administration"
+    }, {
+        "name": "$XSAPPNAME.DealerBooking",
+        "description": "Dealer Booking"
+    }
+  ],
+  "attributes": [
+  	{
+        "name": "DealerCode",
+        "description": "Dealer Code",
+        "valueType": "string"
+    }, {
+        "name": "Language",
+        "description": "Language",
+        "valueType": "string"
+    }, {
+        "name": "UserType",
+        "description": "UserType, identifies dealer or not",
+        "valueType": "string"
+    }, {
+        "name": "Groups",
+        "description": "All the groups configured for this user, It's a string array",
+        "valueType": "string"
+    }, {
+        "name": "Department",
+        "description": "The application defined code, it's static mapping according to ser'group",
+        "valueType": "string"
+    }, {
+        "name": "Brand",
+        "description": "Toyota or Lexus",
+        "valueType": "string"
+    },{
+        "name": "LastName",
+        "description": "The Last name of the basic user",
+        "valueType": "string"
+    }, {
+        "name": "FirstName",
+        "description": "The First Name of the basic User",
+        "valueType": "string"
+    }, {
+        "name": "Email",
+        "description": "Email of the basic user, could be multiple",
+        "valueType": "string"
+    }
+  ],  
+  "role-templates": [
+    {
+      "name": "Base_User",
+      "description": "Booking Program - The base user role",
+      "scope-references": [
+        "$XSAPPNAME.ReadOnly"
+      ],
+      "attribute-references": [
+        "Language",
+        "UserType"
+      ]
+    },{
+      "name": "Dealer_User",
+      "description": "Booking Program - Dealer User",
+      "scope-references": [
+        "$XSAPPNAME.DealerBooking"
+      ],
+      "attribute-references": [
+       	"DealerCode",
+        "Brand"
+      ]
+    }, {
+      "name": "Bookingr_Admin",
+      "description": "Booking Program - Booking Admin",
+      "scope-references": [
+        "$XSAPPNAME.BookingAdmin"
+      ],
+      "attribute-references": [
+        "Department"
+      ]
+    }
+  ]
+}

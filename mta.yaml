@@ -4,15 +4,11 @@ version: 2.0.1
 description: "Booking program consolidated app"
 parameters:
   enable-parallel-deployments: true
-build-parameters:
-  before-all:
-    - builder: custom
-      commands:
-        - npx cds build --production
+
 modules:
   - name: bookingProgram_xsjs
     type: nodejs
-    path: gen/srv
+    path: srv
     parameters:
       buildpack: nodejs_buildpack
     build-parameters:
@@ -31,7 +27,7 @@ modules:
 
   - name: bookingProgram_hbd
     type: hdb
-    path: gen/db
+    path: db
     parameters:
       buildpack: nodejs_buildpack
     requires:
